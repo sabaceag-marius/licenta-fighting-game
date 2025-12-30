@@ -47,11 +47,13 @@ public class InputManager : MonoBehaviour
             JumpHeld = jumpInputAction.IsPressed(),
         };
 
-        frameInput.Dashed = Mathf.Abs(frameInput.Movement.x) - Mathf.Abs(CurrentFrameInput.Movement.x) >= DashDifferenceTreshhold;
+        frameInput.Dashed = 
+            Mathf.Abs(frameInput.Movement.x) - Mathf.Abs(CurrentFrameInput.Movement.x) >= DashDifferenceTreshhold 
+            && Mathf.Abs(frameInput.Movement.x) >= .9f;
 
         frameInput.FastFalled =
-            Mathf.Abs(frameInput.Movement.y) - Mathf.Abs(CurrentFrameInput.Movement.y) >= DashDifferenceTreshhold &&
-            frameInput.Movement.y < 0;
+            Mathf.Abs(frameInput.Movement.y) - Mathf.Abs(CurrentFrameInput.Movement.y) >= DashDifferenceTreshhold 
+            && frameInput.Movement.y <= -.75f;
         
         if (ConsoleLog)
         {
