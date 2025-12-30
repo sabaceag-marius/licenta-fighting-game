@@ -48,6 +48,194 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "UI Overlay",
+            "id": "1f44a38b-0918-4f45-8ead-d97a269c48e3",
+            "actions": [
+                {
+                    "name": "LeftStick",
+                    "type": "Value",
+                    "id": "10505c41-2196-4325-8c2f-44bfd351f446",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "CStick",
+                    "type": "Value",
+                    "id": "40b84c6c-aa43-4436-b90b-290404928db0",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "XButton",
+                    "type": "Button",
+                    "id": "b52434a0-3916-4bbc-b570-17b8439e3f08",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "YButton",
+                    "type": "Button",
+                    "id": "0c7b40da-12e8-4765-90db-83887d13e6a9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BButton",
+                    "type": "Button",
+                    "id": "d0083233-9b04-42e7-98e1-5a216a2c96b2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AButton",
+                    "type": "Button",
+                    "id": "c416a09f-d705-4c54-8aac-e90e73589ed8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ZButton",
+                    "type": "Button",
+                    "id": "1c92f3d7-90e4-4f61-9a33-cee63a297517",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LTrigger",
+                    "type": "Button",
+                    "id": "6a44a610-65fc-40ba-a368-af51dffc89bd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RTrigger",
+                    "type": "Button",
+                    "id": "affca121-2d57-452e-abb2-e573c6a0e59a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4a2a7a75-cecc-477c-b974-f3fff4a99eaa",
+                    "path": "<GamecubeControllerDevice>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "LeftStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9ac07d80-13a0-4392-942a-f0aeade52abb",
+                    "path": "<GamecubeControllerDevice>/cStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "CStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3098699-e13c-413e-8d64-cc2d27343678",
+                    "path": "<GamecubeControllerDevice>/xButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "XButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6c794b08-83e8-42fb-b332-cae5266c31e5",
+                    "path": "<GamecubeControllerDevice>/yButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "YButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25a4a28c-d5dd-4261-8a37-5edfa44b352e",
+                    "path": "<GamecubeControllerDevice>/bButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3aa3fc0a-a00e-4106-a6dc-a3bcfda8608b",
+                    "path": "<GamecubeControllerDevice>/aButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6dc65720-e98d-4fbb-84fa-b4e19e3d2d18",
+                    "path": "<GamecubeControllerDevice>/zButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ZButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5646457f-5884-472e-8782-de267f69908b",
+                    "path": "<GamecubeControllerDevice>/lButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "LTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aa4f6956-800a-47af-aa7d-912258f9ebaf",
+                    "path": "<GamecubeControllerDevice>/rButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

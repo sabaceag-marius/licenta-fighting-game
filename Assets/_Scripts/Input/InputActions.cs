@@ -70,6 +70,194 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""UI Overlay"",
+            ""id"": ""1f44a38b-0918-4f45-8ead-d97a269c48e3"",
+            ""actions"": [
+                {
+                    ""name"": ""LeftStick"",
+                    ""type"": ""Value"",
+                    ""id"": ""10505c41-2196-4325-8c2f-44bfd351f446"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CStick"",
+                    ""type"": ""Value"",
+                    ""id"": ""40b84c6c-aa43-4436-b90b-290404928db0"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""XButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""b52434a0-3916-4bbc-b570-17b8439e3f08"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""YButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""0c7b40da-12e8-4765-90db-83887d13e6a9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""d0083233-9b04-42e7-98e1-5a216a2c96b2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""c416a09f-d705-4c54-8aac-e90e73589ed8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ZButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c92f3d7-90e4-4f61-9a33-cee63a297517"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LTrigger"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a44a610-65fc-40ba-a368-af51dffc89bd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RTrigger"",
+                    ""type"": ""Button"",
+                    ""id"": ""affca121-2d57-452e-abb2-e573c6a0e59a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""4a2a7a75-cecc-477c-b974-f3fff4a99eaa"",
+                    ""path"": ""<GamecubeControllerDevice>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""GameCubeController"",
+                    ""action"": ""LeftStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9ac07d80-13a0-4392-942a-f0aeade52abb"",
+                    ""path"": ""<GamecubeControllerDevice>/cStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""GameCubeController"",
+                    ""action"": ""CStick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c3098699-e13c-413e-8d64-cc2d27343678"",
+                    ""path"": ""<GamecubeControllerDevice>/xButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""GameCubeController"",
+                    ""action"": ""XButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6c794b08-83e8-42fb-b332-cae5266c31e5"",
+                    ""path"": ""<GamecubeControllerDevice>/yButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""GameCubeController"",
+                    ""action"": ""YButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""25a4a28c-d5dd-4261-8a37-5edfa44b352e"",
+                    ""path"": ""<GamecubeControllerDevice>/bButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3aa3fc0a-a00e-4106-a6dc-a3bcfda8608b"",
+                    ""path"": ""<GamecubeControllerDevice>/aButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6dc65720-e98d-4fbb-84fa-b4e19e3d2d18"",
+                    ""path"": ""<GamecubeControllerDevice>/zButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ZButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5646457f-5884-472e-8782-de267f69908b"",
+                    ""path"": ""<GamecubeControllerDevice>/lButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""GameCubeController"",
+                    ""action"": ""LTrigger"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aa4f6956-800a-47af-aa7d-912258f9ebaf"",
+                    ""path"": ""<GamecubeControllerDevice>/rButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RTrigger"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -90,6 +278,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        // UI Overlay
+        m_UIOverlay = asset.FindActionMap("UI Overlay", throwIfNotFound: true);
+        m_UIOverlay_LeftStick = m_UIOverlay.FindAction("LeftStick", throwIfNotFound: true);
+        m_UIOverlay_CStick = m_UIOverlay.FindAction("CStick", throwIfNotFound: true);
+        m_UIOverlay_XButton = m_UIOverlay.FindAction("XButton", throwIfNotFound: true);
+        m_UIOverlay_YButton = m_UIOverlay.FindAction("YButton", throwIfNotFound: true);
+        m_UIOverlay_BButton = m_UIOverlay.FindAction("BButton", throwIfNotFound: true);
+        m_UIOverlay_AButton = m_UIOverlay.FindAction("AButton", throwIfNotFound: true);
+        m_UIOverlay_ZButton = m_UIOverlay.FindAction("ZButton", throwIfNotFound: true);
+        m_UIOverlay_LTrigger = m_UIOverlay.FindAction("LTrigger", throwIfNotFound: true);
+        m_UIOverlay_RTrigger = m_UIOverlay.FindAction("RTrigger", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -201,6 +400,116 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // UI Overlay
+    private readonly InputActionMap m_UIOverlay;
+    private List<IUIOverlayActions> m_UIOverlayActionsCallbackInterfaces = new List<IUIOverlayActions>();
+    private readonly InputAction m_UIOverlay_LeftStick;
+    private readonly InputAction m_UIOverlay_CStick;
+    private readonly InputAction m_UIOverlay_XButton;
+    private readonly InputAction m_UIOverlay_YButton;
+    private readonly InputAction m_UIOverlay_BButton;
+    private readonly InputAction m_UIOverlay_AButton;
+    private readonly InputAction m_UIOverlay_ZButton;
+    private readonly InputAction m_UIOverlay_LTrigger;
+    private readonly InputAction m_UIOverlay_RTrigger;
+    public struct UIOverlayActions
+    {
+        private @InputActions m_Wrapper;
+        public UIOverlayActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @LeftStick => m_Wrapper.m_UIOverlay_LeftStick;
+        public InputAction @CStick => m_Wrapper.m_UIOverlay_CStick;
+        public InputAction @XButton => m_Wrapper.m_UIOverlay_XButton;
+        public InputAction @YButton => m_Wrapper.m_UIOverlay_YButton;
+        public InputAction @BButton => m_Wrapper.m_UIOverlay_BButton;
+        public InputAction @AButton => m_Wrapper.m_UIOverlay_AButton;
+        public InputAction @ZButton => m_Wrapper.m_UIOverlay_ZButton;
+        public InputAction @LTrigger => m_Wrapper.m_UIOverlay_LTrigger;
+        public InputAction @RTrigger => m_Wrapper.m_UIOverlay_RTrigger;
+        public InputActionMap Get() { return m_Wrapper.m_UIOverlay; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIOverlayActions set) { return set.Get(); }
+        public void AddCallbacks(IUIOverlayActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UIOverlayActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UIOverlayActionsCallbackInterfaces.Add(instance);
+            @LeftStick.started += instance.OnLeftStick;
+            @LeftStick.performed += instance.OnLeftStick;
+            @LeftStick.canceled += instance.OnLeftStick;
+            @CStick.started += instance.OnCStick;
+            @CStick.performed += instance.OnCStick;
+            @CStick.canceled += instance.OnCStick;
+            @XButton.started += instance.OnXButton;
+            @XButton.performed += instance.OnXButton;
+            @XButton.canceled += instance.OnXButton;
+            @YButton.started += instance.OnYButton;
+            @YButton.performed += instance.OnYButton;
+            @YButton.canceled += instance.OnYButton;
+            @BButton.started += instance.OnBButton;
+            @BButton.performed += instance.OnBButton;
+            @BButton.canceled += instance.OnBButton;
+            @AButton.started += instance.OnAButton;
+            @AButton.performed += instance.OnAButton;
+            @AButton.canceled += instance.OnAButton;
+            @ZButton.started += instance.OnZButton;
+            @ZButton.performed += instance.OnZButton;
+            @ZButton.canceled += instance.OnZButton;
+            @LTrigger.started += instance.OnLTrigger;
+            @LTrigger.performed += instance.OnLTrigger;
+            @LTrigger.canceled += instance.OnLTrigger;
+            @RTrigger.started += instance.OnRTrigger;
+            @RTrigger.performed += instance.OnRTrigger;
+            @RTrigger.canceled += instance.OnRTrigger;
+        }
+
+        private void UnregisterCallbacks(IUIOverlayActions instance)
+        {
+            @LeftStick.started -= instance.OnLeftStick;
+            @LeftStick.performed -= instance.OnLeftStick;
+            @LeftStick.canceled -= instance.OnLeftStick;
+            @CStick.started -= instance.OnCStick;
+            @CStick.performed -= instance.OnCStick;
+            @CStick.canceled -= instance.OnCStick;
+            @XButton.started -= instance.OnXButton;
+            @XButton.performed -= instance.OnXButton;
+            @XButton.canceled -= instance.OnXButton;
+            @YButton.started -= instance.OnYButton;
+            @YButton.performed -= instance.OnYButton;
+            @YButton.canceled -= instance.OnYButton;
+            @BButton.started -= instance.OnBButton;
+            @BButton.performed -= instance.OnBButton;
+            @BButton.canceled -= instance.OnBButton;
+            @AButton.started -= instance.OnAButton;
+            @AButton.performed -= instance.OnAButton;
+            @AButton.canceled -= instance.OnAButton;
+            @ZButton.started -= instance.OnZButton;
+            @ZButton.performed -= instance.OnZButton;
+            @ZButton.canceled -= instance.OnZButton;
+            @LTrigger.started -= instance.OnLTrigger;
+            @LTrigger.performed -= instance.OnLTrigger;
+            @LTrigger.canceled -= instance.OnLTrigger;
+            @RTrigger.started -= instance.OnRTrigger;
+            @RTrigger.performed -= instance.OnRTrigger;
+            @RTrigger.canceled -= instance.OnRTrigger;
+        }
+
+        public void RemoveCallbacks(IUIOverlayActions instance)
+        {
+            if (m_Wrapper.m_UIOverlayActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IUIOverlayActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UIOverlayActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UIOverlayActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public UIOverlayActions @UIOverlay => new UIOverlayActions(this);
     private int m_GameCubeControllerSchemeIndex = -1;
     public InputControlScheme GameCubeControllerScheme
     {
@@ -214,5 +523,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+    }
+    public interface IUIOverlayActions
+    {
+        void OnLeftStick(InputAction.CallbackContext context);
+        void OnCStick(InputAction.CallbackContext context);
+        void OnXButton(InputAction.CallbackContext context);
+        void OnYButton(InputAction.CallbackContext context);
+        void OnBButton(InputAction.CallbackContext context);
+        void OnAButton(InputAction.CallbackContext context);
+        void OnZButton(InputAction.CallbackContext context);
+        void OnLTrigger(InputAction.CallbackContext context);
+        void OnRTrigger(InputAction.CallbackContext context);
     }
 }
