@@ -741,18 +741,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 345d2e25127fd0f4d9722d4d76fa39f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GroundCheckDistance: 0.02
   stats:
-    WalkSpeed: 5
+    WalkSpeed: 7
     Traction: 20
     InitialDashSpeed: 6
     DashAcceleration: 10
     DashFrames: 15
-    RunningSpeed: 9
-    JumpForce: 9
+    RunningSpeed: 12
+    NormalJumpForce: 14
+    ShortJumpForce: 8
+    AirJumpForce: 15
+    AirJumpCount: 2
     JumpWindupFrames: 4
     LandLagFrames: 4
-    FallSpeed: 7
-    Gravity: 5
+    FallSpeed: 12
+    Gravity: 30
     AirSpeed: 11
     AirAcceleration: 30
     AirFriction: 20

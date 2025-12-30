@@ -38,8 +38,6 @@ public class LandState : BaseState
 
         velocity.x.Decelerate(characterManager.Stats.Traction, Time.fixedDeltaTime);
 
-        velocity.y = 0;
-        
         characterManager.Velocity = velocity;
     }
 }

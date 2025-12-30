@@ -10,6 +10,8 @@ public interface ICharacterManager
     
     public int FacingDirection { get; set; }
     
+    public int RemainingAirJumps { get; set; }
+
     public bool IsGrounded { get; set; }
     
     // TODO: Instead of exposing FrameInput, add a method to check in the FrameBuffer for an action

@@ -8,6 +8,13 @@ public class IdleState : BaseState
     {
     }
 
+    public override void Enter()
+    {
+        base.Enter();
+
+        characterManager.RemainingAirJumps = characterManager.Stats.AirJumpCount;
+    }
+
     public override void HandleLogic()
     {
         base.HandleLogic();

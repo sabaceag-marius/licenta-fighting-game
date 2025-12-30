@@ -6,6 +6,9 @@ using UnityEngine.Rendering;
 
 public class CharacterManager : MonoBehaviour, ICharacterManager
 {
+    [SerializeField]
+    private float GroundCheckDistance = 0.02f;
+
     public Vector2 Velocity { get; set; }
 
     [SerializeField]
@@ -22,8 +25,10 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
      public int FacingDirection { get; set; } = 1;
      
      public FrameInput Input => inputManager.CurrentFrameInput;
-     
-     #region Components
+
+    public int RemainingAirJumps { get; set; }
+
+    #region Components
 
     private Rigidbody2D rigidbody;
 
@@ -49,12 +54,13 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
 
     private void Update()
     {
-        CheckCollisions();
         stateMachine.CurrentState.HandleLogic();
     }
 
     private void FixedUpdate()
     {
+        CheckCollisions();
+
         stateMachine.CurrentState.HandlePhysics();
 
         ApplyMovement();
@@ -64,7 +70,7 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     {
         var groundHits = new RaycastHit2D[2];
         
-        IsGrounded = collider.Cast(Vector2.down, groundHits, 0.05f) > 0;
+        IsGrounded = collider.Cast(Vector2.down, groundHits, GroundCheckDistance) > 0;
     }
     
     private void ApplyMovement()

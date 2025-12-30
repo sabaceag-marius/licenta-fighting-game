@@ -31,11 +31,20 @@ public class CharacterStats
     public float RunningSpeed;
 
     // public int TurnAroundFrames = 40;
-    
-    [Tooltip("The force of the character's jump")]
-    public float JumpForce;
 
-    [FormerlySerializedAs("JumpWindup")] [Tooltip("The number of frames it takes the character to start jumping after pressing the button")]
+    [Tooltip("The force of the character's normal jump")]
+    public float NormalJumpForce;
+
+    [Tooltip("The force of the character's short jump")]
+    public float ShortJumpForce;
+
+    [Tooltip("The force of the character's air jump")]
+    public float AirJumpForce;
+
+    [Tooltip("The number of jumps the character can perform midair")]
+    public int AirJumpCount = 1;
+
+    [Tooltip("The number of frames it takes the character to start jumping after pressing the button")]
     public int JumpWindupFrames = 4;
     
     [Tooltip("The number of frames a character can't move after landing")]

@@ -117,7 +117,7 @@ public class CharacterController : MonoBehaviour
     {
         if (isJumping)
         {
-            velocity.y = characterStats.JumpForce;
+            velocity.y = characterStats.NormalJumpForce;
             
             return;
         }

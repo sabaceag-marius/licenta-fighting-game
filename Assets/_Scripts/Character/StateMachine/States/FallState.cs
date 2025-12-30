@@ -25,8 +25,11 @@ public class FallState : BaseState
     {
         base.HandleLogic();
 
-        if (CheckIfJumping())
+        if (characterManager.RemainingAirJumps > 0 && CheckIfJumping())
+        {
+            characterManager.RemainingAirJumps--;
             return;
+        }
 
         if (characterManager.Input.FastFalled)
         {
@@ -68,10 +71,6 @@ public class FallState : BaseState
         if (isFastFalling)
         {
             velocity.y = - characterManager.Stats.FastFallSpeed;
-        }
-        else
-        {
-            velocity.y.Accelerate(- characterManager.Stats.FallSpeed, characterManager.Stats.Gravity, Time.fixedDeltaTime);
         }
                 
         characterManager.Velocity = velocity;

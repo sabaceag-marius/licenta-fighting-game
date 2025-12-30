@@ -44,7 +44,7 @@ public abstract class BaseState
         }
         else
         {
-            velocity.y.Accelerate(- characterManager.Stats.Gravity, characterManager.Stats.FallSpeed, Time.fixedDeltaTime);
+            velocity.y.Accelerate(- characterManager.Stats.FallSpeed, characterManager.Stats.Gravity, Time.fixedDeltaTime);
         }
 
         characterManager.Velocity = velocity;

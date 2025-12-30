@@ -6,7 +6,9 @@ public class JumpState : BaseState
     private Timer jumpSquatTimer;
 
     private float jumpForce;
-    
+
+    private bool isGroundedJump;
+
     public JumpState(ICharacterManager characterManager, CharacterStateMachine stateMachine, Color color) : base(characterManager, stateMachine, color)
     {
     }
@@ -15,7 +17,8 @@ public class JumpState : BaseState
     {
         base.Enter();
 
-        jumpSquatTimer = new Timer(characterManager.Stats.JumpWindupFrames);
+        isGroundedJump = characterManager.IsGrounded;
+        jumpSquatTimer = new Timer(isGroundedJump ? characterManager.Stats.JumpWindupFrames : 0);
         jumpForce = 0;
     }
 
@@ -30,9 +33,16 @@ public class JumpState : BaseState
 
         if (jumpSquatTimer.IsDone() && jumpForce == 0)
         {
-            jumpForce = characterManager.Input.JumpHeld
-                ? characterManager.Stats.JumpForce
-                : characterManager.Stats.JumpForce * 0.5f;
+            if (isGroundedJump)
+            {
+                jumpForce = characterManager.Input.JumpHeld
+                    ? characterManager.Stats.NormalJumpForce
+                    : characterManager.Stats.ShortJumpForce;
+            }
+            else
+            {
+                jumpForce = characterManager.Stats.AirJumpForce;
+            }
 
             return;
         }
@@ -49,7 +59,7 @@ public class JumpState : BaseState
 
         Vector2 velocity = characterManager.Velocity;
 
-        if (jumpSquatTimer.IsDone() && velocity.y <= 0)
+        if (jumpSquatTimer.IsDone() && jumpForce != 0)
         {
             velocity.y = jumpForce;
         }
