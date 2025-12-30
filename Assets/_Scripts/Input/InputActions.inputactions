@@ -1,0 +1,66 @@
+{
+    "name": "InputActions",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "2d7d717a-f01f-40f1-b8f4-4f469ca96d7e",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "38fa143c-730f-4b4b-a70f-3a350fc52bd8",
+                    "expectedControlType": "Vector2",
+                    "processors": "StickDeadzone(min=0.125,max=1)",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "85196d5b-6164-4aee-b949-46f2af8c1b4e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "851d4093-c446-4c8a-85a9-15ed82df3e05",
+                    "path": "<GamecubeControllerDevice>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e7b3fa4f-aad1-4059-860c-e2e7d7f33636",
+                    "path": "<GamecubeControllerDevice>/yButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "GameCubeController",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "GameCubeController",
+            "bindingGroup": "GameCubeController",
+            "devices": [
+                {
+                    "devicePath": "<GamecubeControllerDevice>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

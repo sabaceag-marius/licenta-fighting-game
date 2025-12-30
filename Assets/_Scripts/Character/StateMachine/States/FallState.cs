@@ -1,0 +1,79 @@
+﻿
+using UnityEngine;
+
+public class FallState : BaseState
+{
+    public FallState(ICharacterManager characterManager, CharacterStateMachine stateMachine, Color color) : base(characterManager, stateMachine, color)
+    {
+    }
+
+    private bool isFastFalling;
+
+    public override void Enter()
+    {
+        base.Enter();
+
+        isFastFalling = false;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+    }
+
+    public override void HandleLogic()
+    {
+        base.HandleLogic();
+
+        if (CheckIfJumping())
+            return;
+
+        if (characterManager.Input.FastFalled)
+        {
+            isFastFalling = true;
+        }
+        
+        if (characterManager.IsGrounded)
+        {
+            stateMachine.ChangeState(stateMachine.LandState);
+        }
+    }
+
+    public override void HandlePhysics()
+    {
+        base.HandlePhysics();
+
+        Vector2 velocity = characterManager.Velocity;
+
+        // Horizontal movement
+        
+        // No movement or
+        // Reached maximum speed 
+        if (Mathf.Abs(characterManager.Input.Movement.x) < 0.1f || 
+            Mathf.Abs(velocity.x) > characterManager.Stats.AirSpeed)
+        {
+            velocity.x.Decelerate(characterManager.Stats.AirFriction, Time.fixedDeltaTime);
+        }
+        else
+        {
+            // Since we can't turn back when midair, we can't use the FacingDirection to determine
+            // in which direction to move the character
+            float direction = Mathf.Sign(characterManager.Input.Movement.x);
+            
+            velocity.x.Accelerate(characterManager.Stats.AirSpeed * direction, characterManager.Stats.AirAcceleration, Time.fixedDeltaTime);
+        }
+        
+        // Falling
+
+        if (isFastFalling)
+        {
+            velocity.y = - characterManager.Stats.FastFallSpeed;
+        }
+        else
+        {
+            velocity.y.Accelerate(- characterManager.Stats.FallSpeed, characterManager.Stats.Gravity, Time.fixedDeltaTime);
+        }
+                
+        characterManager.Velocity = velocity;
+    }
+}
