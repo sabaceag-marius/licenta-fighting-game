@@ -31,7 +31,7 @@ public class CharacterStateMachine
     {
         this.characterManager = characterManager;
 
-        IdleState = new IdleState(this.characterManager, this, ColorUtils.HexToColor("00A8BF"));
+        IdleState = new IdleState(this.characterManager, this, ColorUtils.HexToColor("FFFFFF"));
         WalkState = new WalkState(this.characterManager, this, ColorUtils.HexToColor("00BE2C"));
         DashState = new DashState(this.characterManager, this, ColorUtils.HexToColor("FF0000"));
         RunState = new RunState(this.characterManager, this, ColorUtils.HexToColor("00FF00"));

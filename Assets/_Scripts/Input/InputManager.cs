@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
+    private PlayerInput playerInput;
     private InputActions inputActions;
 
     #region InputActions
@@ -31,6 +33,10 @@ public class InputManager : MonoBehaviour
     void Awake()
     {
         inputActions = new InputActions();
+
+        playerInput = GetComponent<PlayerInput>();
+
+        inputActions.devices = new ReadOnlyArray<InputDevice>(new[] { playerInput.devices[0] });
 
         moveInputAction = inputActions.Player.Move;
         jumpInputAction = inputActions.Player.Jump;
@@ -93,7 +99,7 @@ public class InputManager : MonoBehaviour
             InputBuffer.Enqueue(frameInput);
         }
     }
-    
+
     private void Update() => GatherInput();
     private void OnEnable() => inputActions.Enable();
     private void OnDisable() => inputActions.Disable();
