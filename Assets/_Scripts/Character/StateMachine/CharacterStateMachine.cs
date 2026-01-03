@@ -24,9 +24,11 @@ public class CharacterStateMachine
     public readonly JumpState JumpState;
     
     public readonly LandState LandState;
-    
+
+    public readonly AirDodgeState AirDodgeState;
+
     #endregion
-    
+
     public CharacterStateMachine(ICharacterManager characterManager)
     {
         this.characterManager = characterManager;
@@ -39,6 +41,7 @@ public class CharacterStateMachine
         FallState = new FallState(this.characterManager, this, ColorUtils.HexToColor("c4c101"));
         JumpState = new JumpState(this.characterManager, this, ColorUtils.HexToColor("FFFF00"));
         LandState = new LandState(this.characterManager, this, ColorUtils.HexToColor("00FFFF"));
+        AirDodgeState = new AirDodgeState(this.characterManager, this, ColorUtils.HexToColor("00A8BF"));
 
         Initialize(IdleState);
     }

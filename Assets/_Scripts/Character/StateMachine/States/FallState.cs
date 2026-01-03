@@ -31,6 +31,12 @@ public class FallState : BaseState
             return;
         }
 
+        if (characterManager.Input.DodgePressed)
+        {
+            stateMachine.ChangeState(stateMachine.AirDodgeState);
+            return;
+        }
+
         if (characterManager.Input.FastFalled)
         {
             isFastFalling = true;

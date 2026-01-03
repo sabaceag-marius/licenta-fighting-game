@@ -49,7 +49,13 @@ public class JumpState : BaseState
         
         if (!jumpSquatTimer.IsDone() || characterManager.Velocity.y <= 0)
             return;
-        
+
+        if (characterManager.Input.DodgePressed)
+        {
+            stateMachine.ChangeState(stateMachine.AirDodgeState);
+            return;
+        }
+
         stateMachine.ChangeState(stateMachine.FallState);
     }
 

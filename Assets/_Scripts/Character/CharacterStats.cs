@@ -69,4 +69,10 @@ public class CharacterStats
 
     [Tooltip("Maximum rate at which the character can move down while midair when fast falling")]
     public float FastFallSpeed;
+
+    public float AirDodgePower = 20;
+    
+    public float AirDodgeTraction = 20;
+    
+    public int AirDodgeFrames = 40;
 }

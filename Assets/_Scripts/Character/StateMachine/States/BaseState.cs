@@ -37,14 +37,14 @@ public abstract class BaseState
     public virtual void HandlePhysics()
     {
         Vector2 velocity = characterManager.Velocity;
-        
+
         if (characterManager.IsGrounded)
         {
             velocity.y = 0;
         }
         else
         {
-            velocity.y.Accelerate(- characterManager.Stats.FallSpeed, characterManager.Stats.Gravity, Time.fixedDeltaTime);
+            velocity.y.Accelerate(-characterManager.Stats.FallSpeed, characterManager.Stats.Gravity, Time.fixedDeltaTime);
         }
 
         characterManager.Velocity = velocity;

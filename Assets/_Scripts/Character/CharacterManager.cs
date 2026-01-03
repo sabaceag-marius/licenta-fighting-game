@@ -45,7 +45,7 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
-        collider = GetComponent<BoxCollider2D>();
+        collider = GetComponent<Collider2D>();
         inputManager = GetComponent<InputManager>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 

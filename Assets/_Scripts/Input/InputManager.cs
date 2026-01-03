@@ -17,9 +17,10 @@ public class InputManager : MonoBehaviour
     
     private InputAction moveInputAction;
     private InputAction jumpInputAction;
-    
+    private InputAction dodgeInputAction;
+
     #endregion
-    
+
     public FrameInput CurrentFrameInput  => InputBuffer.LastOrDefault() ?? new FrameInput();
 
     public Queue<FrameInput> InputBuffer;
@@ -36,10 +37,11 @@ public class InputManager : MonoBehaviour
 
         playerInput = GetComponent<PlayerInput>();
 
-        inputActions.devices = new ReadOnlyArray<InputDevice>(new[] { playerInput.devices[0] });
+        //inputActions.devices = new ReadOnlyArray<InputDevice>(new[] { playerInput.devices[0] });
 
         moveInputAction = inputActions.Player.Move;
         jumpInputAction = inputActions.Player.Jump;
+        dodgeInputAction = inputActions.Player.Dodge;
 
         InputBuffer = new Queue<FrameInput>();
     }
@@ -51,6 +53,7 @@ public class InputManager : MonoBehaviour
             Movement = moveInputAction.ReadValue<Vector2>(),
             JumpPressed = jumpInputAction.WasPressedThisFrame(),
             JumpHeld = jumpInputAction.IsPressed(),
+            DodgePressed = dodgeInputAction.WasPressedThisFrame()
         };
 
         frameInput.Dashed = 
@@ -63,30 +66,7 @@ public class InputManager : MonoBehaviour
         
         if (ConsoleLog)
         {
-            if (frameInput.Movement != Vector2.zero)
-            {
-                // Debug.Log($"Direction: {frameInput.Direction}");
-            }
-        
-            if (frameInput.JumpPressed)
-            {
-                Debug.Log($"Jump pressed!");
-            }
-
-            if (frameInput.JumpHeld)
-            {
-                Debug.Log($"Jump is being held!");
-            }
-            
-            if (frameInput.Dashed)
-            {
-                Debug.Log("Dashed!" + $" {CurrentFrameInput.Direction} {frameInput.Direction}");
-            }
-
-            if (frameInput.FastFalled)
-            {
-                Debug.Log("Fast falled!");
-            }
+            LogInputs(frameInput);
         }
 
         if (InputBuffer.Count < BufferSize)
@@ -97,6 +77,39 @@ public class InputManager : MonoBehaviour
         {
             InputBuffer.Dequeue();
             InputBuffer.Enqueue(frameInput);
+        }
+    }
+
+    private void LogInputs(FrameInput frameInput)
+    {
+        if (frameInput.Movement != Vector2.zero)
+        {
+            // Debug.Log($"Direction: {frameInput.Direction}");
+        }
+
+        if (frameInput.JumpPressed)
+        {
+            Debug.Log($"Jump pressed!");
+        }
+
+        if (frameInput.JumpHeld)
+        {
+            Debug.Log($"Jump is being held!");
+        }
+
+        if (frameInput.Dashed)
+        {
+            Debug.Log("Dashed!" + $" {CurrentFrameInput.Direction} {frameInput.Direction}");
+        }
+
+        if (frameInput.FastFalled)
+        {
+            Debug.Log("Fast falled!");
+        }
+
+        if (frameInput.DodgePressed)
+        {
+            Debug.Log("Dodged!");
         }
     }
 
@@ -120,6 +133,8 @@ public class FrameInput
     
     public bool FastFalled { get; set; }
     
+    public bool DodgePressed { get; set; }
+
     [Obsolete]
     public bool ChangedDirection { get;set; }
 }
