@@ -7,7 +7,24 @@ using UnityEngine.Rendering;
 public class CharacterManager : MonoBehaviour, ICharacterManager
 {
     [SerializeField]
+    private bool DrawDebug = true;
+
+    #region Collisions
+
+    [SerializeField]
     private float GroundCheckDistance = 0.02f;
+
+    [SerializeField]
+    private LayerMask GroundLayer;
+
+    [SerializeField]
+    private Vector2 GroundCheckSize = new Vector2(0.8f, 0.05f);
+
+    private Collider2D platformCollider;
+
+    private Collider2D currentGroundCollider;
+
+    #endregion
 
     public Vector2 Velocity { get; set; }
 
@@ -68,11 +85,87 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     
     private void CheckCollisions()
     {
-        var groundHits = new RaycastHit2D[2];
-        
-        IsGrounded = collider.Cast(Vector2.down, groundHits, GroundCheckDistance) > 0;
+        if (rigidbody.velocity.y > 0.01f)
+        {
+            IsGrounded = false;
+            return;
+        }
+
+        // define the position for the box cast (center of the feet)
+        Vector2 boxCenter = (Vector2)transform.position + collider.offset + (Vector2.down * (collider.bounds.size.y / 2f));
+
+        RaycastHit2D hit = Physics2D.BoxCast(
+            boxCenter,
+            GroundCheckSize,
+            0f,
+            Vector2.down,
+            GroundCheckDistance,
+            GroundLayer
+        );
+
+        if (hit.collider != null && hit.collider != platformCollider)
+        {
+            IsGrounded = true;
+            currentGroundCollider = hit.collider;
+        }
+        else
+        {
+            IsGrounded = false;
+            currentGroundCollider = null;
+        }
+
+        if (DrawDebug)
+        {
+            Color rayColor = IsGrounded ? Color.green : Color.red;
+            Debug.DrawRay(boxCenter + new Vector2(-GroundCheckSize.x / 2, -GroundCheckDistance), Vector2.right * GroundCheckSize.x, rayColor);
+            Debug.DrawRay(boxCenter + new Vector2(-GroundCheckSize.x / 2, 0), Vector2.down * GroundCheckDistance, rayColor);
+            Debug.DrawRay(boxCenter + new Vector2(GroundCheckSize.x / 2, 0), Vector2.down * GroundCheckDistance, rayColor);
+        }
     }
-    
+
+    void ICharacterManager.HandlePlatformCollisions()
+    {
+        if (!IsGrounded && rigidbody.velocity.y < 0 && Input.Movement.y < -0.5f)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.5f, GroundLayer);
+
+            if (hit.collider != null && hit.collider.CompareTag("OneWay"))
+            {
+                StartCoroutine(DisablePlatformCoroutine(hit.collider));
+            }
+        }
+
+        //TODO: Add the value for shield dropping
+        if (IsGrounded && Input.FlickDirection.y == -1)
+        {
+            if (currentGroundCollider != null && currentGroundCollider.CompareTag("OneWay"))
+            {
+                StartCoroutine(DisablePlatformCoroutine(currentGroundCollider));
+            }
+        }
+    }
+
+    private IEnumerator DisablePlatformCoroutine(Collider2D platformCollider)
+    {
+        this.platformCollider = platformCollider;
+
+        Physics2D.IgnoreCollision(collider, platformCollider, true);
+
+        yield return new WaitForSeconds(0.5f);
+
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, collider.bounds.size, 0, Vector2.zero, 0, GroundLayer);
+
+        while (hit.collider == platformCollider)
+        {
+            yield return null;
+
+            hit = Physics2D.BoxCast(transform.position, collider.bounds.size, 0, Vector2.zero, 0, GroundLayer);
+        }
+
+        Physics2D.IgnoreCollision(collider, platformCollider, false);
+        this.platformCollider = null;
+    }
+
     private void ApplyMovement()
     {
         rigidbody.velocity = Velocity;

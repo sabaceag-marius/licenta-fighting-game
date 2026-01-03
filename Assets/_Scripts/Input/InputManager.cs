@@ -25,7 +25,10 @@ public class InputManager : MonoBehaviour
 
     public Queue<FrameInput> InputBuffer;
 
-    [SerializeField] private float DashDifferenceTreshhold = 0.45f;
+    [FormerlySerializedAs("DashDifferenceTreshhold")]
+    [SerializeField] private float FlickDifferenceTreshhold = 0.45f;
+
+    [SerializeField] private float MinimumFlickValue = 0.75f;
 
     [SerializeField] private int BufferSize = 10;
 
@@ -56,13 +59,25 @@ public class InputManager : MonoBehaviour
             DodgePressed = dodgeInputAction.WasPressedThisFrame()
         };
 
-        frameInput.Dashed = 
-            Mathf.Abs(frameInput.Movement.x) - Mathf.Abs(CurrentFrameInput.Movement.x) >= DashDifferenceTreshhold 
-            && Mathf.Abs(frameInput.Movement.x) >= .9f;
+        Vector2 flickDirection = Vector2.zero;
 
-        frameInput.FastFalled =
-            Mathf.Abs(frameInput.Movement.y) - Mathf.Abs(CurrentFrameInput.Movement.y) >= DashDifferenceTreshhold 
-            && frameInput.Movement.y <= -.75f;
+        if (Mathf.Abs(frameInput.Movement.x) - Mathf.Abs(CurrentFrameInput.Movement.x) >= MinimumFlickValue
+            && Mathf.Abs(frameInput.Movement.x) >= MinimumFlickValue)
+        {
+            flickDirection.x = Mathf.Sign(frameInput.Movement.x);
+        }
+
+        if (Mathf.Abs(frameInput.Movement.y) - Mathf.Abs(CurrentFrameInput.Movement.y) >= MinimumFlickValue
+            && Mathf.Abs(frameInput.Movement.y) >= MinimumFlickValue)
+        {
+            flickDirection.y = Mathf.Sign(frameInput.Movement.y);
+        }
+
+        frameInput.FlickDirection = flickDirection;
+
+        frameInput.Dashed = Mathf.Abs(frameInput.FlickDirection.x) > 0;
+
+        frameInput.FastFalled = frameInput.FlickDirection.y == -1;
         
         if (ConsoleLog)
         {
@@ -124,6 +139,8 @@ public class FrameInput
     public int Direction { get; set; }
     
     public Vector2 Movement { get; set; }
+
+    public Vector2 FlickDirection { get; set; }
 
     public bool JumpPressed { get; set; }
     

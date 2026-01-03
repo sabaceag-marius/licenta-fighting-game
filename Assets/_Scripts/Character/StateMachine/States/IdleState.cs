@@ -19,6 +19,8 @@ public class IdleState : BaseState
     {
         base.HandleLogic();
 
+        characterManager.HandlePlatformCollisions();
+
         if (CheckIfFalling())
             return;
         

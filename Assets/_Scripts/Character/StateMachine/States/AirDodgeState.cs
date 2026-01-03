@@ -39,8 +39,6 @@ public class AirDodgeState : BaseState
             return;
         }
 
-        Debug.Log(dodgeTimer.RemainingTime());
-
         if (!dodgeTimer.IsDone())
             return;
 

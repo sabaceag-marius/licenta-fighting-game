@@ -25,15 +25,17 @@ public class FallState : BaseState
     {
         base.HandleLogic();
 
-        if (characterManager.RemainingAirJumps > 0 && CheckIfJumping())
-        {
-            characterManager.RemainingAirJumps--;
-            return;
-        }
-
         if (characterManager.Input.DodgePressed)
         {
             stateMachine.ChangeState(stateMachine.AirDodgeState);
+            return;
+        }
+
+        characterManager.HandlePlatformCollisions();
+
+        if (characterManager.RemainingAirJumps > 0 && CheckIfJumping())
+        {
+            characterManager.RemainingAirJumps--;
             return;
         }
 

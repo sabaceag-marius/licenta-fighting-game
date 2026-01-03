@@ -21,4 +21,6 @@ public interface ICharacterManager
     void ChangeColor(Color color);
 
     void Flip();
+
+    void HandlePlatformCollisions();
 }

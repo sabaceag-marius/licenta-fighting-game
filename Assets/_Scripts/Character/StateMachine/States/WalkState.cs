@@ -12,6 +12,8 @@ public class WalkState : BaseState
     {
         base.HandleLogic();
 
+        characterManager.HandlePlatformCollisions();
+
         if (CheckIfFalling())
             return;
         
