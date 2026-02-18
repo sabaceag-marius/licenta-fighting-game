@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
 
 public class JumpState : BaseState
@@ -13,9 +14,9 @@ public class JumpState : BaseState
     {
     }
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
+        base.Enter(parameters);
 
         isGroundedJump = characterManager.IsGrounded;
         jumpSquatTimer = new Timer(isGroundedJump ? characterManager.Stats.JumpWindupFrames : 0);

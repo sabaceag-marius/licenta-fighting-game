@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterStateMachine
@@ -27,6 +28,8 @@ public class CharacterStateMachine
 
     public readonly AirDodgeState AirDodgeState;
 
+    public readonly AttackState AttackState;
+
     #endregion
 
     public CharacterStateMachine(ICharacterManager characterManager)
@@ -42,21 +45,23 @@ public class CharacterStateMachine
         JumpState = new JumpState(this.characterManager, this, ColorUtils.HexToColor("FFFF00"));
         LandState = new LandState(this.characterManager, this, ColorUtils.HexToColor("00FFFF"));
         AirDodgeState = new AirDodgeState(this.characterManager, this, ColorUtils.HexToColor("00A8BF"));
+        AttackState = new AttackState(this.characterManager, this, ColorUtils.HexToColor("A800BF"));
 
         Initialize(IdleState);
     }
 
-    public void Initialize(BaseState state)
+    public void Initialize(BaseState state, Dictionary<string, object> parameters = null)
     {
         CurrentState = state;
-        CurrentState.Enter();
+        CurrentState.Enter(parameters);
     }
-    
-    public void ChangeState(BaseState state)
+
+    public void ChangeState(BaseState state, Dictionary<string, object> parameters = null)
     {
         Debug.Log($"Changed state from {CurrentState.GetType()} to {state.GetType()}");
         CurrentState.Exit();
         CurrentState = state;
-        CurrentState.Enter();
+
+        CurrentState.Enter(parameters);
     }
 }

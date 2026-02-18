@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FallState : BaseState
@@ -9,9 +10,9 @@ public class FallState : BaseState
 
     private bool isFastFalling;
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
+        base.Enter(parameters);
 
         isFastFalling = false;
     }

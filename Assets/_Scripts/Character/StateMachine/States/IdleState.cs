@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class IdleState : BaseState
@@ -8,9 +9,9 @@ public class IdleState : BaseState
     {
     }
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
+        base.Enter(parameters);
 
         characterManager.RemainingAirJumps = characterManager.Stats.AirJumpCount;
     }
@@ -38,6 +39,9 @@ public class IdleState : BaseState
             stateMachine.ChangeState(stateMachine.WalkState);
             return;
         }
+
+        if (CheckIfAttacking())
+            return;
     }
 
     public override void HandlePhysics()
@@ -49,5 +53,15 @@ public class IdleState : BaseState
         velocity.x.Decelerate(characterManager.Stats.Traction, Time.fixedDeltaTime);
         
         characterManager.Velocity = velocity;
+    }
+
+    protected override bool CheckIfAttacking()
+    {
+        if (!characterManager.Input.AttackPressed)
+            return false;
+
+        stateMachine.ChangeState(stateMachine.AttackState, new Dictionary<string, object> { {AttackState.Param_AttackName, "Jab"} });
+
+        return true;
     }
 }

@@ -18,6 +18,7 @@ public class InputManager : MonoBehaviour
     private InputAction moveInputAction;
     private InputAction jumpInputAction;
     private InputAction dodgeInputAction;
+    private InputAction attackInputAction;
 
     #endregion
 
@@ -45,6 +46,7 @@ public class InputManager : MonoBehaviour
         moveInputAction = inputActions.Player.Move;
         jumpInputAction = inputActions.Player.Jump;
         dodgeInputAction = inputActions.Player.Dodge;
+        attackInputAction = inputActions.Player.Attack;
 
         InputBuffer = new Queue<FrameInput>();
     }
@@ -56,7 +58,8 @@ public class InputManager : MonoBehaviour
             Movement = moveInputAction.ReadValue<Vector2>(),
             JumpPressed = jumpInputAction.WasPressedThisFrame(),
             JumpHeld = jumpInputAction.IsPressed(),
-            DodgePressed = dodgeInputAction.WasPressedThisFrame()
+            DodgePressed = dodgeInputAction.WasPressedThisFrame(),
+            AttackPressed = attackInputAction.WasPressedThisFrame()
         };
 
         Vector2 flickDirection = Vector2.zero;
@@ -143,7 +146,7 @@ public class FrameInput
     public Vector2 FlickDirection { get; set; }
 
     public bool JumpPressed { get; set; }
-    
+
     public bool JumpHeld { get; set; }
     
     public bool Dashed { get; set; }
@@ -151,6 +154,8 @@ public class FrameInput
     public bool FastFalled { get; set; }
     
     public bool DodgePressed { get; set; }
+
+    public bool AttackPressed { get; set; }
 
     [Obsolete]
     public bool ChangedDirection { get;set; }

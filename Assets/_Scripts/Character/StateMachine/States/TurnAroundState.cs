@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TurnAroundState : BaseState
@@ -8,10 +9,10 @@ public class TurnAroundState : BaseState
     {
     }
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
-        
+        base.Enter(parameters);
+
         //TODO: move the flip to Exit when adding animations ?
         characterManager.Flip();
     }
