@@ -53,11 +53,11 @@ public class AttackDataEditor : Editor
         // Get Current Frame Data
         var currentFrame = attackData.Frames.FirstOrDefault(f => f.frameIndex == selectedFrameIndex);
 
-        if (currentFrame != null && currentFrame.hitboxes != null)
+        if (currentFrame != null && currentFrame.Hitboxes != null)
         {
-            for (int i = 0; i < currentFrame.hitboxes.Count; i++)
+            for (int i = 0; i < currentFrame.Hitboxes.Count; i++)
             {
-                var hb = currentFrame.hitboxes[i];
+                var hb = currentFrame.Hitboxes[i];
                 Vector3 worldCenter = pivot + (Vector3)hb.Center;
 
                 // Draw Visuals
@@ -113,11 +113,11 @@ public class AttackDataEditor : Editor
         // 1. Header & Configuration
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.LabelField("Attack Configuration", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("attackName"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("Type"));
 
         // Animation Clip Field with Auto-Duration Logic
         EditorGUI.BeginChangeCheck();
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("animationClip"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("AnimationClip"));
         if (EditorGUI.EndChangeCheck())
         {
             // Auto-set duration if animation is assigned
@@ -129,7 +129,7 @@ public class AttackDataEditor : Editor
         }
 
         // Allow manual override of duration
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("totalDurationFrames"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("TotalDurationFrames"));
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.Space();
@@ -223,27 +223,27 @@ public class AttackDataEditor : Editor
         }
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField($"Active Hitboxes ({currentFrame.hitboxes.Count})", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField($"Active Hitboxes ({currentFrame.Hitboxes.Count})", EditorStyles.boldLabel);
 
         // "Add Hitbox" Button
         if (GUILayout.Button("+ Add New Hitbox", GUILayout.Height(30)))
         {
             Undo.RecordObject(attackData, "Add Hitbox");
             
-            if (currentFrame.hitboxes == null) 
-                currentFrame.hitboxes = new List<HitboxData>();
+            if (currentFrame.Hitboxes == null) 
+                currentFrame.Hitboxes = new List<HitboxData>();
 
-            currentFrame.hitboxes.Add(new HitboxData { Id = 0, Center = Vector2.zero, Radius = 0.5f });
+            currentFrame.Hitboxes.Add(new HitboxData { Id = 0, Center = Vector2.zero, Radius = 0.5f });
         }
 
         EditorGUILayout.Space();
 
         // List Hitboxes using a nicer "Card" style
-        if (currentFrame.hitboxes != null)
+        if (currentFrame.Hitboxes != null)
         {
-            for (int i = 0; i < currentFrame.hitboxes.Count; i++)
+            for (int i = 0; i < currentFrame.Hitboxes.Count; i++)
             {
-                var hb = currentFrame.hitboxes[i];
+                var hb = currentFrame.Hitboxes[i];
 
                 // Draw a box around each hitbox entry
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -257,7 +257,7 @@ public class AttackDataEditor : Editor
                 if (GUILayout.Button("Delete", GUILayout.Width(60)))
                 {
                     Undo.RecordObject(attackData, "Delete Hitbox");
-                    currentFrame.hitboxes.RemoveAt(i);
+                    currentFrame.Hitboxes.RemoveAt(i);
                     GUI.backgroundColor = Color.white; // Reset color
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.EndVertical();

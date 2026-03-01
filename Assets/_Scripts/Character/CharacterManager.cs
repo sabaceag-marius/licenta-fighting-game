@@ -1,3 +1,4 @@
+using Project.Tools.DictionaryHelp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,9 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
 
     #endregion
 
+    [SerializeField]
+    private SerializableDictionary<AttackType, AttackDataSO> attackData;
+
     public Vector2 Velocity { get; set; }
 
     [SerializeField]
@@ -39,9 +43,9 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     
      public bool IsGrounded { get; set; }
 
-     public int FacingDirection { get; set; } = 1;
-     
-     public FrameInput Input => inputManager.CurrentFrameInput;
+     public int FacingDirection { get; set; } = -1; // 1 - right, -1 left
+
+    public FrameInput Input => inputManager.CurrentFrameInput;
 
     public int RemainingAirJumps { get; set; }
 
@@ -185,5 +189,22 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
         scale.x *= -1;
 
         transform.localScale = scale;
+    }
+
+    public T GetGameObjectComponent<T>()
+    {
+        T component = GetComponent<T>();
+
+        if (component == null)
+            throw new Exception($"Component of type {nameof(T)} does not exist on this GameObject");
+
+        return component;
+    }
+    public AttackDataSO? GetAttack(AttackType attackType)
+    {
+        if (!attackData.ContainsKey(attackType))
+            return null;
+
+        return attackData[attackType];
     }
 }

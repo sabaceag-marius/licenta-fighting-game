@@ -6,5 +6,5 @@ public class AttackFrame
 {
     public int frameIndex;   // At which frame of the animation this data applies
 
-    public List<HitboxData> hitboxes = new List<HitboxData>();
+    public List<HitboxData> Hitboxes = new List<HitboxData>();
 }

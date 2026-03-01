@@ -13,4 +13,6 @@ public class AttackDataSO : ScriptableObject
 
     // Used only for the attack editor
     public AnimationClip AnimationClip;
+
+    public bool IsAerialAttack => (int)Type >= 7 && (int)Type <= 11; 
 }

@@ -532,7 +532,7 @@ TextureImporter:
       playerGuitarAttacks_8: -1597660028
       playerGuitarAttacks_9: -963598045
   mipmapLimitGroupName: 
-  pSDRemoveMatte: 0
+  pSDRemoveMatte: 1
   userData: 
   assetBundleName: 
   assetBundleVariant: 
