@@ -27,6 +27,8 @@ public abstract class BaseState
         {
             ApplyParameters(parameters);
         }
+
+        HandleAnimation();
     }
 
     public virtual void Exit()
@@ -82,6 +84,11 @@ public abstract class BaseState
     protected virtual bool CheckIfAttacking()
     {
         return false;
+    }
+
+    protected virtual void HandleAnimation()
+    {
+        characterManager.TriggerAnimation(GetType());
     }
 
     private void ApplyParameters(Dictionary<string, object> parameters)

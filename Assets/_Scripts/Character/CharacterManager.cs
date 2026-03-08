@@ -62,7 +62,9 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     #endregion
 
     private CharacterStateMachine stateMachine;
-    
+
+    public event Action<Type, Dictionary<string, object>> OnAnimationChanged;
+
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -206,5 +208,10 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
             return null;
 
         return attackData[attackType];
+    }
+
+    public void TriggerAnimation(Type stateType, Dictionary<string, object> parameters = null)
+    {
+        OnAnimationChanged?.Invoke(stateType, parameters);
     }
 }

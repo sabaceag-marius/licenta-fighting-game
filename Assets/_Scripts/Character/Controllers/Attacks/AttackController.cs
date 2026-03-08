@@ -8,7 +8,7 @@ public class AttackController : MonoBehaviour, IAttackController
 
     [SerializeField] private LayerMask enemyLayer;
     
-    //TODO: change this 
+    //TODO: change this to hurtboxes
     private HashSet<Collider2D> alreadyHit = new HashSet<Collider2D>();
 
     private List<HitboxData> activeHitboxes;
@@ -53,13 +53,11 @@ public class AttackController : MonoBehaviour, IAttackController
 
     private void OnDrawGizmos()
     {
-        // Fix: Return if we DO NOT want to show hitboxes, or if there are none
         if (!showHitboxes || activeHitboxes == null)
             return;
 
         Gizmos.color = Color.red;
 
-        // Loop through and draw all hitboxes active on this frame
         foreach (var hitbox in activeHitboxes)
         {
             Vector2 worldPos = (Vector2)transform.position + new Vector2(-characterManager.FacingDirection, 0) * hitbox.Center;

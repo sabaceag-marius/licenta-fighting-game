@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6d5febe30e971419f7d0b0a305aaa0, type: 3}
+  m_Name: GooberGroundedForwardAttack
+  m_EditorClassIdentifier: 
+  Type: 1
+  TotalDurationFrames: 24
+  TotalAnimationFrames: 6
+  Frames:
+  - frameIndex: 3
+    Hitboxes:
+    - Id: 0
+      Center: {x: -2.0252078, y: 0.10347772}
+      Radius: 0.97304106
+    - Id: 1
+      Center: {x: -0.8721698, y: 0.07391286}
+      Radius: 1.0469538
+  - frameIndex: 4
+    Hitboxes:
+    - Id: 0
+      Center: {x: 1.6408617, y: 0.32521558}
+      Radius: 0.8104334
+  AnimationClip: {fileID: 7400000, guid: a247ebf129980c641bbdd2cefa34d172, type: 2}

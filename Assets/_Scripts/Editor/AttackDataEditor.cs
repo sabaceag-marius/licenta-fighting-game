@@ -10,6 +10,7 @@ public class AttackDataEditor : Editor
     private int selectedFrameIndex = 0;
     private GameObject previewCharacter;
     private bool isPreviewing = false;
+    private bool showHitboxDetails = false;
 
     private void OnEnable()
     {
@@ -124,11 +125,15 @@ public class AttackDataEditor : Editor
             if (attackData.AnimationClip != null)
             {
                 float frameRate = attackData.AnimationClip.frameRate > 0 ? attackData.AnimationClip.frameRate : 60;
-                attackData.TotalDurationFrames = Mathf.CeilToInt(attackData.AnimationClip.length * frameRate);
+                attackData.TotalAnimationFrames = Mathf.CeilToInt(attackData.AnimationClip.length * frameRate);
+
+                UpdatePreview();
             }
         }
 
         // Allow manual override of duration
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("TotalAnimationFrames"));
+
         EditorGUILayout.PropertyField(serializedObject.FindProperty("TotalDurationFrames"));
         EditorGUILayout.EndVertical();
 
@@ -251,7 +256,7 @@ public class AttackDataEditor : Editor
                 // Header Row: ID + Delete Button
                 EditorGUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 60; // Make labels smaller to fit
-                hb.Id = EditorGUILayout.IntField("ID / Type", hb.Id);
+                hb.Id = EditorGUILayout.IntField("ID", hb.Id);
 
                 GUI.backgroundColor = Color.red;
                 if (GUILayout.Button("Delete", GUILayout.Width(60)))
@@ -267,11 +272,12 @@ public class AttackDataEditor : Editor
                 EditorGUILayout.EndHorizontal();
 
                 // Properties Row
-                EditorGUILayout.Space(2);
-                hb.Center = EditorGUILayout.Vector2Field("Offset", hb.Center);
-                hb.Radius = EditorGUILayout.FloatField("Radius", hb.Radius);
+                //EditorGUILayout.Space(2);
+                //hb.Center = EditorGUILayout.Vector2Field("Offset", hb.Center);
+                //hb.Radius = EditorGUILayout.FloatField("Radius", hb.Radius);
 
-                EditorGUILayout.EndVertical();
+                //EditorGUILayout.EndVertical();
+
                 EditorGUILayout.Space(4); // Gap between boxes
             }
         }

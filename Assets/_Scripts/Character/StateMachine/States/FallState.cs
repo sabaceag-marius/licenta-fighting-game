@@ -49,6 +49,9 @@ public class FallState : BaseState
         {
             stateMachine.ChangeState(stateMachine.LandState);
         }
+
+        if (CheckIfAttacking())
+            return;
     }
 
     public override void HandlePhysics()
@@ -83,5 +86,17 @@ public class FallState : BaseState
         }
                 
         characterManager.Velocity = velocity;
+    }
+
+    protected override bool CheckIfAttacking()
+    {
+        if (!characterManager.Input.AttackPressed)
+            return false;
+
+        AttackType attackType = Mathf.Abs(characterManager.Input.Movement.x) > 0.1f ? AttackType.AirForward : AttackType.AirNeutral;
+
+        stateMachine.ChangeState(stateMachine.AttackState, new Dictionary<string, object> { { AttackState.Param_AttackType, attackType } });
+
+        return true;
     }
 }

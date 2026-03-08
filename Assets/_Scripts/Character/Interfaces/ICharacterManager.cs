@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,4 +30,8 @@ public interface ICharacterManager
     AttackDataSO? GetAttack(AttackType attackType);
 
     T GetGameObjectComponent<T>();
+
+    event Action<Type, Dictionary<string, object>> OnAnimationChanged;
+
+    void TriggerAnimation(Type stateType, Dictionary<string, object> parameters = null);
 }

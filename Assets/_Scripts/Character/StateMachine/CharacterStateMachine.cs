@@ -37,15 +37,15 @@ public class CharacterStateMachine
         this.characterManager = characterManager;
 
         IdleState = new IdleState(this.characterManager, this, ColorUtils.HexToColor("FFFFFF"));
-        WalkState = new WalkState(this.characterManager, this, ColorUtils.HexToColor("00BE2C"));
-        DashState = new DashState(this.characterManager, this, ColorUtils.HexToColor("FF0000"));
-        RunState = new RunState(this.characterManager, this, ColorUtils.HexToColor("00FF00"));
+        WalkState = new WalkState(this.characterManager, this, ColorUtils.HexToColor("FFFFFF"));
+        DashState = new DashState(this.characterManager, this, ColorUtils.HexToColor("FFFFFF"));
+        RunState = new RunState(this.characterManager, this, ColorUtils.HexToColor("FFFFFF"));
         TurnAroundState = new TurnAroundState(this.characterManager, this, ColorUtils.HexToColor("d60466"));
         FallState = new FallState(this.characterManager, this, ColorUtils.HexToColor("c4c101"));
         JumpState = new JumpState(this.characterManager, this, ColorUtils.HexToColor("FFFF00"));
         LandState = new LandState(this.characterManager, this, ColorUtils.HexToColor("00FFFF"));
         AirDodgeState = new AirDodgeState(this.characterManager, this, ColorUtils.HexToColor("00A8BF"));
-        AttackState = new AttackState(this.characterManager, this, ColorUtils.HexToColor("A800BF"));
+        AttackState = new AttackState(this.characterManager, this, ColorUtils.HexToColor("FFFFFF"));
 
         Initialize(IdleState);
     }

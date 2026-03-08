@@ -5,6 +5,8 @@ using UnityEngine;
 public class AttackState : BaseState
 {
     public const string Param_AttackType = "AttackType";
+    public const string Param_TotalDurationFrames= "TotalDurationFrames";
+    public const string Param_TotalAnimationFrames= "TotalAnimationFrames";
 
     [FromParameter(Param_AttackType)]
     private AttackType attackType;
@@ -25,8 +27,10 @@ public class AttackState : BaseState
     public override void Enter(Dictionary<string, object> parameters = null)
     {
         base.Enter(parameters);
-        
-        Debug.Log($"Performing attack {attackType}");
+
+        //Debug.Log($"Performing attack {attackType}");
+
+        isFastFalling = false;
 
         attackData = characterManager.GetAttack(attackType);
 
@@ -40,6 +44,8 @@ public class AttackState : BaseState
         }
 
         currentFrame = 0;
+
+        HandleAnimation();
     }
 
     public override void Exit()
@@ -61,8 +67,15 @@ public class AttackState : BaseState
             stateMachine.ChangeState(characterManager.IsGrounded ? stateMachine.IdleState : stateMachine.FallState);
         }
 
-        AttackFrame frameData = attackData.Frames.Find(f => f.frameIndex == currentFrame);
+        // Convert the logic frame to the stepped animation frame
+        float logicProgress = (float)currentFrame / attackData.TotalDurationFrames;
+        int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalAnimationFrames);
 
+        // Look for hitbox data based on the animation frame, not the logic frame
+        AttackFrame frameData = attackData.Frames.Find(f => f.frameIndex == currentAnimFrame);
+
+        // Send the hitboxes to the controller
+        // If the animation is holding frame 2 for five ticks, it will pass frame 2's hitboxes five times.
         if (frameData != null && frameData.Hitboxes.Count > 0)
         {
             attackController.GenerateHitboxes(frameData.Hitboxes);
@@ -128,5 +141,20 @@ public class AttackState : BaseState
         {
             stateMachine.ChangeState(stateMachine.LandState);
         }
+    }
+
+    protected override void HandleAnimation()
+    {
+        if (attackData == null)
+            return;
+
+        characterManager.TriggerAnimation(GetType(), 
+            new Dictionary<string, object> 
+            { 
+                { Param_AttackType, attackType },
+                { Param_TotalDurationFrames, attackData.TotalDurationFrames },
+                { Param_TotalAnimationFrames, attackData.TotalAnimationFrames },
+            }
+        );
     }
 }

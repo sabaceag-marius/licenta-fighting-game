@@ -6,7 +6,11 @@ public class AttackDataSO : ScriptableObject
 {
     public AttackType Type;
 
+    [Tooltip("How many frames this attack will last")]
     public int TotalDurationFrames = 60;
+
+    [Tooltip("How many animation frames this attack contains")]
+    public int TotalAnimationFrames = 60;
 
     [HideInInspector]
     public List<AttackFrame> Frames = new List<AttackFrame>();

@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RunState : BaseState
@@ -28,6 +29,9 @@ public class RunState : BaseState
             stateMachine.ChangeState(stateMachine.IdleState);
             return;
         }
+
+        if (CheckIfAttacking())
+            return;
     }
 
     public override void HandlePhysics()
@@ -49,5 +53,15 @@ public class RunState : BaseState
         }
         
         characterManager.Velocity = velocity;
+    }
+
+    protected override bool CheckIfAttacking()
+    {
+        if (!characterManager.Input.AttackPressed)
+            return false;
+
+        stateMachine.ChangeState(stateMachine.AttackState, new Dictionary<string, object> { { AttackState.Param_AttackType, AttackType.GroundForward } });
+
+        return true;
     }
 }
