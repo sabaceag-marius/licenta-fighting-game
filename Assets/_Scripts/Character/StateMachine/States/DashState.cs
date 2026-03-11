@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DashState : BaseState
@@ -10,9 +11,9 @@ public class DashState : BaseState
     {
     }
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
+        base.Enter(parameters);
 
         if (characterManager.FacingDirection * characterManager.Input.Movement.x < 0)
         {

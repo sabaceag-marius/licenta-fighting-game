@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class LandState : BaseState
 {
@@ -8,9 +9,9 @@ public class LandState : BaseState
 
     private Timer landTimer;
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
+        base.Enter(parameters);
 
         landTimer = new Timer(characterManager.Stats.LandLagFrames);
     }

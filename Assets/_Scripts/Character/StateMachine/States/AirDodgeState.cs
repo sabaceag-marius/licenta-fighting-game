@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AirDodgeState : BaseState
@@ -11,9 +12,9 @@ public class AirDodgeState : BaseState
 
     Vector2 dodgeDirection;
 
-    public override void Enter()
+    public override void Enter(Dictionary<string, object> parameters = null)
     {
-        base.Enter();
+        base.Enter(parameters);
 
         dodgeDirection = characterManager.Input.Movement.normalized;
 

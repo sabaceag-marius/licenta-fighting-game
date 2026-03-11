@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6d5febe30e971419f7d0b0a305aaa0, type: 3}
+  m_Name: Test
+  m_EditorClassIdentifier: 
+  Type: 8
+  TotalDurationFrames: 16
+  TotalAnimationFrames: 4
+  OverrideHurtboxes: 0
+  Frames:
+  - frameIndex: 2
+    Hitboxes:
+    - Id: 0
+      Center: {x: -1.2522063, y: 0.00000023841858}
+      Radius: 1.2930641
+    Hurtboxes: []
+  - frameIndex: 3
+    Hitboxes:
+    - Id: 0
+      Center: {x: 0.9922365, y: -0.34346652}
+      Radius: 0.9174021
+    Hurtboxes: []
+  AnimationClip: {fileID: 7400000, guid: c5fe263b9c0fcfb4384d4c9f59a65cbf, type: 2}

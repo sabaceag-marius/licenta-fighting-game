@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,4 +24,14 @@ public interface ICharacterManager
     void Flip();
 
     void HandlePlatformCollisions();
+
+    //TODO: Change to serializable class instead of scriptable object?
+    //TODO: Move this and CharacterStats to another controller?
+    AttackDataSO? GetAttack(AttackType attackType);
+
+    T GetGameObjectComponent<T>();
+
+    event Action<Type, Dictionary<string, object>> OnAnimationChanged;
+
+    void TriggerAnimation(Type stateType, Dictionary<string, object> parameters = null);
 }

@@ -1,0 +1,180 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class AttackState : BaseState
+{
+    public const string Param_AttackType = "AttackType";
+    public const string Param_TotalDurationFrames= "TotalDurationFrames";
+    public const string Param_TotalAnimationFrames= "TotalAnimationFrames";
+
+    [FromParameter(Param_AttackType)]
+    private AttackType attackType;
+
+    private IAttackController attackController;
+    private IHurtboxController hurtboxController;
+
+    private AttackDataSO attackData;
+
+    private int currentFrame = 0;
+
+    private int previousAnimFrame = 0;
+
+    private bool isFastFalling;
+
+    public AttackState(ICharacterManager characterManager, CharacterStateMachine stateMachine, Color color) : base(characterManager, stateMachine, color)
+    {
+        attackController = characterManager.GetGameObjectComponent<IAttackController>();
+        hurtboxController = characterManager.GetGameObjectComponent<IHurtboxController>();
+    }
+
+    public override void Enter(Dictionary<string, object> parameters = null)
+    {
+        base.Enter(parameters);
+
+        isFastFalling = false;
+
+        attackData = characterManager.GetAttack(attackType);
+
+        if (attackData == null)
+        {
+            Debug.LogWarning($"The character does not have assigned an attack of type {attackType}");
+
+            stateMachine.ChangeState(characterManager.IsGrounded ? stateMachine.IdleState : stateMachine.FallState);
+
+            return;
+        }
+
+        currentFrame = 0;
+        previousAnimFrame = -1;
+
+        Debug.Log($"Frame count: {attackData.Frames.Count}");
+        Debug.Log($"Total duration count: {attackData.TotalDurationFrames}");
+        Debug.Log($"Animation count: {attackData.TotalAnimationFrames}");
+
+        HandleAnimation();
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+
+        attackController.ClearHitTargets();
+        hurtboxController.SetDefaultHiurtbox();
+    }
+
+    public override void HandleLogic()
+    {
+        base.HandleLogic();
+
+        if (attackData == null)
+            return;
+
+        if (currentFrame >= attackData.TotalDurationFrames)
+        {
+            stateMachine.ChangeState(characterManager.IsGrounded ? stateMachine.IdleState : stateMachine.FallState);
+        }
+
+        // Convert the logic frame to the stepped animation frame
+        float logicProgress = (float)currentFrame / attackData.TotalDurationFrames;
+
+        int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalAnimationFrames);
+
+        if (previousAnimFrame != currentAnimFrame)
+        {
+            previousAnimFrame = currentAnimFrame;
+
+            // Look for hitbox data based on the animation frame, not the logic frame
+            AttackFrame frameData = attackData.Frames.Find(f => f.frameIndex == currentAnimFrame);
+
+            // Send the hitboxes to the controller
+            // If the animation is holding frame 2 for five ticks, it will pass frame 2's hitboxes five times.
+            if (frameData != null)
+            {
+                Debug.Log($"{currentAnimFrame} - changed hitboxes and hurtboxes");
+                
+                attackController.GenerateHitboxes(frameData.Hitboxes);
+
+                hurtboxController.SetFramedataHurtboxes(frameData.Hurtboxes, characterManager.FacingDirection);
+            }
+        }
+
+        currentFrame++;
+
+        if (attackData.IsAerialAttack)
+        {
+            HandleAerialAttackLogic();
+        }
+
+        //TODO: Add if we move a bit formard while attacking?
+        //if (CheckIfFalling())
+        //    return;
+    }
+
+    public override void HandlePhysics()
+    {
+        base.HandlePhysics();
+
+        if (!attackData.IsAerialAttack)
+            return;
+
+        Vector2 velocity = characterManager.Velocity;
+
+        // Horizontal movement
+
+        // No movement or
+        // Reached maximum speed 
+        if (Mathf.Abs(characterManager.Input.Movement.x) < 0.1f ||
+            Mathf.Abs(velocity.x) > characterManager.Stats.AirSpeed)
+        {
+            velocity.x.Decelerate(characterManager.Stats.AirFriction, Time.fixedDeltaTime);
+        }
+        else
+        {
+            // Since we can't turn back when midair, we can't use the FacingDirection to determine
+            // in which direction to move the character
+            float direction = Mathf.Sign(characterManager.Input.Movement.x);
+
+            velocity.x.Accelerate(characterManager.Stats.AirSpeed * direction, characterManager.Stats.AirAcceleration, Time.fixedDeltaTime);
+        }
+
+        // Falling
+
+        if (isFastFalling)
+        {
+            velocity.y = -characterManager.Stats.FastFallSpeed;
+        }
+
+        characterManager.Velocity = velocity;
+    }
+
+    private void HandleAerialAttackLogic()
+    {
+        //TODO: fast falling on platforms is fucked
+
+        if (characterManager.Input.FastFalled)
+        {
+            isFastFalling = true;
+        }
+
+        if (characterManager.IsGrounded)
+        {
+            stateMachine.ChangeState(stateMachine.LandState);
+        }
+    }
+
+    protected override void HandleAnimation()
+    {
+        if (attackData == null)
+            return;
+
+        characterManager.TriggerAnimation(GetType(), 
+            new Dictionary<string, object> 
+            { 
+                { Param_AttackType, attackType },
+                { Param_TotalDurationFrames, attackData.TotalDurationFrames },
+                { Param_TotalAnimationFrames, attackData.TotalAnimationFrames },
+            }
+        );
+    }
+}

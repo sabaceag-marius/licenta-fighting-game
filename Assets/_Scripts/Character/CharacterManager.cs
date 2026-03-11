@@ -1,3 +1,4 @@
+using Project.Tools.DictionaryHelp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,9 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
 
     #endregion
 
+    [SerializeField]
+    private SerializableDictionary<AttackType, AttackDataSO> attackData;
+
     public Vector2 Velocity { get; set; }
 
     [SerializeField]
@@ -39,9 +43,9 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     
      public bool IsGrounded { get; set; }
 
-     public int FacingDirection { get; set; } = 1;
-     
-     public FrameInput Input => inputManager.CurrentFrameInput;
+     public int FacingDirection { get; set; } = -1; // 1 - right, -1 left
+
+    public FrameInput Input => inputManager.CurrentFrameInput;
 
     public int RemainingAirJumps { get; set; }
 
@@ -58,7 +62,9 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     #endregion
 
     private CharacterStateMachine stateMachine;
-    
+
+    public event Action<Type, Dictionary<string, object>> OnAnimationChanged;
+
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody2D>();
@@ -71,12 +77,13 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
 
     private void Update()
     {
-        stateMachine.CurrentState.HandleLogic();
     }
 
     private void FixedUpdate()
     {
         CheckCollisions();
+
+        stateMachine.CurrentState.HandleLogic();
 
         stateMachine.CurrentState.HandlePhysics();
 
@@ -180,10 +187,28 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     {
         FacingDirection *= -1;
 
-        var scale = transform.localScale;
+        transform.Rotate(0, 180f, 0);
+    }
 
-        scale.x *= -1;
+    public T GetGameObjectComponent<T>()
+    {
+        T component = GetComponent<T>();
 
-        transform.localScale = scale;
+        if (component == null)
+            throw new Exception($"Component of type {nameof(T)} does not exist on this GameObject");
+
+        return component;
+    }
+    public AttackDataSO? GetAttack(AttackType attackType)
+    {
+        if (!attackData.ContainsKey(attackType))
+            return null;
+
+        return attackData[attackType];
+    }
+
+    public void TriggerAnimation(Type stateType, Dictionary<string, object> parameters = null)
+    {
+        OnAnimationChanged?.Invoke(stateType, parameters);
     }
 }
