@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class AttackController : MonoBehaviour, IAttackController
 {
     [SerializeField] private bool showHitboxes;
 
     [SerializeField] private LayerMask enemyLayer;
-    
-    //TODO: change this to hurtboxes
-    private HashSet<Collider2D> alreadyHit = new HashSet<Collider2D>();
+
+    private HashSet<GameObject> alreadyHit = new HashSet<GameObject>();
 
     private List<HitboxData> activeHitboxes;
 
-
     private ICharacterManager characterManager;
-
+    
     private void Awake()
     {
         characterManager = GetComponent<ICharacterManager>();
@@ -29,16 +28,25 @@ public class AttackController : MonoBehaviour, IAttackController
         {
             Vector2 worldPosition = (Vector2)transform.position + hitbox.Center;
 
-            Collider2D[] hits = Physics2D.OverlapCircleAll(worldPosition, hitbox.Radius, enemyLayer).Where(hit => hit.gameObject != gameObject).ToArray();
+            //TODO: compare to parent instead of hit.GO
+
+            Collider2D[] hits = Physics2D.OverlapCircleAll(worldPosition, hitbox.Radius, enemyLayer).Where(hit => !hit.transform.IsChildOf(transform)).ToArray();
 
             foreach (var hit in hits)
             {
-                if (!alreadyHit.Contains(hit))
-                {
-                    alreadyHit.Add(hit);
-                    Debug.Log($"Hit {hit.name} with Hitbox ID: {hitbox.Id}!");
 
-                    // TODO: Tell the enemy they took damage
+                IHurtboxController enemyHurtboxController = hit.GetComponentInParent<IHurtboxController>();
+
+                if (enemyHurtboxController != null)
+                {
+                    GameObject enemyRoot = hit.gameObject;
+
+                    if (!alreadyHit.Contains(enemyRoot))
+                    {
+                        enemyHurtboxController.ReceiveHit(hit, hitbox);
+
+                        alreadyHit.Add(enemyRoot);
+                    }
                 }
             }
         }

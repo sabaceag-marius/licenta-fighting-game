@@ -15,20 +15,24 @@ MonoBehaviour:
   Type: 7
   TotalDurationFrames: 24
   TotalAnimationFrames: 8
+  OverrideHurtboxes: 1
   Frames:
   - frameIndex: 3
     Hitboxes:
     - Id: 0
       Center: {x: -0.00000017881393, y: 0.06444812}
       Radius: 0.90817267
+    Hurtboxes: []
   - frameIndex: 4
     Hitboxes:
     - Id: 0
       Center: {x: -0.042966068, y: 0.021482944}
       Radius: 1.4667246
+    Hurtboxes: []
   - frameIndex: 5
     Hitboxes:
     - Id: 0
       Center: {x: 0, y: 0}
       Radius: 2.175656
+    Hurtboxes: []
   AnimationClip: {fileID: 7400000, guid: 2166e63b9a2970542ba0b4096211c705, type: 2}

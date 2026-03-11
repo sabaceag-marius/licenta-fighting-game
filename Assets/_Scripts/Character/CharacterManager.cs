@@ -77,12 +77,13 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
 
     private void Update()
     {
-        stateMachine.CurrentState.HandleLogic();
     }
 
     private void FixedUpdate()
     {
         CheckCollisions();
+
+        stateMachine.CurrentState.HandleLogic();
 
         stateMachine.CurrentState.HandlePhysics();
 
@@ -186,11 +187,7 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     {
         FacingDirection *= -1;
 
-        var scale = transform.localScale;
-
-        scale.x *= -1;
-
-        transform.localScale = scale;
+        transform.Rotate(0, 180f, 0);
     }
 
     public T GetGameObjectComponent<T>()

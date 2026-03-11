@@ -12,23 +12,25 @@ public class AttackState : BaseState
     private AttackType attackType;
 
     private IAttackController attackController;
+    private IHurtboxController hurtboxController;
 
     private AttackDataSO attackData;
 
     private int currentFrame = 0;
+
+    private int previousAnimFrame = 0;
 
     private bool isFastFalling;
 
     public AttackState(ICharacterManager characterManager, CharacterStateMachine stateMachine, Color color) : base(characterManager, stateMachine, color)
     {
         attackController = characterManager.GetGameObjectComponent<IAttackController>();
+        hurtboxController = characterManager.GetGameObjectComponent<IHurtboxController>();
     }
 
     public override void Enter(Dictionary<string, object> parameters = null)
     {
         base.Enter(parameters);
-
-        //Debug.Log($"Performing attack {attackType}");
 
         isFastFalling = false;
 
@@ -44,6 +46,11 @@ public class AttackState : BaseState
         }
 
         currentFrame = 0;
+        previousAnimFrame = -1;
+
+        Debug.Log($"Frame count: {attackData.Frames.Count}");
+        Debug.Log($"Total duration count: {attackData.TotalDurationFrames}");
+        Debug.Log($"Animation count: {attackData.TotalAnimationFrames}");
 
         HandleAnimation();
     }
@@ -53,6 +60,7 @@ public class AttackState : BaseState
         base.Exit();
 
         attackController.ClearHitTargets();
+        hurtboxController.SetDefaultHiurtbox();
     }
 
     public override void HandleLogic()
@@ -69,16 +77,26 @@ public class AttackState : BaseState
 
         // Convert the logic frame to the stepped animation frame
         float logicProgress = (float)currentFrame / attackData.TotalDurationFrames;
+
         int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalAnimationFrames);
 
-        // Look for hitbox data based on the animation frame, not the logic frame
-        AttackFrame frameData = attackData.Frames.Find(f => f.frameIndex == currentAnimFrame);
-
-        // Send the hitboxes to the controller
-        // If the animation is holding frame 2 for five ticks, it will pass frame 2's hitboxes five times.
-        if (frameData != null && frameData.Hitboxes.Count > 0)
+        if (previousAnimFrame != currentAnimFrame)
         {
-            attackController.GenerateHitboxes(frameData.Hitboxes);
+            previousAnimFrame = currentAnimFrame;
+
+            // Look for hitbox data based on the animation frame, not the logic frame
+            AttackFrame frameData = attackData.Frames.Find(f => f.frameIndex == currentAnimFrame);
+
+            // Send the hitboxes to the controller
+            // If the animation is holding frame 2 for five ticks, it will pass frame 2's hitboxes five times.
+            if (frameData != null)
+            {
+                Debug.Log($"{currentAnimFrame} - changed hitboxes and hurtboxes");
+                
+                attackController.GenerateHitboxes(frameData.Hitboxes);
+
+                hurtboxController.SetFramedataHurtboxes(frameData.Hurtboxes, characterManager.FacingDirection);
+            }
         }
 
         currentFrame++;
@@ -132,6 +150,8 @@ public class AttackState : BaseState
 
     private void HandleAerialAttackLogic()
     {
+        //TODO: fast falling on platforms is fucked
+
         if (characterManager.Input.FastFalled)
         {
             isFastFalling = true;

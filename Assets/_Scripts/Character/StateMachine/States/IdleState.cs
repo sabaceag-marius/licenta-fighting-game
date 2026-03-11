@@ -60,7 +60,7 @@ public class IdleState : BaseState
         if (!characterManager.Input.AttackPressed)
             return false;
 
-        stateMachine.ChangeState(stateMachine.AttackState, new Dictionary<string, object> { {AttackState.Param_AttackType, AttackType.GroundNeutral} });
+        stateMachine.ChangeState(stateMachine.AttackState, new Dictionary<string, object> { {AttackState.Param_AttackType, AttackType.GroundForward} });
 
         return true;
     }

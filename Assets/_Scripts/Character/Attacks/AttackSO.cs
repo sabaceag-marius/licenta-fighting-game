@@ -12,11 +12,15 @@ public class AttackDataSO : ScriptableObject
     [Tooltip("How many animation frames this attack contains")]
     public int TotalAnimationFrames = 60;
 
+    [Tooltip("If true, the attack will use frame-by-frame custom hurtboxes instead of the default body capsule.")]
+    public bool OverrideHurtboxes = false;
+
     [HideInInspector]
     public List<AttackFrame> Frames = new List<AttackFrame>();
 
     // Used only for the attack editor
     public AnimationClip AnimationClip;
 
-    public bool IsAerialAttack => (int)Type >= 7 && (int)Type <= 11; 
+    [HideInInspector]
+    public bool IsAerialAttack => (int)Type >= 7 && (int)Type <= 11;
 }
