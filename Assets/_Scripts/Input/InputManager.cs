@@ -102,7 +102,7 @@ public class InputManager : MonoBehaviour
     {
         if (frameInput.Movement != Vector2.zero)
         {
-            // Debug.Log($"Direction: {frameInput.Direction}");
+             Debug.Log($"Direction: {frameInput.Movement}");
         }
 
         if (frameInput.JumpPressed)
