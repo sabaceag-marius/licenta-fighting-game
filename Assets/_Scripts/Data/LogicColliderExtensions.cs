@@ -37,7 +37,7 @@ public static class LogicColliderExtensions
         return new LogicBox
         {
             Position = circleCollider.Position,
-            Extents = new FixedVector2(2 * circleCollider.Radius, 2 * circleCollider.Radius)
+            Extents = new FixedVector2(2f * circleCollider.Radius, 2f * circleCollider.Radius)
         };
     }
 

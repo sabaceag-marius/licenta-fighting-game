@@ -163,9 +163,9 @@ public static class PhysicsExtensions
 
         // Push out on the shortest axis
         if (penetrationX < penetrationY)
-            return new FixedVector2(distanceX > 0 ? penetrationX : -penetrationX, (FixedFloat)0);
+            return new FixedVector2(distanceX > 0f ? penetrationX : -penetrationX, 0f);
         else
-            return new FixedVector2((FixedFloat)0, distanceY > 0 ? penetrationY : -penetrationY);
+            return new FixedVector2((FixedFloat)0, distanceY > 0f ? penetrationY : -penetrationY);
     }
 
     public static FixedVector2 SolveCollisionCircleBox(this LogicCollider circle, LogicCollider box)
@@ -179,7 +179,7 @@ public static class PhysicsExtensions
         FixedFloat distSq = (difference.x * difference.x) + (difference.y * difference.y);
 
         // EDGE CASE: Center of the circle is deeply inside the box!
-        if (distSq == 0)
+        if (distSq == 0f)
         {
             // Find distance to all 4 edges
             FixedFloat distLeft = circle.Position.x - box.Left;
@@ -232,6 +232,20 @@ public static class PhysicsExtensions
 
         // BOOM. Zero repeated math.
         return virtualCircle.SolveCollisionCircleBox(box);
+    }
+
+    #endregion
+
+    #region Velocity
+
+    public static void Accelerate(this ref FixedFloat currentSpeed, FixedFloat targetSpeed, FixedFloat acceleration)
+    {
+        currentSpeed = currentSpeed.MoveTowards(targetSpeed, acceleration);
+    }
+
+    public static void Decelerate(this ref FixedFloat currentSpeed, FixedFloat acceleration)
+    {
+        currentSpeed.Accelerate(0f, acceleration);
     }
 
     #endregion

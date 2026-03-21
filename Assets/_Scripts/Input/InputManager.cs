@@ -8,13 +8,14 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+[Obsolete]
 public class InputManager : MonoBehaviour
 {
     private PlayerInput playerInput;
     private InputActions inputActions;
 
     #region InputActions
-    
+
     private InputAction moveInputAction;
     private InputAction jumpInputAction;
     private InputAction dodgeInputAction;
@@ -22,10 +23,17 @@ public class InputManager : MonoBehaviour
 
     #endregion
 
-    public FrameInput CurrentFrameInput  => InputBuffer.LastOrDefault() ?? new FrameInput();
+    public FrameInput CurrentFrameInput => InputBuffer.LastOrDefault() ?? new FrameInput();
 
     public Queue<FrameInput> InputBuffer;
 
+    [Header("Settings")]
+
+    [SerializeField]
+    [Range(0, 1)]
+    private float rightStickMinimumValue = 0.5f;
+
+    [Header("Obsolete")]
     [FormerlySerializedAs("DashDifferenceTreshhold")]
     [SerializeField] private float FlickDifferenceTreshhold = 0.45f;
 
@@ -34,7 +42,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] private int BufferSize = 10;
 
     [SerializeField] private bool ConsoleLog;
-    
+
     void Awake()
     {
         inputActions = new InputActions();
@@ -51,6 +59,43 @@ public class InputManager : MonoBehaviour
         InputBuffer = new Queue<FrameInput>();
     }
 
+    public RawInput GetRawInput()
+    {
+        RawInput input = new RawInput();
+
+        // Left stick - analog
+
+        Vector2 leftAnalog = moveInputAction.ReadValue<Vector2>();
+
+        input.LeftStickX = (sbyte)(leftAnalog.x * 100f);
+        input.LeftStickY = (sbyte)(leftAnalog.y * 100f);
+
+        //TODO: Right stick - only store if we are holding the direction
+
+        // Buttons
+
+        if (jumpInputAction.IsPressed())
+            input.Buttons |= (1 << 0);
+
+        if (attackInputAction.IsPressed())
+            input.Buttons |= (1 << 1);
+
+        //if (specialAttackInputAction.IsPressed())
+        //    input.Buttons |= (1 << 2);
+
+        if (dodgeInputAction.IsPressed())
+            input.Buttons |= (1 << 3);
+
+        //if (grabInputAction.IsPressed())
+        //    input.Buttons |= (1 << 4);
+
+        if (ConsoleLog)
+            LogInput(input);
+
+        return input;
+    }
+
+    [Obsolete]
     private void GatherInput()
     {
         FrameInput frameInput = new FrameInput
@@ -81,7 +126,7 @@ public class InputManager : MonoBehaviour
         frameInput.Dashed = Mathf.Abs(frameInput.FlickDirection.x) > 0;
 
         frameInput.FastFalled = frameInput.FlickDirection.y == -1;
-        
+
         if (ConsoleLog)
         {
             LogInputs(frameInput);
@@ -96,6 +141,12 @@ public class InputManager : MonoBehaviour
             InputBuffer.Dequeue();
             InputBuffer.Enqueue(frameInput);
         }
+    }
+
+    private void LogInput(RawInput input)
+    {
+        Debug.Log($"Movement: ({input.LeftStickX},{input.LeftStickY}); Jumped: {input.Jumped};" +
+            $"Attacked {input.Attacked}; Dodged {input.Dodged}");
     }
 
     private void LogInputs(FrameInput frameInput)
@@ -131,7 +182,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private void Update() => GatherInput();
+    //private void Update() => GatherInput();
     private void OnEnable() => inputActions.Enable();
     private void OnDisable() => inputActions.Disable();
 }

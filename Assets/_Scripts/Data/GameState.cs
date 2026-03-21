@@ -1,11 +1,13 @@
 
 public struct GameState
 {
+    public ushort FrameNumber;
+
     public LogicCollider[] StaticColliders;
 
     public int StaticColliderCount;
 
-    public LogicDynamicBody[] DynamicBodies;
+    public Data.CharacterData[] Characters;
 
-    public int DynamicBodiesCount;
+    public int CharactersCount;
 }

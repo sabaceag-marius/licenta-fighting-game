@@ -16,8 +16,4 @@ public struct LogicDynamicBody
     public FixedVector2 Velocity;
 
     public bool IsGrounded;
-
-    public FixedFloat Gravity;
-
-    public FixedFloat MovementSpeed;
 }

@@ -11,9 +11,9 @@ public class CapsuleColliderFactory : BaseColliderFactory
     
     public Vector2 Size = new Vector2(1f, 2f);
 
-    private Vector2 scaledSize => new Vector2(Size.x * transform.lossyScale.x, Size.y * transform.lossyScale.y);
+    private Vector2 scaledSize => new Vector2(Size.x * Mathf.Abs(transform.lossyScale.x), Size.y * transform.lossyScale.y);
 
-    private Vector2 scaledOffset => new Vector2(Offset.x * transform.lossyScale.x, Offset.y * transform.lossyScale.y);
+    private Vector2 scaledOffset => new Vector2(Offset.x * Mathf.Abs(transform.lossyScale.x), Offset.y * transform.lossyScale.y);
 
     public override LogicCollider GetLogicCollider()
     {

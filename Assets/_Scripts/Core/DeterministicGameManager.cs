@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
+using Simulation;
 
 public class DeterministicGameManager : MonoBehaviour
 {
@@ -11,8 +12,11 @@ public class DeterministicGameManager : MonoBehaviour
     [SerializeField]
     private int TargetFPS = 60;
 
+    [Header("Rollback settings")]
+
     [SerializeField]
-    private InputManager inputManager;
+    private readonly int BufferSize = 60;
+    private GameState[] stateBuffer;
 
     public int CurrentTick { get; private set; }
     
@@ -20,11 +24,9 @@ public class DeterministicGameManager : MonoBehaviour
     
     private float accumulator = 0;
 
-    private GameState gameState;
-
     private GameSimulation gameSimulation;
 
-    private DynamicBody[] dynamicBodies;
+    private Character[] characters;
 
     void Start()
     {
@@ -34,17 +36,24 @@ public class DeterministicGameManager : MonoBehaviour
 
         gameSimulation = new GameSimulation();
 
-        gameState = new GameState();
+        stateBuffer = new GameState[BufferSize];
 
         InitializeStartingState();
+
+        for (int i = 1; i < BufferSize; i++)
+        {
+            InitializeGameStateArrays(ref stateBuffer[i], stateBuffer[0].StaticColliderCount, stateBuffer[0].CharactersCount);
+        }
     }
 
     private void InitializeStartingState()
     {
+        ref GameState gameState = ref stateBuffer[0];
+
         // skip the colliders that are attached to the deterministic rigidbody
 
         BaseColliderFactory[] colliderFactories = FindObjectsOfType<BaseColliderFactory>()
-            .Where(c => c.GetComponent<DynamicBody>() == null).ToArray();
+            .Where(c => c.GetComponent<Character>() == null).ToArray();
         //|| allColliders[i].GetComponentInParent<DeterministicRigidBody>() == null)
 
         gameState.StaticColliderCount = math.min(colliderFactories.Length, 100);
@@ -57,18 +66,29 @@ public class DeterministicGameManager : MonoBehaviour
 
             gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();
         }
+        
+        characters = FindObjectsOfType<Character>();
 
-        dynamicBodies = FindObjectsOfType<DynamicBody>();
+        gameState.CharactersCount = math.min(characters.Length, 100);
+        gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
 
-        gameState.DynamicBodiesCount = math.min(dynamicBodies.Length, 100);
-
-        gameState.DynamicBodies = new LogicDynamicBody[gameState.DynamicBodiesCount];
-
-        for (int i = 0; i < gameState.DynamicBodiesCount; i++)
+        for (int i = 0; i < gameState.CharactersCount; i++)
         {
-            gameState.DynamicBodies[i] = dynamicBodies[i].GetLogicBody();
+            gameState.Characters[i].FacingDirection = (int)characters[i].transform.lossyScale.x;
+            gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
+            gameState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
+            gameState.Characters[i].CurrentState = Data.CharacterStateType.Fall;
         }
     }
+
+    private void InitializeGameStateArrays(ref GameState gameState, int staticColliderCount, int characterCount)
+    {
+        gameState.StaticColliderCount = math.min(staticColliderCount, 100);
+        gameState.StaticColliders = new LogicCollider[gameState.StaticColliderCount];
+
+        gameState.CharactersCount = math.min(characterCount, 100);
+        gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
+    }    
 
     void Update()
     {
@@ -86,24 +106,64 @@ public class DeterministicGameManager : MonoBehaviour
 
     private void RunSingleTick()
     {
+        int previousIndex = CurrentTick % BufferSize;
+        int currentIndex = (CurrentTick + 1) % BufferSize;
+
+        ref GameState previousState = ref stateBuffer[previousIndex];
+        ref GameState currentState = ref stateBuffer[currentIndex];
+
+        DeepCopyGameState(ref previousState, ref currentState);
+
+        for (int i = 0; i < characters.Length; i++)
+        {
+            Character character = characters[i];
+
+            RawInput input = character.GetRawInput();
+
+            input.FrameId = (ushort)CurrentTick;
+
+            currentState.Characters[i].RawInput = input;
+
+            //TODO: Remove this in actual game
+            currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
+        }
+
         // store the game data in the buffer, get the input etc
 
-        gameSimulation.AdvanceFrame(ref gameState, inputManager.CurrentFrameInput);
+        gameSimulation.AdvanceFrame(ref currentState, previousState);
 
         CurrentTick++;
     }
 
     private void UpdateVisuals()
     {
-        for (int i = 0; i < dynamicBodies.Length; i++)
+        GameState gameState = stateBuffer[CurrentTick % BufferSize];
+
+        for (int i = 0; i < characters.Length; i++)
         {
-            var dynamicBody = dynamicBodies[i];
+            var character = characters[i];
 
-            var logicDynamicBody = gameState.DynamicBodies[i];
+            character.SnapToState(gameState.Characters[i]);
+            //TODO: SET ANIMATION
+        }
+    }
 
-            var position = dynamicBody.transform.position;
+    private void DeepCopyGameState(ref GameState source, ref GameState destination)
+    {
+        destination.FrameNumber = source.FrameNumber;
+        destination.FrameNumber++;
 
-            dynamicBody.transform.position = new Vector2((float)logicDynamicBody.Position.x, (float)logicDynamicBody.Position.y);
+        destination.StaticColliderCount = source.StaticColliderCount;
+        destination.CharactersCount = source.CharactersCount;
+
+        for (int i = 0; i < destination.StaticColliderCount; i++)
+        {
+            destination.StaticColliders[i] = source.StaticColliders[i];
+        }
+
+        for (int i = 0; i < destination.CharactersCount; i++)
+        {
+            destination.Characters[i] = source.Characters[i];
         }
     }
 }
