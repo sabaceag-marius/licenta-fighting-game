@@ -37,21 +37,20 @@ public static class LogicColliderExtensions
         return new LogicBox
         {
             Position = circleCollider.Position,
-            Extents = new FixedVector2(2f * circleCollider.Radius, 2f * circleCollider.Radius)
+            Extents = new FixedVector2(circleCollider.Radius, circleCollider.Radius)
         };
     }
 
     private static LogicBox GetBoundingBoxCapsuleCollider(this LogicCollider capsuleCollider)
     {
-        FixedFloat extentX = capsuleCollider.Radius;
-
-        // 3. The Y extent (half-height) is the inner bone plus the foam padding
-        FixedFloat extentY = capsuleCollider.HalfInnerLength + capsuleCollider.Radius;
+        FixedFloat extentX = (FixedMath.Abs(capsuleCollider.Direction.x) * capsuleCollider.HalfInnerLength) + capsuleCollider.Radius;
+        FixedFloat extentY = (FixedMath.Abs(capsuleCollider.Direction.y) * capsuleCollider.HalfInnerLength) + capsuleCollider.Radius;
 
         return new LogicBox
         {
             Position = capsuleCollider.Position,
             Extents = new FixedVector2(extentX, extentY)
         };
+
     }
 }

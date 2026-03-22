@@ -15,10 +15,14 @@ namespace Simulation
             characterStates = new ICharacterState[totalStates];
 
             //Initialize states
+            characterStates[(int)CharacterStateType.AirDodge] = new AirDodgeState();
+            characterStates[(int)CharacterStateType.Dash] = new DashState();
             characterStates[(int)CharacterStateType.Fall] = new FallState();
             characterStates[(int)CharacterStateType.Idle] = new IdleState();
             characterStates[(int)CharacterStateType.Jump] = new JumpState();
             characterStates[(int)CharacterStateType.Land] = new LandState();
+            characterStates[(int)CharacterStateType.Run] = new RunState();
+            characterStates[(int)CharacterStateType.TurnAround] = new TurnAroundState();
             characterStates[(int)CharacterStateType.Walk] = new WalkState();
         }
 
@@ -40,7 +44,7 @@ namespace Simulation
                 currentState.Exit(ref character);
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];
-                newState.Enter(ref character);
+                newState.Enter(ref character, input);
             }
         }
     }

@@ -16,7 +16,13 @@ namespace Simulation
 
             // Check for dash
 
-            if (FixedMath.Abs(input.Movement.x) > 0.1f)
+            if (input.Dashed)
+            {
+                character.CurrentState = CharacterStateType.Dash;
+                return;
+            }
+
+            if (FixedMath.Abs(input.Movement.x) >= 0.1f)
             {
                 character.CurrentState = CharacterStateType.Walk;
                 return;

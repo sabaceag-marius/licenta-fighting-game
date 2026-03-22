@@ -13,9 +13,13 @@ namespace Simulation
             if (CheckIfJumping(ref character, input))
                 return;
 
-            // Check for dash
+            if (input.Dashed)
+            {
+                character.CurrentState = CharacterStateType.Dash;
+                return;
+            }
 
-            if (FixedMath.Abs(input.Movement.x) <= 0.1f)
+            if (FixedMath.Abs(input.Movement.x) < 0.1f)
             {
                 character.CurrentState = CharacterStateType.Idle;
                 return;

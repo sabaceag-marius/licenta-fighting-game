@@ -27,31 +27,60 @@ public class CapsuleColliderFactory : BaseColliderFactory
         {
             Type = ColliderType.Capsule,
             Position = ((Vector2)transform.position + scaledOffset).ToFixedVector2(),
-            HalfInnerLength = halfInnerLength.ToFixedFloat(),
-            Radius = radius.ToFixedFloat()
+            HalfInnerLength = halfInnerLength,
+            Direction = GetDirectionVector().ToFixedVector2(),
+            Radius = radius
         };
     }
 
     public override void DrawCollider()
     {
+        Vector2 direction = GetDirectionVector();
+
         Vector3 scale = transform.lossyScale;
 
         float radius = scaledSize.x / 2f;
 
         float innerHeight = Mathf.Max(0f, scaledSize.y - scaledSize.x);
 
-        Vector3 worldCenter = transform.position + (Vector3)scaledOffset;
+        Vector2 worldCenter = (Vector2)transform.position + scaledOffset;
 
-        Gizmos.DrawWireCube(worldCenter, new Vector3(scaledSize.x, innerHeight, 0.1f));
-        Gizmos.DrawWireSphere(worldCenter + new Vector3(0, innerHeight / 2f, 0), radius);
-        Gizmos.DrawWireSphere(worldCenter - new Vector3(0, innerHeight / 2f, 0), radius);
+        Vector2 pointA = worldCenter + (direction * innerHeight * 0.5f);
+        Vector2 pointB = worldCenter - (direction * innerHeight * 0.5f);
+
+        // Circles
+        Gizmos.DrawWireSphere(pointA, radius);
+        Gizmos.DrawWireSphere(pointB, radius);
+
+        Vector2 perpendicularOffset = new Vector2(-direction.y, direction.x) * radius;
+
+        // Walls of the capsule
+
+        Gizmos.DrawLine(pointA + perpendicularOffset, pointB + perpendicularOffset);
+        Gizmos.DrawLine(pointA - perpendicularOffset, pointB - perpendicularOffset);
     }
 
     public override void DrawBoundingBox()
     {
+        Vector2 direction = GetDirectionVector();
+
         Vector2 worldCenter = (Vector2)transform.position + scaledOffset;
 
-        Gizmos.DrawWireCube(worldCenter, scaledSize);
+        float currentHalfLength = Mathf.Max(0f, scaledSize.y - scaledSize.x) * 0.5f;
+        
+        float radius = scaledSize.x / 2f;
+
+        float extentX = (Mathf.Abs(direction.x) * currentHalfLength) + radius;
+        float extentY = (Mathf.Abs(direction.y) * currentHalfLength) + radius;
+
+        Gizmos.DrawWireCube(worldCenter, new Vector2(extentX * 2f, extentY * 2f));
+    }
+
+    private Vector2 GetDirectionVector()
+    {
+        float angleRadian = transform.eulerAngles.z * Mathf.Deg2Rad;
+
+        return new Vector2(-Mathf.Sin(angleRadian), Mathf.Cos(angleRadian)).normalized;
     }
 }
 

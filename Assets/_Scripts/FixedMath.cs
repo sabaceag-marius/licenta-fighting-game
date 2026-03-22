@@ -53,6 +53,7 @@ public static class FixedMath
     {
         return fpmath.sign(x);
     }
+    
     public static FixedFloat MoveTowards(this FixedFloat current, FixedFloat target, FixedFloat maxDelta)
     {
         FixedFloat distance = target - current;
@@ -92,5 +93,10 @@ public static class FixedMath
             current.x + (direction.x * maxDelta),
             current.y + (direction.y * maxDelta)
         );
+    }
+
+    public static FixedVector2 Normalize(this FixedVector2 vector)
+    {
+        return fpmath.normalize(vector);
     }
 }

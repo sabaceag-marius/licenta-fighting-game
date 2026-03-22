@@ -37,6 +37,13 @@ public struct LogicCollider
     
     public FixedVector2 Extents;
 
+    /// <summary>
+    /// [CapsuleCollider]: Rotation vector. Represents where Vector2.Up is for this collider
+    /// </summary>
+    
+    public FixedVector2 Direction;
+
+
     // BoxCollider specifics
 
     public FixedFloat Top => Position.y + Extents.y;

@@ -1,5 +1,4 @@
 
-using UnityEngine.UIElements;
 
 public static class PhysicsExtensions
 {
@@ -82,9 +81,7 @@ public static class PhysicsExtensions
 
     public static bool CheckCollisionCircleCircle(this LogicCollider circleControllerA, LogicCollider circleControllerB)
     {
-        /*
-         // Calculate the distance of the centers distanceX = center1.X – center2.X distanceY = center1.Y – center2.Y    // Calculate distance based on Pythagorean theorem d = sqrt((distanceX * distanceX) + (distanceY * distanceY))  // Check collision if (d <= (r1 + r2))  return true; // Collision
-         */
+        // Calculate the distance of the centers distanceX = center1.X – center2.X distanceY = center1.Y – center2.Y    // Calculate distance based on Pythagorean theorem d = sqrt((distanceX * distanceX) + (distanceY * distanceY))  // Check collision if (d <= (r1 + r2))  return true; // Collision
 
         FixedVector2 differenceVector = circleControllerA.Position - circleControllerB.Position;
 
@@ -96,18 +93,54 @@ public static class PhysicsExtensions
 
     public static bool CheckCollisionCircleCapsule(this LogicCollider circleCollider, LogicCollider capsuleCollider)
     {
-        // A capsule is made out of multiple circles, so we can reduce this collision to a Circle - Circle collision
-        // if we can find the circle that is the closest vertically to the circle
+        if (capsuleCollider.Direction.x == 0 && capsuleCollider.Direction.y == 1)
+        {
+            // A. The capsule is not rotated:
+            // A capsule is made out of multiple circles, so we can reduce this collision to a Circle - Circle collision
+            // if we can find the circle that is the closest vertically to the circle
 
-        FixedFloat topCircleCenterY = capsuleCollider.Position.y + capsuleCollider.HalfInnerLength;
+            FixedFloat topCircleCenterY = capsuleCollider.Position.y + capsuleCollider.HalfInnerLength;
 
-        FixedFloat bottomCircleCenterY = capsuleCollider.Position.y - capsuleCollider.HalfInnerLength;
+            FixedFloat bottomCircleCenterY = capsuleCollider.Position.y - capsuleCollider.HalfInnerLength;
 
-        FixedFloat closestYOnCapsule = FixedMath.Clamp(circleCollider.Position.y, bottomCircleCenterY, topCircleCenterY);
+            FixedFloat closestYOnCapsule = FixedMath.Clamp(circleCollider.Position.y, bottomCircleCenterY, topCircleCenterY);
 
-        FixedVector2 virtualCircleCenter = new FixedVector2(capsuleCollider.Position.x, closestYOnCapsule);
+            FixedVector2 virtualCircleCenter = new FixedVector2(capsuleCollider.Position.x, closestYOnCapsule);
 
-        return CheckCollisionCircleCircle(new LogicCollider { Position = virtualCircleCenter, Radius = capsuleCollider.Radius }, circleCollider);
+            return CheckCollisionCircleCircle(new LogicCollider { Position = virtualCircleCenter, Radius = capsuleCollider.Radius }, circleCollider);
+        }
+        else
+        {
+            // 1. Find the distance vector from the capsule's center to the circle's center
+            FixedVector2 delta = circleCollider.Position - capsuleCollider.Position;
+
+            // 2. Project the circle's center onto the capsule's direction vector (Dot Product)
+            // This tells us how far "up" or "down" the capsule's bone the circle is.
+            FixedFloat projection = (delta.x * capsuleCollider.Direction.x) + (delta.y * capsuleCollider.Direction.y);
+
+            // 3. Clamp the projection to the actual length of the inner bone.
+            // The bone extends from -HalfInnerLength to +HalfInnerLength from the center.
+            FixedFloat clampedProjection = FixedMath.Clamp(projection, -capsuleCollider.HalfInnerLength, capsuleCollider.HalfInnerLength);
+
+            // 4. Find the exact World Space coordinate of the closest point on the bone to the circle
+            FixedVector2 closestPointOnBone = new FixedVector2(
+            capsuleCollider.Position.x + (capsuleCollider.Direction.x * clampedProjection),
+                capsuleCollider.Position.y + (capsuleCollider.Direction.y * clampedProjection)
+            );
+
+            // 5. Calculate the vector from the closest point to the circle's center
+            FixedVector2 distanceVec = circleCollider.Position - closestPointOnBone;
+
+            // Find the squared length of that vector
+            FixedFloat distanceSquared = (distanceVec.x * distanceVec.x) + (distanceVec.y * distanceVec.y);
+
+            // 6. The collision threshold is the sum of both radii, squared
+            FixedFloat combinedRadii = capsuleCollider.Radius + circleCollider.Radius;
+            FixedFloat combinedRadiiSquared = combinedRadii * combinedRadii;
+
+            // 7. If the actual distance is less than the threshold, it's a hit
+            return distanceSquared <= combinedRadiiSquared;
+        }
     }
 
     #endregion
@@ -230,7 +263,6 @@ public static class PhysicsExtensions
             Radius = capsule.Radius
         };
 
-        // BOOM. Zero repeated math.
         return virtualCircle.SolveCollisionCircleBox(box);
     }
 

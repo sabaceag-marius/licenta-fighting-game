@@ -42,5 +42,7 @@ namespace Data
         public int RemainingAirJumps;
 
         public bool IsFastFalling;
+
+        public FixedVector2 AirDodgeDirection;
     }
 }

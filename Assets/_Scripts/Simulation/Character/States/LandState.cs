@@ -5,9 +5,9 @@ namespace Simulation
 {
     public class LandState : BaseState
     {
-        public override void Enter(ref CharacterData character)
+        public override void Enter(ref CharacterData character, ProcessedInput input)
         {
-            base.Enter(ref character);
+            base.Enter(ref character, input);
 
             character.RemainingAirJumps = character.Stats.AirJumpCount;
         }

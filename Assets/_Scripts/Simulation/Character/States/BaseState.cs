@@ -6,7 +6,7 @@ namespace Simulation
 {
     public abstract class BaseState : ICharacterState
     {
-        public virtual void Enter(ref CharacterData character) 
+        public virtual void Enter(ref CharacterData character, ProcessedInput input) 
         {
             character.StateFrame = 0;
         }

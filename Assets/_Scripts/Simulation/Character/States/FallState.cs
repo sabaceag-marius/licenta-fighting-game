@@ -6,20 +6,20 @@ namespace Simulation
 {
     public class FallState : BaseState
     {
-        public override void Enter(ref CharacterData character)
+        public override void Enter(ref CharacterData character, ProcessedInput input)
         {
-            base.Enter(ref character);
+            base.Enter(ref character, input);
 
             character.IsFastFalling = false;
         }
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {
-            //if (input.DodgePressed)
-            //{
-            //    character.CurrentState = CharacterStateType.AirDodge;
-            //    return;
-            //}
+            if (input.DodgePressed)
+            {
+                character.CurrentState = CharacterStateType.AirDodge;
+                return;
+            }
 
             if (character.RemainingAirJumps > 0 && CheckIfJumping(ref character, input))
             {
