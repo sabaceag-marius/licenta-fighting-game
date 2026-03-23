@@ -13,6 +13,8 @@ namespace Data
 
         public CharacterStateType CurrentState;
 
+        public bool StateChanged;
+
         public int StateFrame;
 
         public CharacterStats Stats;

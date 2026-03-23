@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(DynamicBody), typeof(InputController))]
+[RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
 public class Character : MonoBehaviour
 {
     [SerializeField]
@@ -8,11 +8,13 @@ public class Character : MonoBehaviour
 
     private InputController inputController;
     private DynamicBody dynamicBody;
+    private Core.CharacterAnimator characterAnimator;
 
     private void Awake()
     {
         inputController = GetComponent<InputController>();
         dynamicBody = GetComponent<DynamicBody>();
+        characterAnimator = GetComponent<Core.CharacterAnimator>();
     }
 
     public Data.CharacterStats GetLogicCharacterStats(float fixedDeltaTime)
@@ -61,5 +63,7 @@ public class Character : MonoBehaviour
             transform.localScale.y,
             transform.localScale.z
         );
+
+        characterAnimator.UpdateAnimation(data.CurrentState, data.StateFrame);
     }
 }

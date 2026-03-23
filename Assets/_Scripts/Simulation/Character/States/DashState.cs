@@ -31,6 +31,13 @@ namespace Simulation
 
             // Dash dance
 
+            if (input.Dashed && character.FacingDirection * input.Movement.x < 0)
+            {
+                character.CurrentState = CharacterStateType.Dash;
+                character.StateChanged = true;
+                return;
+            }
+
             // Minimum dash time
             if (character.StateFrame < character.Stats.DashFrames)
                 return;

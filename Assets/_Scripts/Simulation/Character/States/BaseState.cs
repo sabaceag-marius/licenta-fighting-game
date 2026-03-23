@@ -9,6 +9,7 @@ namespace Simulation
         public virtual void Enter(ref CharacterData character, ProcessedInput input) 
         {
             character.StateFrame = 0;
+            character.StateChanged = false;
         }
 
         public virtual void Exit(ref CharacterData character) { }
