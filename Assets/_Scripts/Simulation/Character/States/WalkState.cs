@@ -19,7 +19,7 @@ namespace Simulation
                 return;
             }
 
-            if (FixedMath.Abs(input.Movement.x) < 0.1f)
+            if (FixedMath.Abs(input.Movement.x) < 0.1)
             {
                 character.CurrentState = CharacterStateType.Idle;
                 return;

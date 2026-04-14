@@ -49,7 +49,7 @@ public class AttackState : BaseState
         previousAnimFrame = -1;
 
         Debug.Log($"Frame count: {attackData.Frames.Count}");
-        Debug.Log($"Total duration count: {attackData.TotalDurationFrames}");
+        Debug.Log($"Total duration count: {attackData.FrameCount}");
         Debug.Log($"Animation count: {attackData.TotalAnimationFrames}");
 
         HandleAnimation();
@@ -70,13 +70,13 @@ public class AttackState : BaseState
         if (attackData == null)
             return;
 
-        if (currentFrame >= attackData.TotalDurationFrames)
+        if (currentFrame >= attackData.FrameCount)
         {
             stateMachine.ChangeState(characterManager.IsGrounded ? stateMachine.IdleState : stateMachine.FallState);
         }
 
         // Convert the logic frame to the stepped animation frame
-        float logicProgress = (float)currentFrame / attackData.TotalDurationFrames;
+        float logicProgress = (float)currentFrame / attackData.FrameCount;
 
         int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalAnimationFrames);
 
@@ -172,7 +172,7 @@ public class AttackState : BaseState
             new Dictionary<string, object> 
             { 
                 { Param_AttackType, attackType },
-                { Param_TotalDurationFrames, attackData.TotalDurationFrames },
+                { Param_TotalDurationFrames, attackData.FrameCount },
                 { Param_TotalAnimationFrames, attackData.TotalAnimationFrames },
             }
         );

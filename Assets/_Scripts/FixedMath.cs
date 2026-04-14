@@ -1,12 +1,78 @@
-global using FixedFloat = Unity.Mathematics.FixedPoint.fp;
-global using FixedVector2 = Unity.Mathematics.FixedPoint.fp2;
+// global using FixedFloat = Unity.Mathematics.FixedPoint.fp;
+// global using FixedVector2 = Unity.Mathematics.FixedPoint.fp2;
 using UnityEngine;
 using Unity.Mathematics.FixedPoint;
+
+public struct FixedFloat
+{
+    public fp rawValue;
+
+    public FixedFloat(fp value) { rawValue = value; }
+    public FixedFloat(float value) { rawValue = (fp)value; }
+
+    public static implicit operator FixedFloat(float f) => new FixedFloat((fp)f);
+
+    public static implicit operator float(FixedFloat f) => (float)f.rawValue;
+
+    public static implicit operator FixedFloat(fp f) => new FixedFloat(f);
+
+    public static implicit operator fp(FixedFloat f) => f.rawValue;
+
+    public static FixedFloat operator +(FixedFloat a, FixedFloat b) => a.rawValue + b.rawValue;
+    public static FixedFloat operator -(FixedFloat a, FixedFloat b) => a.rawValue - b.rawValue;
+    public static FixedFloat operator *(FixedFloat a, FixedFloat b) => a.rawValue * b.rawValue;
+    public static FixedFloat operator /(FixedFloat a, FixedFloat b) => a.rawValue / b.rawValue;
+}
+
+public struct FixedVector2
+{
+    public FixedFloat x;
+    public FixedFloat y;
+
+    public static FixedVector2 zero => new FixedVector2(fp.zero);
+
+    public FixedVector2(FixedFloat x, FixedFloat y) 
+    { 
+        this.x = x; 
+        this.y = y; 
+    }
+
+    public FixedVector2(fp2 value) 
+    { 
+        this.x = value.x; 
+        this.y = value.y; 
+    }
+
+    public FixedVector2(float x, float y) 
+    { 
+        this.x = (fp)x; 
+        this.y = (fp)y; 
+    }
+    
+    public static implicit operator FixedVector2(Vector2 v) => new FixedVector2(v.x, v.y);
+    public static implicit operator Vector2(FixedVector2 v) => new Vector2((float)v.x, (float)v.y);
+
+    public static implicit operator fp2(FixedVector2 v) => new fp2(v.x.rawValue, v.y.rawValue);
+    public static implicit operator FixedVector2(fp2 v) => new FixedVector2(v);
+
+    // Vector addition and subtraction
+    public static FixedVector2 operator +(FixedVector2 a, FixedVector2 b) => new FixedVector2(a.x + b.x, a.y + b.y);
+    public static FixedVector2 operator -(FixedVector2 a, FixedVector2 b) => new FixedVector2(a.x - b.x, a.y - b.y);
+    public static FixedVector2 operator -(FixedVector2 a) => new FixedVector2(-a.x, -a.y);
+
+    // Scalar multiplication and division (Vector * Float)
+    public static FixedVector2 operator *(FixedVector2 a, FixedFloat b) => new FixedVector2(a.x * b, a.y * b);
+    public static FixedVector2 operator *(FixedFloat a, FixedVector2 b) => new FixedVector2(a * b.x, a * b.y);
+    public static FixedVector2 operator /(FixedVector2 a, FixedFloat b) => new FixedVector2(a.x / b, a.y / b);
+
+    public override string ToString() => $"({(float)x}, {(float)y})";
+}
+
 public static class FixedMath
 {
     public static FixedFloat Abs(FixedFloat value)
     {
-        return value > 0f ? value : -value;
+        return value > 0 ? value : -value;
     }
  
     public static FixedFloat ToFixedFloat(this float x)
@@ -81,7 +147,7 @@ public static class FixedMath
         FixedFloat distanceSquared = (difference.x * difference.x) + (difference.y * difference.y);
 
         // If we are within range snap to target
-        if (distanceSquared == 0f || distanceSquared <= maxDelta * maxDelta)
+        if (distanceSquared == 0 || distanceSquared <= maxDelta * maxDelta)
         {
             return target;
         }

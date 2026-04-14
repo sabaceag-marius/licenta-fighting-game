@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
@@ -9,6 +10,9 @@ public class Character : MonoBehaviour
     private InputController inputController;
     private DynamicBody dynamicBody;
     private Core.CharacterAnimator characterAnimator;
+
+    [SerializeField]
+    private List<AttackDataSO> AttackData;
 
     private void Awake()
     {

@@ -81,7 +81,7 @@ public static class PhysicsExtensions
 
     public static bool CheckCollisionCircleCircle(this LogicCollider circleControllerA, LogicCollider circleControllerB)
     {
-        // Calculate the distance of the centers distanceX = center1.X – center2.X distanceY = center1.Y – center2.Y    // Calculate distance based on Pythagorean theorem d = sqrt((distanceX * distanceX) + (distanceY * distanceY))  // Check collision if (d <= (r1 + r2))  return true; // Collision
+        // Calculate the distance of the centers distanceX = center1.X ï¿½ center2.X distanceY = center1.Y ï¿½ center2.Y    // Calculate distance based on Pythagorean theorem d = sqrt((distanceX * distanceX) + (distanceY * distanceY))  // Check collision if (d <= (r1 + r2))  return true; // Collision
 
         FixedVector2 differenceVector = circleControllerA.Position - circleControllerB.Position;
 
@@ -226,9 +226,9 @@ public static class PhysicsExtensions
             FixedFloat min = minX < minY ? minX : minY;
 
             // Push out towards that closest edge, plus the radius
-            if (min == distLeft) return new FixedVector2(-(distLeft + circle.Radius), (FixedFloat)0);
-            if (min == distRight) return new FixedVector2(distRight + circle.Radius, (FixedFloat)0);
-            if (min == distBottom) return new FixedVector2((FixedFloat)0, -(distBottom + circle.Radius));
+            if (min == distLeft) return new FixedVector2(-(distLeft + circle.Radius), 0);
+            if (min == distRight) return new FixedVector2(distRight + circle.Radius, 0);
+            if (min == distBottom) return new FixedVector2(0, -(distBottom + circle.Radius));
             return new FixedVector2((FixedFloat)0, distTop + circle.Radius); // distTop
         }
         // STANDARD CASE: Shallow penetration

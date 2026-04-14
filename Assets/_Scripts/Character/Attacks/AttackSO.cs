@@ -1,14 +1,18 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "NewAttack", menuName = "Combat/Attack Data")]
 public class AttackDataSO : ScriptableObject
 {
-    public AttackType Type;
+    public Data.Combat.AttackType Type;
 
     [Tooltip("How many frames this attack will last")]
-    public int TotalDurationFrames = 60;
+    [FormerlySerializedAs("TotalDurationFrames")]
+    public int FrameCount = 60;
 
+    [Obsolete("Set in CharacterAnimator instead")]
     [Tooltip("How many animation frames this attack contains")]
     public int TotalAnimationFrames = 60;
 
@@ -20,7 +24,8 @@ public class AttackDataSO : ScriptableObject
 
     // Used only for the attack editor
     public AnimationClip AnimationClip;
-
+    
+    [Obsolete]
     [HideInInspector]
     public bool IsAerialAttack => (int)Type >= 7 && (int)Type <= 11;
 }
