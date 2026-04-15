@@ -28,7 +28,7 @@ public class AttackController : MonoBehaviour, IAttackController
         {
             Vector2 worldPosition = (Vector2)transform.position + hitbox.Center;
 
-            //TODO: compare to parent instead of hit.GO
+            //OBSOLETETODO: compare to parent instead of hit.GO
 
             Collider2D[] hits = Physics2D.OverlapCircleAll(worldPosition, hitbox.Radius, enemyLayer).Where(hit => !hit.transform.IsChildOf(transform)).ToArray();
 

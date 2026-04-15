@@ -18,7 +18,7 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "85196d5b-6164-4aee-b949-46f2af8c1b4e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -36,7 +36,7 @@
                     "name": "Attack",
                     "type": "Button",
                     "id": "48ea3b14-d37e-4d8c-94c2-d3fc3592fd42",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -45,7 +45,7 @@
                     "name": "SpecialAttack",
                     "type": "Button",
                     "id": "38b68148-39c1-47a5-b049-bb2ee19da6d3",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -120,6 +120,28 @@
                 },
                 {
                     "name": "",
+                    "id": "0f4f2293-3ee9-4348-abff-fc1841befbde",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "379bb1d7-d2fc-4b09-b714-e4f28a60a179",
+                    "path": "<DualShockGamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e7b3fa4f-aad1-4059-860c-e2e7d7f33636",
                     "path": "<GamecubeControllerDevice>/yButton",
                     "interactions": "",
@@ -136,6 +158,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyboardTest",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8e175945-effd-4df9-8a4b-b06d9f237087",
+                    "path": "<DualShockGamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -175,6 +208,28 @@
                 },
                 {
                     "name": "",
+                    "id": "86d73b4a-5950-4fdd-9232-bc318f97c50a",
+                    "path": "<DualShockGamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Dodge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5781ad7f-9e5d-429b-af2c-0832539c62dd",
+                    "path": "<DualShockGamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Dodge",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "732ff807-5aa8-4844-8eb9-51917d381d84",
                     "path": "<GamecubeControllerDevice>/aButton",
                     "interactions": "",
@@ -197,11 +252,33 @@
                 },
                 {
                     "name": "",
+                    "id": "94c7e2fc-8fcf-4a4e-9689-eac437d4522f",
+                    "path": "<DualShockGamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "86738fac-a832-46b0-8051-82093d052c36",
                     "path": "<GamecubeControllerDevice>/bButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "GameCubeController",
+                    "action": "SpecialAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8790736b-d4d4-4c30-8aa1-9bc1f5c0fced",
+                    "path": "<DualShockGamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
                     "action": "SpecialAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -415,6 +492,17 @@
             "devices": [
                 {
                     "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "PS4 controller",
+            "bindingGroup": "PS4 controller",
+            "devices": [
+                {
+                    "devicePath": "<DualShockGamepad>",
                     "isOptional": false,
                     "isOR": false
                 }

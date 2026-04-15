@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: GooberGroundedNeutralAttack
   m_EditorClassIdentifier: 
   Type: 0
-  TotalDurationFrames: 24
-  TotalAnimationFrames: 7
+  TotalDurationFrames: 7
+  FrameCount: 7
+  OverrideHurtboxes: 0
   Frames:
   - frameIndex: 2
     Hitboxes:
     - Id: 0
       Center: {x: -1.0450664, y: 0.12215048}
       Radius: 0.48
+    Hurtboxes: []
   - frameIndex: 3
     Hitboxes:
     - Id: 0
@@ -32,6 +34,7 @@ MonoBehaviour:
     - Id: 2
       Center: {x: -2.3140507, y: -0.038802624}
       Radius: 0.19663334
+    Hurtboxes: []
   - frameIndex: 4
     Hitboxes:
     - Id: 0
@@ -43,6 +46,7 @@ MonoBehaviour:
     - Id: 2
       Center: {x: -2.2467465, y: -0.029187739}
       Radius: 0.26874447
+    Hurtboxes: []
   - frameIndex: 5
     Hitboxes:
     - Id: 0
@@ -54,4 +58,6 @@ MonoBehaviour:
     - Id: 2
       Center: {x: -2.2323241, y: -0.043610036}
       Radius: 0.19663334
+    Hurtboxes: []
   AnimationClip: {fileID: 7400000, guid: ee924d1831e21d24eadf552403b7e7e7, type: 2}
+  AnimationFrameRate: 60

@@ -49,8 +49,8 @@ public class AttackState : BaseState
         previousAnimFrame = -1;
 
         Debug.Log($"Frame count: {attackData.Frames.Count}");
-        Debug.Log($"Total duration count: {attackData.TotalDurationFrames}");
-        Debug.Log($"Animation count: {attackData.TotalAnimationFrames}");
+        Debug.Log($"Total duration count: {attackData.FrameCount}");
+        Debug.Log($"Animation count: {attackData.TotalDurationFrames}");
 
         HandleAnimation();
     }
@@ -70,15 +70,15 @@ public class AttackState : BaseState
         if (attackData == null)
             return;
 
-        if (currentFrame >= attackData.TotalDurationFrames)
+        if (currentFrame >= attackData.FrameCount)
         {
             stateMachine.ChangeState(characterManager.IsGrounded ? stateMachine.IdleState : stateMachine.FallState);
         }
 
         // Convert the logic frame to the stepped animation frame
-        float logicProgress = (float)currentFrame / attackData.TotalDurationFrames;
+        float logicProgress = (float)currentFrame / attackData.FrameCount;
 
-        int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalAnimationFrames);
+        int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalDurationFrames);
 
         if (previousAnimFrame != currentAnimFrame)
         {
@@ -106,7 +106,7 @@ public class AttackState : BaseState
             HandleAerialAttackLogic();
         }
 
-        //TODO: Add if we move a bit formard while attacking?
+        //OBSOLETETODO: Add if we move a bit formard while attacking?
         //if (CheckIfFalling())
         //    return;
     }
@@ -150,7 +150,7 @@ public class AttackState : BaseState
 
     private void HandleAerialAttackLogic()
     {
-        //TODO: fast falling on platforms is fucked
+        //OBSOLETETODO: fast falling on platforms is fucked
 
         if (characterManager.Input.FastFalled)
         {
@@ -172,8 +172,8 @@ public class AttackState : BaseState
             new Dictionary<string, object> 
             { 
                 { Param_AttackType, attackType },
-                { Param_TotalDurationFrames, attackData.TotalDurationFrames },
-                { Param_TotalAnimationFrames, attackData.TotalAnimationFrames },
+                { Param_TotalDurationFrames, attackData.FrameCount },
+                { Param_TotalAnimationFrames, attackData.TotalDurationFrames },
             }
         );
     }

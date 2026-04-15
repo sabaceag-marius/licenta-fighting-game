@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Type: 1
   TotalDurationFrames: 24
-  TotalAnimationFrames: 6
+  FrameCount: 6
   OverrideHurtboxes: 1
   Frames:
   - frameIndex: 3
@@ -182,3 +182,4 @@ MonoBehaviour:
       Size: {x: 0.15286438, y: 0.26297712}
       Angle: -24.800913
   AnimationClip: {fileID: 7400000, guid: a247ebf129980c641bbdd2cefa34d172, type: 2}
+  AnimationFrameRate: 15

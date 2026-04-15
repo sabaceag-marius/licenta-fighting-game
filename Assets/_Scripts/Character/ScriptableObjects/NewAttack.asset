@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6d5febe30e971419f7d0b0a305aaa0, type: 3}
+  m_Name: NewAttack
+  m_EditorClassIdentifier: 
+  Type: 0
+  FrameCount: 1
+  TotalAnimationFrames: 60
+  OverrideHurtboxes: 1
+  Frames:
+  - frameIndex: 0
+    Hitboxes:
+    - Id: 0
+      Center: {x: 1.1730256, y: 1.0521989}
+      Radius: 0.72654986
+    Hurtboxes:
+    - Type: 2
+      State: 0
+      Center: {x: 0, y: 0}
+      Size: {x: 0.5, y: 1}
+      Angle: 0
+    - Type: 2
+      State: 0
+      Center: {x: -0.5560136, y: -0.015027322}
+      Size: {x: 0.36527386, y: 0.62553865}
+      Angle: -269.4371
+    - Type: 2
+      State: 0
+      Center: {x: 0.5109316, y: 0.29303408}
+      Size: {x: 0.18538338, y: 0.6707844}
+      Angle: -42.759705
+  AnimationClip: {fileID: 0}

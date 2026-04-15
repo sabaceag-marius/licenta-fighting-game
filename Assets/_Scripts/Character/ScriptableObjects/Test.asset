@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   Type: 8
-  TotalDurationFrames: 16
-  TotalAnimationFrames: 4
+  TotalDurationFrames: 60
+  FrameCount: 16
   OverrideHurtboxes: 0
   Frames:
   - frameIndex: 2
@@ -30,3 +30,4 @@ MonoBehaviour:
       Radius: 0.9174021
     Hurtboxes: []
   AnimationClip: {fileID: 7400000, guid: c5fe263b9c0fcfb4384d4c9f59a65cbf, type: 2}
+  AnimationFrameRate: 16

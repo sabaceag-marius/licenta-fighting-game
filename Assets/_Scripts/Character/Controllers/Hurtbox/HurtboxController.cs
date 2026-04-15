@@ -112,7 +112,7 @@ public class HurtboxController : MonoBehaviour, IHurtboxController
         }
         else if (hitCollider == defaultHurtbox)
         {
-            //TODO: change for dodges, rolls etc
+            //OBSOLETETODO: change for dodges, rolls etc
             state = HurtboxState.Normal;
         }
         else
@@ -131,7 +131,6 @@ public class HurtboxController : MonoBehaviour, IHurtboxController
         }
 
         //Debug.Log($"{hitType} took damage from Hitbox ID: {hitbox.Id}!");
-        // TODO: Pass actual damage/knockback to your CharacterManager here
     }
 
     [Header("Debug")]

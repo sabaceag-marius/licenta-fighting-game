@@ -13,7 +13,7 @@ public class TurnAroundState : BaseState
     {
         base.Enter(parameters);
 
-        //TODO: move the flip to Exit when adding animations ?
+        //OBSOLETETODO: move the flip to Exit when adding animations ?
         characterManager.Flip();
     }
 

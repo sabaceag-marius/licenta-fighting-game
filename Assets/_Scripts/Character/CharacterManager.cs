@@ -142,7 +142,7 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
             }
         }
 
-        //TODO: Add the value for shield dropping
+        //OBSOLETETODO: Add the value for shield dropping
         if (IsGrounded && Input.FlickDirection.y == -1)
         {
             if (currentGroundCollider != null && currentGroundCollider.CompareTag("OneWay"))
