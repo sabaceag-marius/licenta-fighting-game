@@ -4,15 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
 public class Character : MonoBehaviour
 {
+    public List<AttackDataSO> Attacks;
+
     [SerializeField]
     private CharacterStats CharacterStats;
 
     private InputController inputController;
     private DynamicBody dynamicBody;
     private Core.CharacterAnimator characterAnimator;
-
-    [SerializeField]
-    private List<AttackDataSO> AttackData;
 
     private void Awake()
     {
@@ -58,9 +57,9 @@ public class Character : MonoBehaviour
 
     public RawInput GetRawInput() => inputController.GetRawInput();
 
-    public void SnapToState(Data.CharacterData data)
+    public void UpdateState(Data.CharacterData data)
     {
-        dynamicBody.transform.position = new Vector2((float)data.Position.x, (float)data.Position.y);
+        dynamicBody.transform.position = new Vector2(data.Position.x, data.Position.y);
 
         transform.localScale = new Vector3(
             data.FacingDirection,
@@ -68,6 +67,6 @@ public class Character : MonoBehaviour
             transform.localScale.z
         );
 
-        characterAnimator.UpdateAnimation(data.CurrentState, data.StateFrame);
+        characterAnimator.UpdateAnimation(data);
     }
 }

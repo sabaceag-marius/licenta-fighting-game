@@ -13,6 +13,10 @@ namespace Core
 
         private Dictionary<Data.CharacterStateType, int> animationLengths = new();
 
+        private Dictionary<Data.Combat.AttackType, int> attackAnimationNames = new();
+
+        private Dictionary<Data.Combat.AttackType, int> attackAnimationLengths = new();
+
         private void Awake()
         {
             animator = GetComponentInChildren<Animator>();
@@ -26,7 +30,7 @@ namespace Core
                 animationNames.Add(stateType, Animator.StringToHash(stateType.ToString()));
 
                 AnimationClip clip = clips.FirstOrDefault(c => c.name == stateType.ToString());
-
+                
                 if (clip == null)
                 { 
                     Debug.LogWarning($"There was no clip found for the state {stateType}");
@@ -37,20 +41,70 @@ namespace Core
 
                 animationLengths.Add(stateType, Mathf.RoundToInt(clip.length * 60f));
             }
+
+            // Animations for attacks
+
+            foreach(Data.Combat.AttackType attackType in System.Enum.GetValues(typeof(Data.Combat.AttackType)))
+            {
+                string animationName = $"Attack_{attackType.ToString()}";
+
+                attackAnimationNames.Add(attackType, Animator.StringToHash(animationName));
+
+                AnimationClip clip = clips.FirstOrDefault(c => c.name == animationName);
+                
+                if (clip == null)
+                { 
+                    Debug.LogWarning($"There was no clip found for the attack {attackType}");
+                    
+                    continue; 
+                }
+
+                Debug.Log($"{attackType},{Mathf.RoundToInt(clip.length * 60f)}");
+
+                attackAnimationLengths.Add(attackType, Mathf.RoundToInt(clip.length * 60f));
+            }
         }
 
-        public void UpdateAnimation(Data.CharacterStateType stateType, int stateFrame) //TODO: Add attack type when needed
+        public void UpdateAnimation(Data.CharacterData characterData) //TODO: Add attack type when needed
         {
-            // Check for attack state
+            Data.CharacterStateType stateType = characterData.CurrentState;
+            int stateFrame = characterData.StateFrame;
 
-            int animationName = animationNames[stateType];
+            int animationName = 0;
+            int animationLength = 0;
 
-            if (!animationLengths.TryGetValue(stateType, out int animationLength))
+            if (stateType != Data.CharacterStateType.Attack)
             {
-                //Debug.LogWarning($"There was no animation found for the state {stateType}");
+                animationName = animationNames[stateType];
 
-                animationName = animationNames[Data.CharacterStateType.Idle];
-                animationLength = animationLengths[Data.CharacterStateType.Idle];
+                if (!animationLengths.TryGetValue(stateType, out animationLength))
+                {
+                    //Debug.LogWarning($"There was no animation found for the state {stateType}");
+
+                    animationName = animationNames[Data.CharacterStateType.Idle];
+                    animationLength = animationLengths[Data.CharacterStateType.Idle];
+                }
+
+                
+            }
+            else
+            {
+                Data.Combat.AttackType attackType = characterData.AttackType;
+
+                animationName = attackAnimationNames[attackType];
+
+                if (!attackAnimationLengths.TryGetValue(attackType, out animationLength))
+                {
+                    //Debug.LogWarning($"There was no animation found for the state {stateType}");
+
+                    animationName = animationNames[Data.CharacterStateType.Idle];
+                    animationLength = animationLengths[Data.CharacterStateType.Idle];
+                }
+
+                // TODO: Use CurrentAttackFrame or smth to determine the normalizedTime??
+                // normalizedTime = (float)characterData.CurrentAttackFrame / (float)animationLength;
+
+                // Debug.Log($"Animator: {characterData.CurrentAttackFrame}, {normalizedTime}");
             }
 
             int currentFrame = stateFrame % animationLength;

@@ -2,7 +2,7 @@ namespace Data.Combat
 {
     public struct HurtboxData
     {
-        // Capsule colliderœ
+        // Capsule collider
         public LogicCollider Collider;
 
         //HurtboxType Type; ?

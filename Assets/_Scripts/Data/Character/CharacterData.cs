@@ -1,6 +1,4 @@
 
-using UnityEngine;
-
 namespace Data
 {
     public struct CharacterData
@@ -46,5 +44,22 @@ namespace Data
         public bool IsFastFalling;
 
         public FixedVector2 AirDodgeDirection;
+
+        #region Attack State
+        public Combat.AttackType AttackType;
+
+        public int AttackFrameCount;
+
+        public int AttackDurationCount;
+        
+        public int CurrentAttackFrame;
+
+        /// <summary>
+        /// Hurtboxes of the character when not performing an attack that overrides its hurtboxes. 
+        /// Note: For now there is only one hurtbox in this list.
+        /// </summary>
+        public Data.Combat.HurtboxData[] Hurtboxes;
+        
+        #endregion
     }
 }

@@ -4,9 +4,19 @@ using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 using Simulation;
+using Data.Combat;
+using Data;
 
 public class DeterministicGameManager : MonoBehaviour
 {
+    [Header("Debug settings")]
+    
+    [SerializeField]
+    private bool ShowHitboxes = true;
+
+    [SerializeField]
+    private DebugDrawer debugDrawer;
+
     [Header("Simulation Settings")]
 
     [SerializeField]
@@ -44,6 +54,8 @@ public class DeterministicGameManager : MonoBehaviour
         {
             InitializeGameStateArrays(ref stateBuffer[i], stateBuffer[0].StaticColliderCount, stateBuffer[0].CharactersCount);
         }
+
+        InitializeAttackData();
     }
 
     private void InitializeStartingState()
@@ -90,6 +102,27 @@ public class DeterministicGameManager : MonoBehaviour
         gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
     }    
 
+    private void InitializeAttackData()
+    {
+        int totalAttackTypes = System.Enum.GetValues(typeof(Data.Combat.AttackType)).Length;
+
+        AttackData[][] attacks = new Data.Combat.AttackData[characters.Count()][];
+
+        for (int i = 0; i < characters.Count(); i++)
+        {
+            attacks[i] = new Data.Combat.AttackData[totalAttackTypes];
+
+            foreach (AttackDataSO attack in characters[i].Attacks)
+            {
+                AttackData attackData = attack.GetAttackData();
+
+                attacks[i][(int)attackData.Type] = attackData;
+            }
+        }
+
+        gameSimulation.InitializeAttackData(attacks);
+    }
+
     void Update()
     {
         accumulator += Time.deltaTime;
@@ -125,7 +158,7 @@ public class DeterministicGameManager : MonoBehaviour
             currentState.Characters[i].RawInput = input;
 
             //TODO: Remove this in actual game
-            currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
+            // currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
         }
 
         // store the game data in the buffer, get the input etc
@@ -141,10 +174,16 @@ public class DeterministicGameManager : MonoBehaviour
 
         for (int i = 0; i < characters.Length; i++)
         {
-            var character = characters[i];
+            Character character = characters[i];
+            CharacterData characterData = gameState.Characters[i];
 
-            character.SnapToState(gameState.Characters[i]);
-            //TODO: SET ANIMATION
+            character.UpdateState(characterData);
+
+            if (characterData.CurrentState == Data.CharacterStateType.Attack && ShowHitboxes && debugDrawer != null)
+            {
+                debugDrawer.DrawAttackState(gameSimulation.GetCharacterAttack(i, characterData.AttackType), 
+                    characterData.CurrentAttackFrame, characterData.Position, -characterData.FacingDirection);
+            }
         }
     }
 

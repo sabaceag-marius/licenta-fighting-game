@@ -10,6 +10,7 @@ public static class AttackExtensions
         {
             Type = attackSO.Type,
             FrameCount = attackSO.FrameCount,
+            TotalDurationFrames = attackSO.TotalDurationFrames,
             OverrideHurtboxes = attackSO.OverrideHurtboxes
         };
 
@@ -75,7 +76,10 @@ public static class AttackExtensions
             HurtboxOverrideData hurtbox = attackFrame.Hurtboxes[i];
 
             float angleRad = hurtbox.Angle * Mathf.Deg2Rad;
-            Vector2 direction = new Vector2(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
+            Vector2 direction = new Vector2(-Mathf.Sin(angleRad), Mathf.Cos(angleRad));
+
+            float radius = hurtbox.Size.x / 2;
+            float halfLength = (hurtbox.Size.y - hurtbox.Size.x) / 2f;
 
             frameData.Hurtboxes[i] = new Data.Combat.HurtboxData
             {
@@ -84,16 +88,16 @@ public static class AttackExtensions
                 {
                     Type = ColliderType.Capsule,
                     Position = hurtbox.Center,
-                    Radius = hurtbox.Size.x,
-                    HalfInnerLength = hurtbox.Size.y,
+                    Radius = radius,
+                    HalfInnerLength = halfLength,
                     Direction = direction
                 }
             };
 
             // Expand the float Bounding Box
 
-            float extentX = (Mathf.Abs(direction.x) * hurtbox.Size.y) + hurtbox.Size.x;
-            float extentY = (Mathf.Abs(direction.y) * hurtbox.Size.y) + hurtbox.Size.x;
+            float extentX = (Mathf.Abs(direction.x) * halfLength) + radius;
+            float extentY = (Mathf.Abs(direction.y) * halfLength) + radius;
 
             minX = Mathf.Min(minX, hurtbox.Center.x - extentX);
             maxX = Mathf.Max(maxX, hurtbox.Center.x + extentX);

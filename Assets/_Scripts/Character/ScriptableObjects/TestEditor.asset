@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f6d5febe30e971419f7d0b0a305aaa0, type: 3}
-  m_Name: GooberGroundedForwardAttack
+  m_Name: TestEditor
   m_EditorClassIdentifier: 
-  Type: 1
+  Type: 0
   TotalDurationFrames: 24
   FrameCount: 6
   OverrideHurtboxes: 1
@@ -72,7 +72,7 @@ MonoBehaviour:
     - Type: 1
       State: 0
       Center: {x: -0.09357762, y: -0.13646746}
-      Size: {x: 0.6249651, y: 0.5603418}
+      Size: {x: 0.6249651, y: 0.6249651}
       Angle: 0
     - Type: 3
       State: 0
@@ -181,5 +181,5 @@ MonoBehaviour:
       Center: {x: -0.5616143, y: -0.842422}
       Size: {x: 0.15286438, y: 0.26297712}
       Angle: -24.800913
-  AnimationClip: {fileID: 7400000, guid: a247ebf129980c641bbdd2cefa34d172, type: 2}
+  AnimationClip: {fileID: 7400000, guid: bb2b2cc8ddf614417ad5ac2fcdb6f978, type: 2}
   AnimationFrameRate: 15

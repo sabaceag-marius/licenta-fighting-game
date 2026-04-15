@@ -5,9 +5,9 @@ namespace Simulation
 {
     public class AirDodgeState : BaseState
     {
-        public override void Enter(ref CharacterData character, ProcessedInput input)
+        public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
         {
-            base.Enter(ref character, input);
+            base.Enter(ref character, input, characterAttacks);
 
             character.AirDodgeDirection = input.Movement.Normalize();
 

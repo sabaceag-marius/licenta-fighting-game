@@ -22,6 +22,8 @@ public struct FixedFloat
     public static FixedFloat operator -(FixedFloat a, FixedFloat b) => a.rawValue - b.rawValue;
     public static FixedFloat operator *(FixedFloat a, FixedFloat b) => a.rawValue * b.rawValue;
     public static FixedFloat operator /(FixedFloat a, FixedFloat b) => a.rawValue / b.rawValue;
+
+    public override string ToString() => $"({rawValue})";
 }
 
 public struct FixedVector2

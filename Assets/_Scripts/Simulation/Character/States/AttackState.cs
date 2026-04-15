@@ -1,32 +1,57 @@
 
+using System;
 using Data;
-using UnityEngine;
 
 namespace Simulation
 {
-    public class FallState : BaseState
+    public class AttackState : BaseState
     {
         public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
         {
             base.Enter(ref character, input, characterAttacks);
 
+            character.CurrentAttackFrame = 0;
+            character.AttackDurationCount = characterAttacks[(int)character.AttackType].TotalDurationFrames;
+            character.AttackFrameCount = characterAttacks[(int)character.AttackType].Frames.Length;
+
             character.IsFastFalling = false;
+        }
+
+        public override void Exit(ref CharacterData character)
+        {
+            base.Exit(ref character);
+
+            //TODO: clear hit targets here
         }
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (input.DodgePressed)
+            if (character.StateFrame >= character.AttackDurationCount
+                || character.AttackFrameCount == 0)
             {
-                character.CurrentState = CharacterStateType.AirDodge;
+                character.CurrentState = character.DynamicBody.IsGrounded ? CharacterStateType.Idle : CharacterStateType.Fall;
+                
                 return;
             }
 
-            if (character.RemainingAirJumps > 0 && CheckIfJumping(ref character, input))
+            FixedFloat logicProgress = (FixedFloat)character.StateFrame / (FixedFloat)character.AttackDurationCount;
+
+            int currentAnimationFrame = (int)Math.Floor(logicProgress * character.AttackFrameCount);
+
+            if (character.CurrentAttackFrame != currentAnimationFrame)
             {
-                character.RemainingAirJumps--;
-                return;
+                character.CurrentAttackFrame = currentAnimationFrame;
             }
 
+            if (character.AttackType >= Data.Combat.AttackType.AirNeutral 
+                && character.AttackType <= Data.Combat.AttackType.AirUpward)
+            {
+                HandleAerialAttackLogic(ref character, input);
+            }
+        }
+
+        private void HandleAerialAttackLogic(ref CharacterData character, ProcessedInput input)
+        {
             if (input.FastFalled)
             {
                 character.IsFastFalling = true;
@@ -36,15 +61,18 @@ namespace Simulation
             {
                 character.CurrentState = CharacterStateType.Land;
             }
-
-            // Check for attack
         }
 
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
         {
             base.HandlePhysics(ref character, input);
 
+            if (!(character.AttackType >= Data.Combat.AttackType.AirNeutral 
+                && character.AttackType <= Data.Combat.AttackType.AirUpward))
+                return;
+
             FixedVector2 velocity = character.Velocity;
+
             // Horizontal movement
 
             // No movement or

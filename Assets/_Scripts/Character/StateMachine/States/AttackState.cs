@@ -50,7 +50,7 @@ public class AttackState : BaseState
 
         Debug.Log($"Frame count: {attackData.Frames.Count}");
         Debug.Log($"Total duration count: {attackData.FrameCount}");
-        Debug.Log($"Animation count: {attackData.TotalAnimationFrames}");
+        Debug.Log($"Animation count: {attackData.TotalDurationFrames}");
 
         HandleAnimation();
     }
@@ -78,7 +78,7 @@ public class AttackState : BaseState
         // Convert the logic frame to the stepped animation frame
         float logicProgress = (float)currentFrame / attackData.FrameCount;
 
-        int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalAnimationFrames);
+        int currentAnimFrame = Mathf.FloorToInt(logicProgress * attackData.TotalDurationFrames);
 
         if (previousAnimFrame != currentAnimFrame)
         {
@@ -173,7 +173,7 @@ public class AttackState : BaseState
             { 
                 { Param_AttackType, attackType },
                 { Param_TotalDurationFrames, attackData.FrameCount },
-                { Param_TotalAnimationFrames, attackData.TotalAnimationFrames },
+                { Param_TotalAnimationFrames, attackData.TotalDurationFrames },
             }
         );
     }

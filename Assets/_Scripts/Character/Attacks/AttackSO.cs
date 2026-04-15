@@ -9,12 +9,11 @@ public class AttackDataSO : ScriptableObject
     public Data.Combat.AttackType Type;
 
     [Tooltip("How many frames this attack will last")]
-    [FormerlySerializedAs("TotalDurationFrames")]
-    public int FrameCount = 60;
+    public int TotalDurationFrames;
 
-    [Obsolete("Set in CharacterAnimator instead")]
     [Tooltip("How many animation frames this attack contains")]
-    public int TotalAnimationFrames = 60;
+    [FormerlySerializedAs("TotalAnimationFrames")]
+    public int FrameCount;
 
     [Tooltip("If true, the attack will use frame-by-frame custom hurtboxes instead of the default body capsule.")]
     public bool OverrideHurtboxes = false;
@@ -25,6 +24,9 @@ public class AttackDataSO : ScriptableObject
     // Used only for the attack editor
     public AnimationClip AnimationClip;
     
+    [HideInInspector]
+    public float AnimationFrameRate = 0;
+
     [Obsolete]
     [HideInInspector]
     public bool IsAerialAttack => (int)Type >= 7 && (int)Type <= 11;

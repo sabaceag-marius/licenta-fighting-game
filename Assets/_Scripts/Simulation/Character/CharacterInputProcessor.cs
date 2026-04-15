@@ -20,7 +20,7 @@ namespace Simulation
 
             input.JumpPressed = rawInput.Jumped && !previousRawInput.Jumped;
 
-            input.AttackPressed = rawInput.Attacked;
+            input.AttackPressed = rawInput.Attacked && !previousRawInput.Attacked;
 
             input.DodgePressed = rawInput.Dodged;
 

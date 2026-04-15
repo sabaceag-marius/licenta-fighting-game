@@ -5,9 +5,9 @@ namespace Simulation
 {
     public class DashState : BaseState
     {
-        public override void Enter(ref CharacterData character, ProcessedInput input)
+        public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
         {
-            base.Enter(ref character, input);
+            base.Enter(ref character, input, characterAttacks);
 
             if (character.FacingDirection * input.Movement.x < 0)
             {

@@ -7,6 +7,8 @@ namespace Data.Combat
 
         public int FrameCount;
 
+        public int TotalDurationFrames;
+
         public bool OverrideHurtboxes;
 
         public FrameData[] Frames;

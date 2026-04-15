@@ -24,9 +24,10 @@ namespace Simulation
             characterStates[(int)CharacterStateType.Run] = new RunState();
             characterStates[(int)CharacterStateType.TurnAround] = new TurnAroundState();
             characterStates[(int)CharacterStateType.Walk] = new WalkState();
+            characterStates[(int)CharacterStateType.Attack ] = new AttackState();
         }
 
-        public void AdvanceFrame(ref CharacterData character, ProcessedInput input)
+        public void AdvanceFrame(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
         {
             // Save the state we started this frame in, in case we need to swap it
 
@@ -44,7 +45,7 @@ namespace Simulation
                 currentState.Exit(ref character);
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];
-                newState.Enter(ref character, input);
+                newState.Enter(ref character, input, characterAttacks);
             }
         }
     }

@@ -198,7 +198,7 @@ namespace Editor
                         if (EditorGUI.EndChangeCheck())
                         {
                             Undo.RecordObject(attackData, "Resize Hurtbox Height");
-                            float newHeight = Vector3.Distance(worldCenter, newHeightPos) * 2f;
+                            float newHeight = Mathf.Max(Vector3.Distance(worldCenter, newHeightPos) * 2f, hurtbox.Size.x);
                             hurtbox.Size = new Vector2(hurtbox.Size.x, newHeight);
                             EditorUtility.SetDirty(attackData);
                         }
@@ -224,10 +224,38 @@ namespace Editor
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(AttackDataSO.AnimationClip)));
 
+            EditorGUI.BeginChangeCheck();
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(AttackDataSO.FrameCount)));
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(AttackDataSO.OverrideHurtboxes)));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(AttackDataSO.TotalDurationFrames)));
             
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+
+                if (attackData.TotalDurationFrames > 0)
+                {
+                    UpdateAnimationFrameRate();
+                }
+            }
+
+            if (attackData.AnimationClip != null)
+            {
+                if (attackData.AnimationFrameRate == 0 && attackData.TotalDurationFrames > 0)
+                {
+                    UpdateAnimationFrameRate();
+                }
+
+                GUI.enabled = false;
+
+                EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(AttackDataSO.AnimationFrameRate)));
+
+                GUI.enabled = true;
+            }
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(AttackDataSO.OverrideHurtboxes)));
+
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.Space();
@@ -264,12 +292,26 @@ namespace Editor
             else
             {
                 EditorGUILayout.HelpBox($"No Data for Frame {selectedFrameIndex}", MessageType.Info);
-                return;
             }
 
             if (GUI.changed) EditorUtility.SetDirty(attackData);
             serializedObject.ApplyModifiedProperties();
         }
+
+        private void UpdateAnimationFrameRate()
+        {
+            float frameRate = (float)attackData.FrameCount / attackData.TotalDurationFrames * 60f;
+
+            if (attackData.AnimationClip != null)
+            {
+                attackData.AnimationClip.frameRate = frameRate;
+            }
+
+            serializedObject.FindProperty(nameof(AttackDataSO.AnimationFrameRate)).floatValue = frameRate;
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
         private void DrawTimelineControls()
         {
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -284,7 +326,7 @@ namespace Editor
             }
 
             // The Slider
-            int maxFrames = Mathf.Max(attackData.TotalAnimationFrames, 1);
+            int maxFrames = Mathf.Max(attackData.FrameCount - 1, 1);
             EditorGUI.BeginChangeCheck();
             selectedFrameIndex = EditorGUILayout.IntSlider(selectedFrameIndex, 0, maxFrames);
             if (EditorGUI.EndChangeCheck())

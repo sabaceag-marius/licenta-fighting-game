@@ -6,7 +6,7 @@ namespace Simulation
 {
     public abstract class BaseState : ICharacterState
     {
-        public virtual void Enter(ref CharacterData character, ProcessedInput input) 
+        public virtual void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks) 
         {
             character.StateFrame = 0;
             character.StateChanged = false;
@@ -63,6 +63,20 @@ namespace Simulation
                 return false;
 
             character.CurrentState = CharacterStateType.Fall;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check if we should change the character's state to Attack
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="input"></param>
+        /// <returns>true if the state changed, false otherwise</returns>
+        protected virtual bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)
+        {
+            if (!input.AttackPressed)
+                return false;
 
             return true;
         }
