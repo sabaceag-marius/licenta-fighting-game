@@ -167,4 +167,9 @@ public static class FixedMath
     {
         return fpmath.normalize(vector);
     }
+
+    public static FixedVector2 GetGlobalPosition(FixedVector2 localPosition, FixedVector2 position, int facingDirection)
+    {
+        return position + new FixedVector2(localPosition.x * facingDirection, localPosition.y);
+    }
 }

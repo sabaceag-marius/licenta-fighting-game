@@ -7,6 +7,9 @@ namespace Core
 {
     public class CharacterAnimator : MonoBehaviour
     {
+        [SerializeField]
+        private bool IsAnimated = true;
+
         private Animator animator;
 
         private Dictionary<Data.CharacterStateType, int> animationNames = new();
@@ -19,6 +22,9 @@ namespace Core
 
         private void Awake()
         {
+            if (!IsAnimated)
+                return;
+
             animator = GetComponentInChildren<Animator>();
 
             AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
@@ -37,7 +43,6 @@ namespace Core
                     
                     continue; 
                 }
-                Debug.Log($"{stateType},{Mathf.RoundToInt(clip.length * 60f)}");
 
                 animationLengths.Add(stateType, Mathf.RoundToInt(clip.length * 60f));
             }
@@ -59,14 +64,15 @@ namespace Core
                     continue; 
                 }
 
-                Debug.Log($"{attackType},{Mathf.RoundToInt(clip.length * 60f)}");
-
                 attackAnimationLengths.Add(attackType, Mathf.RoundToInt(clip.length * 60f));
             }
         }
 
         public void UpdateAnimation(Data.CharacterData characterData) //TODO: Add attack type when needed
         {
+            if (!IsAnimated)
+                return;
+
             Data.CharacterStateType stateType = characterData.CurrentState;
             int stateFrame = characterData.StateFrame;
 
@@ -100,11 +106,6 @@ namespace Core
                     animationName = animationNames[Data.CharacterStateType.Idle];
                     animationLength = animationLengths[Data.CharacterStateType.Idle];
                 }
-
-                // TODO: Use CurrentAttackFrame or smth to determine the normalizedTime??
-                // normalizedTime = (float)characterData.CurrentAttackFrame / (float)animationLength;
-
-                // Debug.Log($"Animator: {characterData.CurrentAttackFrame}, {normalizedTime}");
             }
 
             int currentFrame = stateFrame % animationLength;

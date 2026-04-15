@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class AttackExtensions
@@ -47,9 +48,11 @@ public static class AttackExtensions
         frameData.HitboxCount = attackFrame.Hitboxes.Count;
         frameData.Hitboxes = new Data.Combat.HitboxData[frameData.HitboxCount];
 
+        HitboxData[] sortedHitboxes = attackFrame.Hitboxes.OrderBy(i => i.Id).ToArray();
+
         for (int i = 0; i < frameData.HitboxCount; i++)
         {
-            HitboxData hitbox = attackFrame.Hitboxes[i];
+            HitboxData hitbox = sortedHitboxes[i];
 
             frameData.Hitboxes[i] = new Data.Combat.HitboxData
             {
@@ -58,7 +61,9 @@ public static class AttackExtensions
                     Type = ColliderType.Circle,
                     Position = hitbox.Center,
                     Radius = hitbox.Radius
-                }
+                },
+
+                Id = hitbox.Id
             };
         }
 

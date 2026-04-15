@@ -106,7 +106,7 @@ public class AttackState : BaseState
             HandleAerialAttackLogic();
         }
 
-        //TODO: Add if we move a bit formard while attacking?
+        //OBSOLETETODO: Add if we move a bit formard while attacking?
         //if (CheckIfFalling())
         //    return;
     }
@@ -150,7 +150,7 @@ public class AttackState : BaseState
 
     private void HandleAerialAttackLogic()
     {
-        //TODO: fast falling on platforms is fucked
+        //OBSOLETETODO: fast falling on platforms is fucked
 
         if (characterManager.Input.FastFalled)
         {

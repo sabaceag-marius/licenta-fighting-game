@@ -41,7 +41,7 @@ namespace Simulation
             // Swap between states
             if (character.StateChanged || character.CurrentState != startingStateType)
             {
-                Debug.Log($"Changed state from {startingStateType} to {character.CurrentState}");
+                // Debug.Log($"Changed state from {startingStateType} to {character.CurrentState}");
                 currentState.Exit(ref character);
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];

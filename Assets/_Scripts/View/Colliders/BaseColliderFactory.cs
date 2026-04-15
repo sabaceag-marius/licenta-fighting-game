@@ -2,7 +2,11 @@ using UnityEngine;
 
 public abstract class BaseColliderFactory : MonoBehaviour
 {
+    public bool IsHurtbox = false;
+    
     [Header("Debug settings")]
+
+    public bool ShowCollider = true;
 
     public bool ShowBoundingBox = true;
 
@@ -15,6 +19,9 @@ public abstract class BaseColliderFactory : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
+
+        if (!ShowCollider)
+            return;
 
         DrawCollider();
 

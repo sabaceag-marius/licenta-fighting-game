@@ -25,7 +25,8 @@ namespace Simulation
                 return;
             }
 
-            // Check for attack
+            if (CheckIfAttacking(ref character, input))
+                return;
         }
 
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
@@ -57,6 +58,17 @@ namespace Simulation
             }
 
             character.Velocity = velocity;
+        }
+
+        protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)
+        {
+            if (!base.CheckIfAttacking(ref character, input))
+                return false;
+            
+            character.CurrentState = CharacterStateType.Attack;
+            character.AttackType = Data.Combat.AttackType.GroundForward;
+
+            return true;
         }
     }
 }

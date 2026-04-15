@@ -4,7 +4,9 @@ namespace Data.Combat
     {
         // Circle collider
         public LogicCollider Collider;
-
+        
+        public int Id;
+        
         //TODO: Add damage, knockback etc.
     }
 }

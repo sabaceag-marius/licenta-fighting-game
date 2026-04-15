@@ -2,6 +2,7 @@
 using System;
 using Data;
 using Data.Combat;
+using UnityEngine;
 
 public static class CombatEngine
 {
@@ -22,7 +23,7 @@ public static class CombatEngine
 
             for (int j = 0; j < state.CharactersCount; j++)
             {
-                if (i == j)
+                if (i == j || character.HitTargets[j])
                     continue;
 
                 ref Data.CharacterData targetCharacter = ref state.Characters[j];
@@ -31,10 +32,14 @@ public static class CombatEngine
 
                 Data.Combat.HurtboxData[] hurtboxes = GetActiveHurtboxes(j, targetCharacter, attacks, out hurtboxesBoundingBox);
 
-                Data.Combat.HitboxData? hitbox = CheckForCollision(frameData, hurtboxes, hurtboxesBoundingBox);
+                Data.Combat.HitboxData? hitbox = CheckForCollision(frameData, hurtboxes, hurtboxesBoundingBox, character, targetCharacter);
                 
                 if (hitbox != null)
                 {
+                    character.HitTargets[j] = true;
+
+                    Debug.Log($"Hit character! with hitbox {hitbox.Value.Id}");
+
                     // TODO: Apply damage, knockback etc.
                     break;
                 }
@@ -42,21 +47,32 @@ public static class CombatEngine
         }
     }
 
-    private static Data.Combat.HitboxData? CheckForCollision(FrameData frameData, Data.Combat.HurtboxData[] hurtboxes, LogicBox hurtboxesBoundingBox)
+    private static Data.Combat.HitboxData? CheckForCollision(
+        FrameData frameData, 
+        Data.Combat.HurtboxData[] hurtboxes, 
+        LogicBox hurtboxesBoundingBox,
+        CharacterData attacker,
+        CharacterData target)
     {
         
+        hurtboxesBoundingBox.Position = FixedMath.GetGlobalPosition(hurtboxesBoundingBox.Position, target.Position, target.FacingDirection); 
+
         for (int i = 0; i < frameData.HitboxCount; i++)
         {
             Data.Combat.HitboxData hitbox = frameData.Hitboxes[i];
 
+            hitbox.Collider.Position = FixedMath.GetGlobalPosition(hitbox.Collider.Position, attacker.Position, -attacker.FacingDirection); 
+
             // Check the bounding box collisions
 
-            if (!hitbox.Collider.BoundingBox.CheckAABBCollision(hurtboxesBoundingBox))
+            if (!hitbox.Collider.GetBoundingBox().CheckAABBCollision(hurtboxesBoundingBox))
                 continue;
 
             for (int j = 0; j < hurtboxes.Length; j++)
             {
                 Data.Combat.HurtboxData hurtbox = hurtboxes[j];
+
+                hurtbox.Collider.Position = FixedMath.GetGlobalPosition(hurtbox.Collider.Position, target.Position, target.FacingDirection); 
 
                 if (hitbox.Collider.CheckCollision(hurtbox.Collider) && hurtbox.State != Data.Combat.HurtboxState.Invincible)
                     return hitbox;

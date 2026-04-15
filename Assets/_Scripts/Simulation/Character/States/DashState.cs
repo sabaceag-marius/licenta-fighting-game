@@ -29,6 +29,9 @@ namespace Simulation
             if (CheckIfJumping(ref character, input))
                 return;
 
+            if (CheckIfAttacking(ref character, input))
+                return;
+                
             // Dash dance
 
             if (input.Dashed && character.FacingDirection * input.Movement.x < 0)
@@ -62,6 +65,17 @@ namespace Simulation
                 character.Stats.DashAcceleration);
 
             character.Velocity = velocity;
+        }
+
+        protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)
+        {
+            if (!base.CheckIfAttacking(ref character, input))
+                return false;
+            
+            character.CurrentState = CharacterStateType.Attack;
+            character.AttackType = Data.Combat.AttackType.GroundForward;
+
+            return true;
         }
     }
 }

@@ -21,7 +21,10 @@ namespace Simulation
         {
             base.Exit(ref character);
 
-            //TODO: clear hit targets here
+            for (int i = 0; i < character.HitTargets.Length; i++)
+            {
+                character.HitTargets[i] = false;
+            }
         }
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
@@ -30,7 +33,6 @@ namespace Simulation
                 || character.AttackFrameCount == 0)
             {
                 character.CurrentState = character.DynamicBody.IsGrounded ? CharacterStateType.Idle : CharacterStateType.Fall;
-                
                 return;
             }
 

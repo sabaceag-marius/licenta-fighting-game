@@ -32,7 +32,6 @@ public class CharacterAnimator : MonoBehaviour
         { typeof(DashState), Animator.StringToHash(nameof(DashState)) }
     };
 
-    //TODO: List<int> for combo attacks?
     private Dictionary<AttackType, int> attackAnimationStates = new Dictionary<AttackType, int>
     {
         {AttackType.GroundNeutral, Animator.StringToHash(nameof(AttackState)+"_"+AttackType.GroundNeutral.ToString())},

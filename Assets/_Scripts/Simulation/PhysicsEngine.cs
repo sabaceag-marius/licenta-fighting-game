@@ -26,7 +26,7 @@ public static class PhysicsEngine
             {
                 ref LogicCollider staticCollider = ref state.StaticColliders[j];
 
-                //TODO: Check for layermasks
+                //TODO: Check for layermasks ?
 
                 if (!dynamicBody.Collider.BoundingBox.CheckAABBCollision(staticCollider.BoundingBox))
                     continue;
@@ -35,7 +35,7 @@ public static class PhysicsEngine
             }
         }
 
-        // TODO: Dynamic body - Dynamic body collision
+        // TODO: Dynamic body - Dynamic body collision ?
     }
 
     private static void HandleDynamicBodyCollision(ref LogicDynamicBody dynamicBody, LogicCollider collider)

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
+[RequireComponent(typeof(DynamicBody), typeof(Core.CharacterAnimator))]
+// [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
 public class Character : MonoBehaviour
 {
     public List<AttackDataSO> Attacks;
@@ -10,14 +12,19 @@ public class Character : MonoBehaviour
     private CharacterStats CharacterStats;
 
     private InputController inputController;
+
     private DynamicBody dynamicBody;
+
     private Core.CharacterAnimator characterAnimator;
+
+    private BaseColliderFactory hurtboxFactory;
 
     private void Awake()
     {
         inputController = GetComponent<InputController>();
         dynamicBody = GetComponent<DynamicBody>();
         characterAnimator = GetComponent<Core.CharacterAnimator>();
+        hurtboxFactory = GetComponents<BaseColliderFactory>().First(col => col.IsHurtbox);
     }
 
     public Data.CharacterStats GetLogicCharacterStats(float fixedDeltaTime)
@@ -55,7 +62,18 @@ public class Character : MonoBehaviour
 
     public LogicDynamicBody GetLogicBody() => dynamicBody.GetLogicBody();
 
-    public RawInput GetRawInput() => inputController.GetRawInput();
+    public LogicCollider GetHurtbox()
+    {
+        LogicCollider hurtbox = hurtboxFactory.GetLogicCollider();
+
+        hurtbox.Position = hurtbox.Position - new FixedVector2(transform.position.x, transform.position.y);
+
+        hurtbox.BoundingBox = hurtbox.GetBoundingBox();
+
+        return hurtbox;
+    }
+    
+    public RawInput GetRawInput() => inputController == null ? new RawInput() : inputController.GetRawInput();
 
     public void UpdateState(Data.CharacterData data)
     {

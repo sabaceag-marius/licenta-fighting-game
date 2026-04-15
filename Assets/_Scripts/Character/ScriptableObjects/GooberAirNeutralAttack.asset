@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: GooberAirNeutralAttack
   m_EditorClassIdentifier: 
   Type: 7
-  TotalDurationFrames: 60
-  FrameCount: 24
+  TotalDurationFrames: 28
+  FrameCount: 7
   OverrideHurtboxes: 1
   Frames:
   - frameIndex: 3
@@ -35,5 +35,5 @@ MonoBehaviour:
       Center: {x: 0, y: 0}
       Radius: 2.175656
     Hurtboxes: []
-  AnimationClip: {fileID: 7400000, guid: 2166e63b9a2970542ba0b4096211c705, type: 2}
-  AnimationFrameRate: 180
+  AnimationClip: {fileID: 7400000, guid: 538f8f6569d984da0ba1c4b89b104c35, type: 2}
+  AnimationFrameRate: 15

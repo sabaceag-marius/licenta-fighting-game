@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GooberGroundedNeutralAttack
   m_EditorClassIdentifier: 
   Type: 0
-  TotalDurationFrames: 60
+  TotalDurationFrames: 7
   FrameCount: 7
   OverrideHurtboxes: 0
   Frames:
@@ -60,4 +60,4 @@ MonoBehaviour:
       Radius: 0.19663334
     Hurtboxes: []
   AnimationClip: {fileID: 7400000, guid: ee924d1831e21d24eadf552403b7e7e7, type: 2}
-  AnimationFrameRate: 7
+  AnimationFrameRate: 60

@@ -70,7 +70,7 @@ public class InputManager : MonoBehaviour
         input.LeftStickX = (sbyte)(leftAnalog.x * 100f);
         input.LeftStickY = (sbyte)(leftAnalog.y * 100f);
 
-        //TODO: Right stick - only store if we are holding the direction
+        //OBSOLETETODO: Right stick - only store if we are holding the direction
 
         // Buttons
 

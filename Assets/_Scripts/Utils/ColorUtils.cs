@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-//TODO: remove when adding animations
+//OBSOLETETODO: remove when adding animations
 public static class ColorUtils
 {
     public static Color HexToColor(string hex)

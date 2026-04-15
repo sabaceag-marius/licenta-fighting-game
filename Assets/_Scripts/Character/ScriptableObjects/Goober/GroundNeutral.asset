@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f6d5febe30e971419f7d0b0a305aaa0, type: 3}
+  m_Name: GroundNeutral
+  m_EditorClassIdentifier: 
+  Type: 0
+  TotalDurationFrames: 14
+  FrameCount: 7
+  OverrideHurtboxes: 0
+  Frames:
+  - frameIndex: 3
+    Hitboxes:
+    - Id: 0
+      Center: {x: -1.3279443, y: -0.00000023841858}
+      Radius: 0.46474504
+    - Id: 1
+      Center: {x: -2.1623163, y: -0.023503542}
+      Radius: 0.39423466
+    Hurtboxes: []
+  - frameIndex: 4
+    Hitboxes:
+    - Id: 0
+      Center: {x: -1.3279443, y: -0.00000023841858}
+      Radius: 0.46474504
+    - Id: 1
+      Center: {x: -2.1623163, y: -0.023503542}
+      Radius: 0.39423466
+    Hurtboxes: []
+  - frameIndex: 5
+    Hitboxes:
+    - Id: 0
+      Center: {x: -1.3279443, y: -0.00000023841858}
+      Radius: 0.46474504
+    - Id: 1
+      Center: {x: -2.1623163, y: -0.023503542}
+      Radius: 0.39423466
+    Hurtboxes: []
+  - frameIndex: 0
+    Hitboxes: []
+    Hurtboxes:
+    - Type: 2
+      State: 0
+      Center: {x: 0.054374695, y: -0.24770284}
+      Size: {x: 0.94945085, y: 1}
+      Angle: 0
+    - Type: 2
+      State: 0
+      Center: {x: -0.29032278, y: -0.6890371}
+      Size: {x: 0.16159916, y: 0.26642323}
+      Angle: 0
+    - Type: 2
+      State: 0
+      Center: {x: 0.34452105, y: -0.72000504}
+      Size: {x: 0.18393669, y: 0.2587604}
+      Angle: 18.68835
+    - Type: 2
+      State: 0
+      Center: {x: -0.5215268, y: -0.26655817}
+      Size: {x: 0.28441435, y: 0.45993716}
+      Angle: 0
+    - Type: 2
+      State: 0
+      Center: {x: 0.5678847, y: 0.15452671}
+      Size: {x: 0.37067145, y: 0.52376825}
+      Angle: 0
+    - Type: 2
+      State: 0
+      Center: {x: -0.08035183, y: 0.30935383}
+      Size: {x: 0.64360094, y: 0.7317925}
+      Angle: -256.50018
+  AnimationClip: {fileID: 7400000, guid: 34f1b359e73254ffda7e7feb347fef0f, type: 2}
+  AnimationFrameRate: 30

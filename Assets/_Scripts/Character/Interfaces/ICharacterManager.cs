@@ -15,18 +15,18 @@ public interface ICharacterManager
 
     public bool IsGrounded { get; set; }
     
-    // TODO: Instead of exposing FrameInput, add a method to check in the FrameBuffer for an action
+    // OBSOLETETODO: Instead of exposing FrameInput, add a method to check in the FrameBuffer for an action
     public FrameInput Input { get; }
     
-    //TODO: REMOVE THIS WHEN ADDING ANIMATIONS
+    //OBSOLETETODO: REMOVE THIS WHEN ADDING ANIMATIONS
     void ChangeColor(Color color);
 
     void Flip();
 
     void HandlePlatformCollisions();
 
-    //TODO: Change to serializable class instead of scriptable object?
-    //TODO: Move this and CharacterStats to another controller?
+    //OBSOLETETODO: Change to serializable class instead of scriptable object?
+    //OBSOLETETODO: Move this and CharacterStats to another controller?
     AttackDataSO? GetAttack(AttackType attackType);
 
     T GetGameObjectComponent<T>();

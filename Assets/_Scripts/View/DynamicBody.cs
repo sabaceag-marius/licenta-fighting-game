@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(BaseColliderFactory))]
@@ -9,7 +10,7 @@ public class DynamicBody : MonoBehaviour
 
     private void Awake()
     {
-        colliderFactory = GetComponent<BaseColliderFactory>();
+        colliderFactory = GetComponents<BaseColliderFactory>().First(col => !col.IsHurtbox);
     }
 
     public LogicDynamicBody GetLogicBody()

@@ -90,6 +90,13 @@ public class DeterministicGameManager : MonoBehaviour
             gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
             gameState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
             gameState.Characters[i].CurrentState = Data.CharacterStateType.Fall;
+
+            var hurtbox = new Data.Combat.HurtboxData[1];
+            hurtbox[0] = new Data.Combat.HurtboxData {Collider = characters[i].GetHurtbox()};
+            
+            gameState.Characters[i].Hurtboxes = hurtbox;
+
+            gameState.Characters[i].HitTargets = new bool[gameState.Characters.Length];
         }
     }
 
@@ -179,10 +186,12 @@ public class DeterministicGameManager : MonoBehaviour
 
             character.UpdateState(characterData);
 
-            if (characterData.CurrentState == Data.CharacterStateType.Attack && ShowHitboxes && debugDrawer != null)
+            if (ShowHitboxes && debugDrawer != null)
             {
-                debugDrawer.DrawAttackState(gameSimulation.GetCharacterAttack(i, characterData.AttackType), 
-                    characterData.CurrentAttackFrame, characterData.Position, -characterData.FacingDirection);
+
+                Data.Combat.AttackData attack = gameSimulation.GetCharacterAttack(i, characterData.AttackType);
+
+                debugDrawer.DrawCharacter(characterData, attack);
             }
         }
     }
