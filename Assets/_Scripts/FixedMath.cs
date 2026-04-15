@@ -67,6 +67,14 @@ public struct FixedVector2
     public static FixedVector2 operator *(FixedFloat a, FixedVector2 b) => new FixedVector2(a * b.x, a * b.y);
     public static FixedVector2 operator /(FixedVector2 a, FixedFloat b) => new FixedVector2(a.x / b, a.y / b);
 
+    // Equality
+    public static bool operator ==(FixedVector2 a, FixedVector2 b) => a.x == b.x && a.y == b.y;
+    public static bool operator !=(FixedVector2 a, FixedVector2 b) => !(a == b);
+
+    // Override Equals and GetHashCode (Required when overloading == and !=)
+    public override bool Equals(object obj) => obj is FixedVector2 other && this == other;
+    public override int GetHashCode() => (int)fpmath.hash(this);
+
     public override string ToString() => $"({(float)x}, {(float)y})";
 }
 
@@ -165,6 +173,9 @@ public static class FixedMath
 
     public static FixedVector2 Normalize(this FixedVector2 vector)
     {
+        if (vector == FixedVector2.zero)
+            return FixedVector2.zero;
+
         return fpmath.normalize(vector);
     }
 
