@@ -15,16 +15,14 @@ namespace Simulation
             character.AttackFrameCount = characterAttacks[(int)character.AttackType].Frames.Length;
 
             character.IsFastFalling = false;
+
+            character.HitTargetsMask = 0;
         }
 
         public override void Exit(ref CharacterData character)
         {
             base.Exit(ref character);
 
-            for (int i = 0; i < character.HitTargets.Length; i++)
-            {
-                character.HitTargets[i] = false;
-            }
         }
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)

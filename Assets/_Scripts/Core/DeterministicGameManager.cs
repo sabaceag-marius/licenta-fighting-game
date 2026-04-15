@@ -81,7 +81,7 @@ public class DeterministicGameManager : MonoBehaviour
         
         characters = FindObjectsOfType<Character>();
 
-        gameState.CharactersCount = math.min(characters.Length, 100);
+        gameState.CharactersCount = math.min(characters.Length, 16);
         gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
 
         for (int i = 0; i < gameState.CharactersCount; i++)
@@ -96,7 +96,7 @@ public class DeterministicGameManager : MonoBehaviour
             
             gameState.Characters[i].Hurtboxes = hurtbox;
 
-            gameState.Characters[i].HitTargets = new bool[gameState.Characters.Length];
+            // gameState.Characters[i].HitTargets = new bool[gameState.Characters.Length];
         }
     }
 
@@ -107,6 +107,11 @@ public class DeterministicGameManager : MonoBehaviour
 
         gameState.CharactersCount = math.min(characterCount, 100);
         gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
+
+        for (int i = 0; i < gameState.Characters.Length; i++)
+        {
+            gameState.Characters[i].Hurtboxes = new Data.Combat.HurtboxData[1];
+        }
     }    
 
     private void InitializeAttackData()
@@ -211,7 +216,18 @@ public class DeterministicGameManager : MonoBehaviour
 
         for (int i = 0; i < destination.CharactersCount; i++)
         {
+            // We save the hurtbox for the character before copying it because
+            // otherwise the hurtbox array of the character will have the pointer
+            // to the array of the source AND will leave this array unused, whill
+            // will lead to the GarbageCollector triggering
+
+            var preAllocatedHurtboxes = destination.Characters[i].Hurtboxes;
+
             destination.Characters[i] = source.Characters[i];
+
+            destination.Characters[i].Hurtboxes = preAllocatedHurtboxes;
+
+            destination.Characters[i].Hurtboxes[0] = source.Characters[i].Hurtboxes[0];
         }
     }
 }

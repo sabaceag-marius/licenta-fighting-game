@@ -60,7 +60,9 @@ namespace Data
         /// </summary>
         public Data.Combat.HurtboxData[] Hurtboxes;
         
-        public bool[] HitTargets;
+        public int HitTargetsMask;
+        
+        // public bool[] HitTargets;
 
         #endregion
     }
