@@ -21,6 +21,8 @@ namespace Simulation
                 return;
             }
 
+            HandlePlatformCollision(ref character, input);
+
             if (character.RemainingAirJumps > 0 && CheckIfJumping(ref character, input))
             {
                 character.RemainingAirJumps--;

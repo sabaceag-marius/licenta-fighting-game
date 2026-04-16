@@ -38,6 +38,12 @@ namespace Simulation
 
             character.StateFrame++;
 
+            //TODO: move somewhere else when handling other buffers and such
+            if (character.IgnorePlatformCollisionFrames > 0)
+            {
+                character.IgnorePlatformCollisionFrames--;
+            }
+
             // Swap between states
             if (character.StateChanged || character.CurrentState != startingStateType)
             {

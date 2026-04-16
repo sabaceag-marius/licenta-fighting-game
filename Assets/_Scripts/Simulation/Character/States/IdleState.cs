@@ -8,6 +8,8 @@ namespace Simulation
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {
+            HandlePlatformCollision(ref character, input);
+
             if (CheckIfFalling(ref character, input))
                 return;
 

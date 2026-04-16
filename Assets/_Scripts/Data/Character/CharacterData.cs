@@ -45,6 +45,8 @@ namespace Data
 
         public FixedVector2 AirDodgeDirection;
 
+        public int IgnorePlatformCollisionFrames;
+
         #region Attack State
         public Combat.AttackType AttackType;
 

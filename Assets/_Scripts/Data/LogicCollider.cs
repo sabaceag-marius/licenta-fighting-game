@@ -8,7 +8,7 @@ public enum ColliderType
 
 public struct LogicCollider
 {
-    // Add layer stuff here
+    public ColliderLayer Layer;
 
     public ColliderType Type;
 
@@ -53,4 +53,11 @@ public struct LogicCollider
     public FixedFloat Right => Position.x + Extents.x;
 
     public FixedFloat Left => Position.x - Extents.x;
+}
+
+public enum ColliderLayer
+{
+    None,
+    Ground,
+    Platform
 }

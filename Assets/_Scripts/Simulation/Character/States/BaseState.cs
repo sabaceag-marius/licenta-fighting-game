@@ -85,5 +85,18 @@ namespace Simulation
         {
             character.FacingDirection = direction;
         }
+
+        protected void HandlePlatformCollision(ref CharacterData character, ProcessedInput input)
+        {
+            // Fall through the platform if:
+            // You are grounded on the platform and you flick down (Idle and Walk)
+            // or if you are falling above the platform and hold down
+             
+            if ((character.DynamicBody.IsGrounded && input.FlickDirection.y == -1) ||
+                (!character.DynamicBody.IsGrounded && character.DynamicBody.Velocity.y < 0 && input.Movement.y <= -0.5))
+            {
+                character.IgnorePlatformCollisionFrames = character.Stats.IgnorePlatformCollisionFrames;
+            }
+        }
     }
 }

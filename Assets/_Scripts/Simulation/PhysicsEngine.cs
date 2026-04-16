@@ -26,7 +26,8 @@ public static class PhysicsEngine
             {
                 ref LogicCollider staticCollider = ref state.StaticColliders[j];
 
-                //TODO: Check for layermasks ?
+                if (staticCollider.Layer == ColliderLayer.Platform && !ShouldCheckPlatformCollisions(state.Characters[i], staticCollider))
+                    continue;
 
                 if (!dynamicBody.Collider.BoundingBox.CheckAABBCollision(staticCollider.BoundingBox))
                     continue;
@@ -66,5 +67,23 @@ public static class PhysicsEngine
         {
             dynamicBody.Velocity.x = 0f;
         }
+    }
+
+    private static bool ShouldCheckPlatformCollisions(Data.CharacterData characterData, LogicCollider platformCollider)
+    {
+        // We should only consider the platform collider solid if all of these conditions are met:
+        // 1. The character is not ignoring the platforms (holding down to fall through them)
+        // 2. The character is moving downwards
+        // 3. The character's bottom position was above the platform in the previous frame
+
+        if (characterData.IgnorePlatformCollisionFrames > 0)
+            return false;
+
+        if (characterData.Velocity.y > 0)
+            return false;
+
+        FixedFloat characterBottomPreviousFrame = characterData.DynamicBody.Collider.BoundingBox.Bottom - characterData.Velocity.y;
+
+        return characterBottomPreviousFrame >= platformCollider.Top;
     }
 }
