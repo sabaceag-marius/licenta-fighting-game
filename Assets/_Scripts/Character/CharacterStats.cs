@@ -75,4 +75,6 @@ public class CharacterStats
     public float AirDodgeTraction = 20;
     
     public int AirDodgeFrames = 40;
+
+    public int IgnorePlatformCollisionFrames = 8;
 }

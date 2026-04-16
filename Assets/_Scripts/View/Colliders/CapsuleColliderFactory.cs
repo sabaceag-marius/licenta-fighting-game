@@ -29,7 +29,8 @@ public class CapsuleColliderFactory : BaseColliderFactory
             Position = ((Vector2)transform.position + scaledOffset).ToFixedVector2(),
             HalfInnerLength = halfInnerLength,
             Direction = GetDirectionVector().ToFixedVector2(),
-            Radius = radius
+            Radius = radius,
+            Layer = Layer
         };
     }
 

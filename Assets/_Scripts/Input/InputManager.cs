@@ -182,7 +182,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    //private void Update() => GatherInput();
+    private void Update() => GatherInput();
     private void OnEnable() => inputActions.Enable();
     private void OnDisable() => inputActions.Disable();
 }

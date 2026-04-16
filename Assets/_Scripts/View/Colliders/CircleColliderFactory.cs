@@ -17,7 +17,8 @@ public class CustomCircleCollider : BaseColliderFactory
         {
             Type = ColliderType.Circle,
             Position = transform.position.ToFixedVector2(),
-            Radius = scaledRadius.ToFixedFloat()
+            Radius = scaledRadius.ToFixedFloat(),
+            Layer = Layer
         };
     }
 

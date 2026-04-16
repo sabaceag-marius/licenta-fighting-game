@@ -44,5 +44,7 @@ namespace Data
         public FixedFloat AirDodgeTraction;
 
         public int AirDodgeFrames;
+
+        public int IgnorePlatformCollisionFrames;
     }
 }

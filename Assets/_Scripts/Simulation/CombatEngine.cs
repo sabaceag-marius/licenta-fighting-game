@@ -23,7 +23,9 @@ public static class CombatEngine
 
             for (int j = 0; j < state.CharactersCount; j++)
             {
-                if (i == j || character.HitTargets[j])
+                bool alreadyHit = (character.HitTargetsMask & (1 << j)) != 0;
+
+                if (i == j || alreadyHit)
                     continue;
 
                 ref Data.CharacterData targetCharacter = ref state.Characters[j];
@@ -36,7 +38,7 @@ public static class CombatEngine
                 
                 if (hitbox != null)
                 {
-                    character.HitTargets[j] = true;
+                    character.HitTargetsMask |= (1 << j);
 
                     Debug.Log($"Hit character! with hitbox {hitbox.Value.Id}");
 

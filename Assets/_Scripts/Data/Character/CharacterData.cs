@@ -45,6 +45,8 @@ namespace Data
 
         public FixedVector2 AirDodgeDirection;
 
+        public int IgnorePlatformCollisionFrames;
+
         #region Attack State
         public Combat.AttackType AttackType;
 
@@ -60,7 +62,9 @@ namespace Data
         /// </summary>
         public Data.Combat.HurtboxData[] Hurtboxes;
         
-        public bool[] HitTargets;
+        public int HitTargetsMask;
+        
+        // public bool[] HitTargets;
 
         #endregion
     }

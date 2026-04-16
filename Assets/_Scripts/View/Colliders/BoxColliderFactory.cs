@@ -16,7 +16,8 @@ public class BoxColliderFactory : BaseColliderFactory
         {
             Type = ColliderType.Box,
             Position = transform.position.ToFixedVector2(),
-            Extents = scaledSize.ToFixedVector2() / 2f
+            Extents = scaledSize.ToFixedVector2() / 2f,
+            Layer = Layer
         };
     }
 
