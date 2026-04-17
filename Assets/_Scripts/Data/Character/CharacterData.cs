@@ -45,7 +45,20 @@ namespace Data
 
         public FixedVector2 AirDodgeDirection;
 
+        #region Countdowns
+
         public int IgnorePlatformCollisionFrames;
+
+        public int AirDodgeCooldown;
+
+        #endregion
+
+        #region AirDodgeState
+
+        //TODO: reset after being hit
+        public int RemainingAirDodges;
+
+        #endregion
 
         #region Attack State
         public Combat.AttackType AttackType;

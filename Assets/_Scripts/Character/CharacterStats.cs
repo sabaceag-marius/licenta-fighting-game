@@ -77,4 +77,8 @@ public class CharacterStats
     public int AirDodgeFrames = 40;
 
     public int IgnorePlatformCollisionFrames = 8;
+
+    public int AirDodgeCooldown = 50;
+
+    public int AirDodgesCount = 2;
 }

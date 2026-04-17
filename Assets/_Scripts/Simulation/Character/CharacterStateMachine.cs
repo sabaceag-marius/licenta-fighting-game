@@ -38,11 +38,7 @@ namespace Simulation
 
             character.StateFrame++;
 
-            //TODO: move somewhere else when handling other buffers and such
-            if (character.IgnorePlatformCollisionFrames > 0)
-            {
-                character.IgnorePlatformCollisionFrames--;
-            }
+            DecrementCountdowns(ref character);            
 
             // Swap between states
             if (character.StateChanged || character.CurrentState != startingStateType)
@@ -52,6 +48,19 @@ namespace Simulation
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];
                 newState.Enter(ref character, input, characterAttacks);
+            }
+        }
+
+        private void DecrementCountdowns(ref CharacterData character)
+        {
+            if (character.IgnorePlatformCollisionFrames > 0)
+            {
+                character.IgnorePlatformCollisionFrames--;
+            }
+
+            if (character.AirDodgeCooldown > 0)
+            {
+                character.AirDodgeCooldown--;
             }
         }
     }

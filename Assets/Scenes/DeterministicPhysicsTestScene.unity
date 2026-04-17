@@ -571,10 +571,13 @@ MonoBehaviour:
     AirSpeed: 20
     AirAcceleration: 30
     AirFriction: 20
-    FastFallSpeed: 30
+    FastFallSpeed: 20
     AirDodgePower: 17
     AirDodgeTraction: 50
     AirDodgeFrames: 40
+    IgnorePlatformCollisionFrames: 8
+    AirDodgeCooldown: 50
+    AirDodgesCount: 2
 --- !u!114 &337496538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2071,6 +2074,9 @@ MonoBehaviour:
     AirDodgePower: 17
     AirDodgeTraction: 50
     AirDodgeFrames: 40
+    IgnorePlatformCollisionFrames: 8
+    AirDodgeCooldown: 50
+    AirDodgesCount: 2
 --- !u!114 &1937588375
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,6 +14,14 @@ namespace Simulation
             character.Velocity = character.AirDodgeDirection * character.Stats.AirDodgePower;
         }
 
+        public override void Exit(ref CharacterData character)
+        {
+            base.Exit(ref character);
+
+            character.RemainingAirDodges--;
+            character.AirDodgeCooldown = character.Stats.AirDodgeCooldown;
+        }
+        
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {
             if (character.DynamicBody.IsGrounded)

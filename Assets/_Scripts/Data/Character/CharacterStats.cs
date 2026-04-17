@@ -45,6 +45,10 @@ namespace Data
 
         public int AirDodgeFrames;
 
+        public int AirDodgeCooldown;
+
+        public int AirDodgesCount;
+
         public int IgnorePlatformCollisionFrames;
     }
 }

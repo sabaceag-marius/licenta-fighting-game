@@ -15,7 +15,7 @@ namespace Simulation
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (input.DodgePressed)
+            if (input.DodgePressed && character.RemainingAirDodges > 0 && character.AirDodgeCooldown == 0)
             {
                 character.CurrentState = CharacterStateType.AirDodge;
                 return;

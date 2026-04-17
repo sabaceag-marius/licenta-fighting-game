@@ -5,6 +5,14 @@ namespace Simulation
 {
     public class IdleState : BaseState
     {
+        public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
+        {
+            base.Enter(ref character, input, characterAttacks);
+
+            character.RemainingAirJumps = character.Stats.AirJumpCount;
+            character.RemainingAirDodges = character.Stats.AirDodgesCount;
+            character.AirDodgeCooldown = 0;
+        }
 
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {

@@ -57,7 +57,9 @@ public class Character : MonoBehaviour
             LandLagFrames = CharacterStats.LandLagFrames,
             AirJumpCount = CharacterStats.AirJumpCount,
             AirDodgeFrames = CharacterStats.AirDodgeFrames,
-            IgnorePlatformCollisionFrames = CharacterStats.IgnorePlatformCollisionFrames
+            IgnorePlatformCollisionFrames = CharacterStats.IgnorePlatformCollisionFrames,
+            AirDodgeCooldown = CharacterStats.AirDodgeCooldown,
+            AirDodgesCount = CharacterStats.AirDodgesCount,
         };
     }
 
