@@ -52,7 +52,11 @@ public static class AttackExtensions
 
         for (int i = 0; i < frameData.HitboxCount; i++)
         {
+            FixedFloat damageMultiplier = 1;
+
             HitboxData hitbox = sortedHitboxes[i];
+
+            FixedVector2 launchDirection = FixedMath.GetDirectionVector(hitbox.Angle);
 
             frameData.Hitboxes[i] = new Data.Combat.HitboxData
             {
@@ -63,7 +67,12 @@ public static class AttackExtensions
                     Radius = hitbox.Radius
                 },
 
-                Id = hitbox.Id
+                Id = hitbox.Id,
+
+                LaunchDirection = launchDirection,
+                BaseKnockback = hitbox.BaseKnockback * damageMultiplier,
+                FixedKnockback = hitbox.FixedKnockback * damageMultiplier,
+                Damage = hitbox.Damage,
             };
         }
 

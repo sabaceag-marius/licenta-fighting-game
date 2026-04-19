@@ -9,4 +9,13 @@ public class HitboxData
     public Vector2 Center;   // Position relative to the character pivot
     
     public float Radius;     // Size of the circle
+
+    public float Damage;
+
+    [Range(0, 360)]
+    public float Angle;
+
+    public float FixedKnockback;
+
+    public float BaseKnockback;
 }

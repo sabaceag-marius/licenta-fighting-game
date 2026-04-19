@@ -1,0 +1,29 @@
+
+using Data;
+using UnityEngine;
+
+namespace Simulation
+{
+    public class HitState : BaseState
+    {
+        public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
+        {
+            base.Enter(ref character, input, characterAttacks);
+        }
+
+        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        {
+            if (character.DynamicBody.IsGrounded)
+            {
+                character.CurrentState = CharacterStateType.Land;
+            }
+
+            // Check if hitstun expired -> transition into fall
+
+            if (character.HitstunFrames == 0)
+            {
+                character.CurrentState = CharacterStateType.Fall;
+            }
+        }
+    }
+}

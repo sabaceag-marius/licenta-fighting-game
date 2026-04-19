@@ -25,6 +25,7 @@ namespace Simulation
             characterStates[(int)CharacterStateType.TurnAround] = new TurnAroundState();
             characterStates[(int)CharacterStateType.Walk] = new WalkState();
             characterStates[(int)CharacterStateType.Attack ] = new AttackState();
+            characterStates[(int)CharacterStateType.Hit ] = new HitState();
         }
 
         public void AdvanceFrame(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
@@ -61,6 +62,11 @@ namespace Simulation
             if (character.AirDodgeCooldown > 0)
             {
                 character.AirDodgeCooldown--;
+            }
+
+            if (character.HitstunFrames > 0)
+            {
+                character.HitstunFrames--;
             }
         }
     }

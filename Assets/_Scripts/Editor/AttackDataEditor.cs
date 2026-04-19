@@ -414,7 +414,7 @@ namespace Editor
 
                     // Header Row: ID + Delete Button
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUIUtility.labelWidth = 60; // Make labels smaller to fit
+                    EditorGUIUtility.labelWidth = 120; // Make labels smaller to fit
                     hb.Id = EditorGUILayout.IntField("ID", hb.Id);
 
                     GUI.backgroundColor = Color.red;
@@ -434,6 +434,14 @@ namespace Editor
                     //EditorGUILayout.Space(2);
                     //hb.Center = EditorGUILayout.Vector2Field("Offset", hb.Center);
                     //hb.Radius = EditorGUILayout.FloatField("Radius", hb.Radius);
+
+                    hb.Damage = EditorGUILayout.FloatField("Damage", hb.Damage);
+
+                    hb.Angle = EditorGUILayout.FloatField("Angle", hb.Angle);
+
+                    hb.BaseKnockback = EditorGUILayout.FloatField("Base Knockback", hb.BaseKnockback);
+                    
+                    hb.FixedKnockback = EditorGUILayout.FloatField("Fixed Knockback", hb.FixedKnockback);
 
                     EditorGUILayout.EndVertical();
 

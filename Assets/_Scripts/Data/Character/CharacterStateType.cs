@@ -13,5 +13,6 @@ namespace Data
         Land,
         Attack,
         AirDodge,
+        Hit,
     }
 }

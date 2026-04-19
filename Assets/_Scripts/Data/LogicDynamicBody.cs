@@ -15,5 +15,7 @@ public struct LogicDynamicBody
 
     public FixedVector2 Velocity;
 
+    public FixedVector2 ExternalVelocity;
+
     public bool IsGrounded;
 }
