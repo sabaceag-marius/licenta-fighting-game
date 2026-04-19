@@ -113,7 +113,7 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""name"": ""Dodge"",
                     ""type"": ""Button"",
                     ""id"": ""9e21d5be-5d3c-458f-9e4d-35673193d233"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -206,8 +206,8 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0f4f2293-3ee9-4348-abff-fc1841befbde"",
-                    ""path"": """",
+                    ""id"": ""379bb1d7-d2fc-4b09-b714-e4f28a60a179"",
+                    ""path"": ""<DualShockGamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PS4 controller"",
@@ -217,11 +217,11 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""379bb1d7-d2fc-4b09-b714-e4f28a60a179"",
-                    ""path"": ""<DualShockGamepad>/leftStick"",
+                    ""id"": ""0e87d7c1-d546-4fa7-8ada-173cf64bf98b"",
+                    ""path"": ""<SwitchProControllerHID>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";PS4 controller"",
+                    ""groups"": "";Switch Pro Controller"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -255,6 +255,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PS4 controller"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9efddd6d-af57-4489-9b60-aa8a5eafd112"",
+                    ""path"": ""<SwitchProControllerHID>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Switch Pro Controller"",
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -316,6 +327,28 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""504ed307-32ad-42c0-b073-0403a6eed0a8"",
+                    ""path"": ""<SwitchProControllerHID>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Switch Pro Controller"",
+                    ""action"": ""Dodge"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""22371aea-1da4-4c7b-b0a2-f04be04f2eb7"",
+                    ""path"": ""<SwitchProControllerHID>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Switch Pro Controller"",
+                    ""action"": ""Dodge"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""732ff807-5aa8-4844-8eb9-51917d381d84"",
                     ""path"": ""<GamecubeControllerDevice>/aButton"",
                     ""interactions"": """",
@@ -349,6 +382,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""a4f3818d-6e34-4be6-a280-209a67042f38"",
+                    ""path"": ""<SwitchProControllerHID>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Switch Pro Controller"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""86738fac-a832-46b0-8051-82093d052c36"",
                     ""path"": ""<GamecubeControllerDevice>/bButton"",
                     ""interactions"": """",
@@ -365,6 +409,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PS4 controller"",
+                    ""action"": ""SpecialAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0842a8c0-db4d-44a9-be52-e7f9b6d1bde0"",
+                    ""path"": ""<SwitchProControllerHID>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Switch Pro Controller"",
                     ""action"": ""SpecialAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -589,6 +644,17 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
             ""devices"": [
                 {
                     ""devicePath"": ""<DualShockGamepad>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Switch Pro Controller"",
+            ""bindingGroup"": ""Switch Pro Controller"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<SwitchProControllerHID>"",
                     ""isOptional"": false,
                     ""isOR"": false
                 }
@@ -1052,6 +1118,19 @@ public partial class @InputActions: IInputActionCollection2, IDisposable
         {
             if (m_PS4controllerSchemeIndex == -1) m_PS4controllerSchemeIndex = asset.FindControlSchemeIndex("PS4 controller");
             return asset.controlSchemes[m_PS4controllerSchemeIndex];
+        }
+    }
+    private int m_SwitchProControllerSchemeIndex = -1;
+    /// <summary>
+    /// Provides access to the input control scheme.
+    /// </summary>
+    /// <seealso cref="UnityEngine.InputSystem.InputControlScheme" />
+    public InputControlScheme SwitchProControllerScheme
+    {
+        get
+        {
+            if (m_SwitchProControllerSchemeIndex == -1) m_SwitchProControllerSchemeIndex = asset.FindControlSchemeIndex("Switch Pro Controller");
+            return asset.controlSchemes[m_SwitchProControllerSchemeIndex];
         }
     }
     /// <summary>
