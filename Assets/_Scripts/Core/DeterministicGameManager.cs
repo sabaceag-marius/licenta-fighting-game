@@ -9,6 +9,11 @@ using Data;
 
 public class DeterministicGameManager : MonoBehaviour
 {
+    [Header("Scene settings")]
+
+    [SerializeField]
+    private Transform SpawnPointsTransform;
+
     [Header("Debug settings")]
     
     [SerializeField]
@@ -38,7 +43,12 @@ public class DeterministicGameManager : MonoBehaviour
 
     private Character[] characters;
 
-    void Start()
+    private void Awake()
+    {
+        InitializeScene();
+    }
+    
+    private void Start()
     {
         fixedDeltaTime = 1f / TargetFPS;
 
@@ -56,6 +66,18 @@ public class DeterministicGameManager : MonoBehaviour
         }
 
         InitializeAttackData();
+    }
+
+    private void InitializeScene()
+    {
+        PlayerHandler[] players = FindObjectsOfType<PlayerHandler>();
+
+        Transform[] spawnpoints = SpawnPointsTransform.GetComponentsInChildren<Transform>().Where(t => t != SpawnPointsTransform).ToArray();
+
+        for (int i = 0; i < Math.Min(players.Length, spawnpoints.Length); i++)
+        {
+            players[i].SpawnCharacter(spawnpoints[i]);
+        }
     }
 
     private void InitializeStartingState()
@@ -135,7 +157,7 @@ public class DeterministicGameManager : MonoBehaviour
         gameSimulation.InitializeAttackData(attacks);
     }
 
-    void Update()
+    private void Update()
     {
         accumulator += Time.deltaTime;
 

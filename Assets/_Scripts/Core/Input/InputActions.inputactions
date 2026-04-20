@@ -424,6 +424,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "e7403f16-e769-4f19-a998-d8d85dc49873",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Start",
+                    "type": "Button",
+                    "id": "15cc2dc7-e377-4a48-9eb9-229297337872",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -434,6 +452,28 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "GameCubeController",
+                    "action": "LeftStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d657cca8-23de-4b1f-8863-726fecdd27fb",
+                    "path": "<DualShockGamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "LeftStick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d524e15c-1296-4d45-9767-688d56fc6353",
+                    "path": "<SwitchProControllerHID>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Switch Pro Controller",
                     "action": "LeftStick",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -523,6 +563,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "RTrigger",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b9f83d3f-7dba-45c2-aeba-41a14573b7a8",
+                    "path": "<DualShockGamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7a47babf-678a-4af0-bbe1-db56907d2adf",
+                    "path": "<SwitchProControllerHID>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Switch Pro Controller",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8cf3e18b-e8b9-4808-8693-1bee03c05d56",
+                    "path": "<SwitchProControllerHID>/home",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Switch Pro Controller",
+                    "action": "Start",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "be296ac7-777c-4780-8ed3-41945c5dad64",
+                    "path": "<DualShockGamepad>/touchpadButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PS4 controller",
+                    "action": "Start",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -26,7 +26,7 @@ public struct LogicCollider
     public FixedFloat Radius;
 
     /// <summary>
-    /// [CapsuleCollider]: The distance from the center to the top / bottom of the capsule
+    /// [CapsuleCollider]: The distance from the center to the top / bottom of the capsule TODO CHANGE
     /// </summary>
     
     public FixedFloat HalfInnerLength;
