@@ -15,6 +15,7 @@ namespace Simulation
         {
             if (character.DynamicBody.IsGrounded)
             {
+                //TODO: remove hitstun frames?
                 character.CurrentState = CharacterStateType.Land;
             }
 
