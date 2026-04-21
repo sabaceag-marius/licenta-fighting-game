@@ -81,4 +81,6 @@ public class CharacterStats
     public int AirDodgeCooldown = 50;
 
     public int AirDodgesCount = 2;
+
+    public float Weight = 100;
 }

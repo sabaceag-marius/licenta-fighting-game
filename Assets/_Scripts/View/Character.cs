@@ -6,6 +6,9 @@ using UnityEngine;
 // [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
 public class Character : MonoBehaviour
 {
+    [Header("Debug settings")]
+    public float Damage = 0;
+    
     public List<AttackDataSO> Attacks;
 
     [SerializeField]

@@ -7,6 +7,13 @@ public static class PhysicsEngine
 
         position += dynamicBody.Velocity;
 
+        if (dynamicBody.ExternalVelocity != FixedVector2.zero)
+        {
+            position += dynamicBody.ExternalVelocity;
+
+            dynamicBody.ExternalVelocity = dynamicBody.ExternalVelocity.MoveTowards(FixedVector2.zero, 0.15f);
+        }
+
         dynamicBody.Position = position;
 
         dynamicBody.Collider.BoundingBox = dynamicBody.Collider.GetBoundingBox();

@@ -183,4 +183,12 @@ public static class FixedMath
     {
         return position + new FixedVector2(localPosition.x * facingDirection, localPosition.y);
     }
+
+    public static FixedVector2 GetDirectionVector(FixedFloat angleDegrees)
+    {
+        FixedFloat angleRadian = angleDegrees * (FixedFloat)(fpmath.PI / 180);
+        
+        return new FixedVector2(fpmath.cos(angleRadian), fpmath.sin(angleRadian)).Normalize();
+        // return new FixedVector2(-fpmath.sin(angleRadian), fpmath.cos(angleRadian)).Normalize();
+    }
 }
