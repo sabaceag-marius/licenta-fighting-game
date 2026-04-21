@@ -52,7 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Layer: 0
   IsHurtbox: 0
-  ShowCollider: 1
+  ShowCollider: 0
   ShowBoundingBox: 0
   Offset: {x: 0, y: 0}
   Size: {x: 1.12, y: 2}
@@ -150,9 +150,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Layer: 0
   IsHurtbox: 1
-  ShowCollider: 0
+  ShowCollider: 1
   ShowBoundingBox: 0
-  Offset: {x: -0.12, y: -0.15}
+  Offset: {x: 0, y: -0.15}
   Size: {x: 0.71, y: 1.56}
 --- !u!1 &6300420669191912182
 GameObject:

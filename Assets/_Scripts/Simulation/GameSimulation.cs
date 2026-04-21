@@ -1,12 +1,18 @@
 
+using System;
+
 namespace Simulation
 {
     public class GameSimulation
     {
         private Data.Combat.AttackData[][] attackDatabase;
+        
         private CharacterStateMachine characterStateMachine;
+        
         private CharacterInputProcessor inputProcessor;
 
+        private LogicBox blastzoneBoundingBox;        
+        
         public GameSimulation()
         {
             characterStateMachine = new CharacterStateMachine();
@@ -37,6 +43,8 @@ namespace Simulation
 
                 // Run physics
                 PhysicsEngine.ApplyVelocity(ref character.DynamicBody);
+
+                GameRulesEngine.CheckBlastZone(ref character, blastzoneBoundingBox);
             }
 
             // Check for all collisions for the colliders from the gameState in the PhysicsEngine
@@ -46,6 +54,11 @@ namespace Simulation
 
             // Check for hitbox - hurtbox collision
             CombatEngine.ProcessAttacks(ref gameState, attackDatabase);
+        }
+
+        public void SetBlastzone(LogicBox collider)
+        {
+            blastzoneBoundingBox = collider;
         }
     }
 }

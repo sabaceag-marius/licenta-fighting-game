@@ -55,7 +55,7 @@ public class CharacterSelectManager : MonoBehaviour
                 startLabel.gameObject.SetActive(canStartMatch);
             }
 
-            if (context.action.name == "Start" && canStartMatch)
+            if (context.action.name == "Start" ) //&& canStartMatch
             {
                 canStartMatch = false;
 

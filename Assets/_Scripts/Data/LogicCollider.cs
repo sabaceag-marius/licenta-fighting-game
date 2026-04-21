@@ -59,5 +59,6 @@ public enum ColliderLayer
 {
     None,
     Ground,
-    Platform
+    Platform,
+    Blastzone
 }

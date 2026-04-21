@@ -80,5 +80,13 @@ namespace Data
         // public bool[] HitTargets;
 
         #endregion
+
+        #region Respawning
+
+        public int RemainingStocks;
+
+        public FixedVector2 SpawnPosition;
+
+        #endregion
     }
 }

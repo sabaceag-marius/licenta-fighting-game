@@ -96,9 +96,18 @@ public class DeterministicGameManager : MonoBehaviour
 
         for (int i = 0; i < gameState.StaticColliderCount; i++)
         {
-            gameState.StaticColliders[i] = colliderFactories[i].GetLogicCollider();
+            LogicCollider collider = colliderFactories[i].GetLogicCollider();
 
-            gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();
+            if (collider.Layer == ColliderLayer.Blastzone)
+            {
+                gameSimulation.SetBlastzone(collider.GetBoundingBox());
+            }
+            else
+            {
+                gameState.StaticColliders[i] = collider;
+
+                gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();    
+            }
         }
         
         characters = FindObjectsOfType<Character>();
@@ -112,6 +121,8 @@ public class DeterministicGameManager : MonoBehaviour
             gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
             gameState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
             gameState.Characters[i].CurrentState = Data.CharacterStateType.Fall;
+            gameState.Characters[i].SpawnPosition = (Vector2)characters[i].transform.position;
+            gameState.Characters[i].RemainingStocks = 3;
 
             var hurtbox = new Data.Combat.HurtboxData[1];
             hurtbox[0] = new Data.Combat.HurtboxData {Collider = characters[i].GetHurtbox()};
