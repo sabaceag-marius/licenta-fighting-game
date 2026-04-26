@@ -12,6 +12,8 @@ namespace Simulation
             character.AirDodgeDirection = input.Movement.Normalize();
 
             character.Velocity = character.AirDodgeDirection * character.Stats.AirDodgePower;
+
+            character.Hurtboxes[0].State = Data.Combat.HurtboxState.Intangible;
         }
 
         public override void Exit(ref CharacterData character)
@@ -20,6 +22,8 @@ namespace Simulation
 
             character.RemainingAirDodges--;
             character.AirDodgeCooldown = character.Stats.AirDodgeCooldown;
+
+            character.Hurtboxes[0].State = Data.Combat.HurtboxState.Normal;
         }
         
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)

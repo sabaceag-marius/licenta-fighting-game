@@ -91,12 +91,24 @@ namespace Data
 
         #endregion
 
-        public FixedFloat DamagePercentage;
+        #region Respawning
+
+        public int RemainingStocks;
+
+        public FixedVector2 SpawnPosition;
+
+        #endregion
 
         #region Hit State
 
         public int HitstunFrames;
 
+        public FixedFloat DamagePercentage;
+
         #endregion
+
+        public FixedFloat Score;
+
+        public int InvincibilityFrames;
     }
 }

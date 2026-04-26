@@ -2,7 +2,7 @@
   "dependencies": {
     "com.danielmansson.mathematics.fixedpoint": "https://github.com/danielmansson/Unity.Mathematics.FixedPoint.git",
     "com.nfysoft.gamecubecontroller": "git@github.com:enfyy/Unity-GameCubeController.git",
-    "com.unity.cinemachine": "2.10.3",
+    "com.unity.cinemachine": "2.10.7",
     "com.unity.collab-proxy": "2.7.1",
     "com.unity.feature.2d": "2.0.1",
     "com.unity.ide.rider": "3.0.36",

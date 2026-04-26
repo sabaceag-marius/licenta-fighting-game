@@ -1,5 +1,7 @@
 using UnityEngine;
 using Data.Combat;
+using Data;
+using System;
 
 public class DebugDrawer : MonoBehaviour
 {
@@ -19,6 +21,9 @@ public class DebugDrawer : MonoBehaviour
     private Material IntangibleHurtboxMaterial;
 
     [SerializeField]
+    private Material InvincibleHurtboxMaterial;
+
+    [SerializeField]
     private Material BoundingBoxMaterial;
 
     // Cached procedural meshes
@@ -28,6 +33,7 @@ public class DebugDrawer : MonoBehaviour
     private RenderParams hitboxParams;
     private RenderParams hurtboxParams;
     private RenderParams intangibleHurtboxParams;
+    private RenderParams invincibleHurtboxParams;
     private RenderParams boundingBoxParams;
 
     private void Awake()
@@ -41,6 +47,7 @@ public class DebugDrawer : MonoBehaviour
         hitboxParams = new RenderParams(HitboxMaterial);
         hurtboxParams = new RenderParams(HurtboxMaterial);
         intangibleHurtboxParams = new RenderParams(IntangibleHurtboxMaterial);
+        invincibleHurtboxParams = new RenderParams(InvincibleHurtboxMaterial);
         boundingBoxParams = new RenderParams(BoundingBoxMaterial);
     }
 
@@ -48,18 +55,18 @@ public class DebugDrawer : MonoBehaviour
     {
         if (characterData.CurrentState == Data.CharacterStateType.Attack)
         {
-            DrawAttackState(attack, characterData.CurrentAttackFrame, characterData.Position, -characterData.FacingDirection);
+            DrawAttackState(attack, characterData.CurrentAttackFrame, characterData.Position, -characterData.FacingDirection, characterData);
         }
         else
         {
-            DrawCharacterHurtbox(characterData.Hurtboxes[0], characterData.Position, characterData.FacingDirection);
+            DrawCharacterHurtbox(characterData.Hurtboxes[0], characterData.Position, characterData.FacingDirection, GetHurtboxParams(characterData, characterData.Hurtboxes[0].State));
         }
     }
 
     /// <summary>
     /// Call this every frame from your View/Visuals script, passing the current player position.
     /// </summary>
-    public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection)
+    public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection, Data.CharacterData characterData)
     {
         // Safety check to ensure we don't read out of bounds
         if (currentFrame < 0 || currentFrame >= attack.FrameCount) return;
@@ -84,12 +91,12 @@ public class DebugDrawer : MonoBehaviour
             {
                 Data.Combat.HurtboxData hurtbox = frameData.Hurtboxes[i];
 
-                DrawCapsule(hurtbox.Collider, playerPosition, facingDirection, hurtbox.State == Data.Combat.HurtboxState.Intangible ? intangibleHurtboxParams : hurtboxParams);
+                DrawCapsule(hurtbox.Collider, playerPosition, facingDirection, GetHurtboxParams(characterData, hurtbox.State));
             }
         }
         else
         {
-            //TODO: ADD NORMAL HURTBOX
+            DrawCharacterHurtbox(characterData.Hurtboxes[0], characterData.Position, -characterData.FacingDirection, GetHurtboxParams(characterData, characterData.Hurtboxes[0].State));
         }
 
         for (int i = 0; i < frameData.HitboxCount; i++)
@@ -98,14 +105,22 @@ public class DebugDrawer : MonoBehaviour
         }
     }
 
-    private void DrawCharacterHurtbox(Data.Combat.HurtboxData hurtbox, Vector2 playerPosition, int facingDirection)
+    private RenderParams GetHurtboxParams(CharacterData characterData, Data.Combat.HurtboxState hurtboxState)
+    {
+        if (characterData.InvincibilityFrames > 0)
+            return invincibleHurtboxParams;
+
+        return hurtboxState == Data.Combat.HurtboxState.Intangible ? intangibleHurtboxParams : hurtboxParams;
+    }
+
+    private void DrawCharacterHurtbox(Data.Combat.HurtboxData hurtbox, Vector2 playerPosition, int facingDirection, RenderParams renderParams)
     {
         if (ShowHurtboxBoundingBox)
         {
                 DrawAABB(hurtbox.Collider.BoundingBox, playerPosition, facingDirection, boundingBoxParams);
         }
 
-        DrawCapsule(hurtbox.Collider, playerPosition, facingDirection, hurtbox.State == Data.Combat.HurtboxState.Intangible ? intangibleHurtboxParams : hurtboxParams);
+        DrawCapsule(hurtbox.Collider, playerPosition, facingDirection, renderParams);
     }
 
     #region Drawing Math

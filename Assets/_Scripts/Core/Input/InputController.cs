@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 public class InputController : MonoBehaviour
 {
     private PlayerInput playerInput;
-    private InputActions inputActions;
 
     #region InputActions
 
@@ -26,24 +25,13 @@ public class InputController : MonoBehaviour
     [SerializeField] 
     private bool ConsoleLog;
 
-    void Awake()
-    {
-        inputActions = new InputActions();
-
-        //playerInput = GetComponent<PlayerInput>();
-
-        //inputActions.devices = new ReadOnlyArray<InputDevice>(new[] { playerInput.devices[0] });
-
-        moveInputAction = inputActions.Player.Move;
-        jumpInputAction = inputActions.Player.Jump;
-        dodgeInputAction = inputActions.Player.Dodge;
-        attackInputAction = inputActions.Player.Attack;
-    }
-
     public RawInput GetRawInput()
     {
         RawInput input = new RawInput();
 
+        if (playerInput == null)
+            return input;
+            
         // Left stick - analog
 
         Vector2 leftAnalog = moveInputAction.ReadValue<Vector2>();
@@ -82,6 +70,15 @@ public class InputController : MonoBehaviour
             $"Attacked {input.Attacked}; Dodged {input.Dodged}");
     }
 
-    private void OnEnable() => inputActions.Enable();
-    private void OnDisable() => inputActions.Disable();
+    public void Initialize(PlayerInput assignedInput)
+    {
+        playerInput = assignedInput;
+
+        //TODO: remove magic strings
+        
+        moveInputAction = playerInput.actions["Move"];
+        jumpInputAction = playerInput.actions["Jump"];
+        dodgeInputAction = playerInput.actions["Dodge"];
+        attackInputAction = playerInput.actions["Attack"];
+    }
 }

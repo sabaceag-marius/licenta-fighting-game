@@ -20,17 +20,17 @@ MonoBehaviour:
   - frameIndex: 3
     Hitboxes:
     - Id: 0
-      Center: {x: -2.059945, y: 0.13126779}
+      Center: {x: -2.0161328, y: 0.13126826}
       Radius: 0.89661837
-      Damage: 0
-      Angle: 0
+      Damage: 10
+      Angle: 8
       FixedKnockback: 0
-      BaseKnockback: 0
+      BaseKnockback: 45
     - Id: 1
       Center: {x: -0.7888, y: 0.108650446}
       Radius: 0.88716125
-      Damage: 0
-      Angle: 0
+      Damage: 8
+      Angle: 30
       FixedKnockback: 0
       BaseKnockback: 0
     Hurtboxes:

@@ -68,6 +68,11 @@ namespace Simulation
             {
                 character.HitstunFrames--;
             }
+
+            if (character.InvincibilityFrames > 0)
+            {
+                character.InvincibilityFrames--;
+            }
         }
     }
 }
