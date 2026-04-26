@@ -47,11 +47,14 @@ public static class CombatEngine
                     // If any of the hurtboxes are in the invincible state, the target is not hit, but the hitstun still applies
                     // The invincible state should only be used when respawning and shields
 
-                    bool isInvincible = CheckIfInvincible(hurtboxes);
+                    // bool isInvincible = CheckIfInvincible(hurtboxes);
+                    bool isInvincible = targetCharacter.InvincibilityFrames > 0;
 
                     // TODO: Apply damage, knockback etc.
                     if (!isInvincible)
                     {
+                        character.Score += hitbox.Damage;
+                        
                         // Apply the damage
                         targetCharacter.DamagePercentage += hitbox.Damage;
 

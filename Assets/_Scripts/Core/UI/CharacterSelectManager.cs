@@ -7,71 +7,89 @@ using UnityEngine.SceneManagement;
 
 public class CharacterSelectManager : MonoBehaviour
 {
-    [SerializeField] 
-    private Transform canvasTransform;
-
-    [SerializeField] 
-    private GameObject cursorPrefab;
-
-    [SerializeField]
-    private TMP_Text startLabel;
+    [SerializeField] private Transform canvasTransform;
+    [SerializeField] private GameObject cursorPrefab;
+    [SerializeField] private TMP_Text startLabel;
 
     private List<PlayerHandler> joinedPlayers = new List<PlayerHandler>();
-
     private int MaxPlayerCount;
-
     private bool canStartMatch;
-
 
     void Awake()
     {
         MaxPlayerCount = GetComponent<PlayerInputManager>().maxPlayerCount;
     }
 
+    void Start()
+    {
+        PlayerHandler[] returningPlayers = FindObjectsOfType<PlayerHandler>();
+
+        foreach (PlayerHandler player in returningPlayers)
+        {
+            // Reset their previous character choice so they have to pick again
+            player.SetCharacter(null); 
+            
+            SetupPlayerUI(player, player.GetComponent<PlayerInput>());
+        }
+    }
+
     public void OnPlayerJoined(PlayerInput playerInput)
     {
         PlayerHandler newPlayer = playerInput.GetComponent<PlayerHandler>();
-        
-        joinedPlayers.Add(newPlayer);
+        SetupPlayerUI(newPlayer, playerInput);
+    }
 
-        // Spawn the visual cursor on the UI Canvas
+    private void SetupPlayerUI(PlayerHandler playerHandler, PlayerInput playerInput)
+    {
+        if (!joinedPlayers.Contains(playerHandler))
+        {
+            joinedPlayers.Add(playerHandler);
+        }
+
+        // Switch them back to UI mode
+        playerInput.SwitchCurrentActionMap("UI Overlay");
+
+        // Spawn the visual cursor
         GameObject newCursor = Instantiate(cursorPrefab, canvasTransform);
         VirtualCursor cursorScript = newCursor.GetComponent<VirtualCursor>();
         
-        cursorScript.PlayerHandler = newPlayer;
+        cursorScript.PlayerHandler = playerHandler;
         cursorScript.PlayerIndex = playerInput.playerIndex;
         
-        playerInput.onActionTriggered += context => 
+        // We initialize the cursor and let IT handle its own input listening.
+        // This is much safer than subscribing to events on the persistent manager.
+        cursorScript.Initialize(playerInput, this);
+    }
+
+    // Called by the VirtualCursor when a player locks in a character
+    public void CheckStartCondition()
+    {
+        canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
+        startLabel.gameObject.SetActive(canStartMatch);
+    }
+
+    // Called by the VirtualCursor when a player presses Start
+    public void TryStartMatch()
+    {
+        if (canStartMatch)
         {
-            if (context.action.name == "LeftStick") 
-                cursorScript.OnMove(context);
-
-            if (context.action.name == "Select")
-            {
-                cursorScript.OnSelect(context);
-
-                canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
-
-                startLabel.gameObject.SetActive(canStartMatch);
-            }
-
-            if (context.action.name == "Start" ) //&& canStartMatch
-            {
-                canStartMatch = false;
-
-                SceneManager.LoadScene("CombatScene");
-            }
-        };
+            canStartMatch = false;
+            SceneManager.LoadScene("CombatScene");
+        }
     }
 
     public void OnPlayerLeft(PlayerInput playerInput)
     {
-        // var player = playerInput.GetComponent<PlayerHandler>();
+        PlayerHandler player = playerInput.GetComponent<PlayerHandler>();
         
-        // joinedPlayers.Remove(player);
+        if (joinedPlayers.Contains(player))
+        {
+            joinedPlayers.Remove(player);
+        }
 
-        // canStartMatch = false;
-
-        // startLabel.enabled = false;
+        CheckStartCondition();
+        
+        // The PlayerInputManager handles destroying the GameObject, 
+        // so any cursors linked to it need to clean themselves up.
     }
 }

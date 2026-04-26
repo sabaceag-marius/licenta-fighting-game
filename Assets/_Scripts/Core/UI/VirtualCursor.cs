@@ -1,15 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEngine.AI;
-using System;
 
 public class VirtualCursor : MonoBehaviour
 {
     private CharacterSlot[] characterSlots;
-
 
     [SerializeField]
     private float cursorSpeed = 1000f;
@@ -27,21 +22,24 @@ public class VirtualCursor : MonoBehaviour
     public int PlayerIndex
     {
         get => playerIndex;
-
         set
         {
             playerIndex = value;
-
-            tmpText.text = $"P{playerIndex+1}";
+            tmpText.text = $"P{playerIndex + 1}";
         }
     }
 
     private bool isCharacterSelected;
 
+    private PlayerInput myInput;
+    private CharacterSelectManager selectManager;
+    private InputAction moveAction;
+    private InputAction selectAction;
+    private InputAction startAction;
+
     private void Awake()
     {
         cursorRect = GetComponent<RectTransform>();
-
         tmpText = GetComponentInChildren<TMP_Text>();
 
         parentCanvas = GetComponentInParent<Canvas>();
@@ -56,15 +54,57 @@ public class VirtualCursor : MonoBehaviour
         characterSlots = FindObjectsOfType<CharacterSlot>();
     }
 
-    public void OnMove(InputAction.CallbackContext context)
+    // Called by the CharacterSelectManager right after this cursor is instantiated
+    public void Initialize(PlayerInput input, CharacterSelectManager manager)
     {
-        moveInput = context.ReadValue<Vector2>();
+        myInput = input;
+        selectManager = manager;
+
+        // Cache the specific actions for this player's controller
+        moveAction = myInput.actions["LeftStick"];
+        selectAction = myInput.actions["Select"];
+        startAction = myInput.actions["Start"];
     }
 
-    public void OnSelect(InputAction.CallbackContext context)
+    void Update()
     {
-        if (!context.performed) return;
+        // Safety check to ensure Initialize was called
+        if (myInput == null) return;
 
+        // 1. Read Inputs
+        moveInput = moveAction.ReadValue<Vector2>();
+
+        // 2. Handle Movement
+        // Move the cursor based on thumbstick input (only if they haven't locked in)
+        if (moveInput.sqrMagnitude > 0.1f && !isCharacterSelected)
+        {
+            Vector2 newPosition = cursorRect.anchoredPosition + moveInput * cursorSpeed * Time.deltaTime;
+
+            // Clamp the position if we have a Canvas reference
+            if (canvasRect != null)
+            {
+                newPosition = ClampToCanvas(newPosition);
+            }
+
+            cursorRect.anchoredPosition = newPosition;
+        }
+
+        // 3. Handle Selection
+        if (selectAction.WasPressedThisFrame())
+        {
+            HandleSelection();
+        }
+
+        // 4. Handle Match Start
+        if (startAction.WasPressedThisFrame())
+        {
+            selectManager.TryStartMatch();
+        }
+    }
+
+    // Extracted from your previous OnSelect logic
+    private void HandleSelection()
+    {
         Camera uiCamera = null;
         if (parentCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
         {
@@ -87,35 +127,21 @@ public class VirtualCursor : MonoBehaviour
             {
                 if (isCharacterSelected)
                 {
-                    PlayerHandler.SetCharacter(null);
+                    PlayerHandler.SetCharacter(null); // Deselect
                 }
                 else
                 {
-                    Debug.Log($"Player {playerIndex+1} selected {slot.CharacterName}!");
-                
-                    PlayerHandler.SetCharacter(slot.CharacterPrefab);
+                    Debug.Log($"Player {playerIndex + 1} selected {slot.CharacterName}!");
+                    PlayerHandler.SetCharacter(slot.CharacterPrefab); // Select
                 }
                 
                 isCharacterSelected = !isCharacterSelected;
+                
+                // Notify the manager to update the "Start" label visibility
+                selectManager.CheckStartCondition();
 
                 break;
             }
-        }
-    }
-    void Update()
-    {
-        // Move the cursor based on thumbstick input
-        if (moveInput.sqrMagnitude > 0.1f && !isCharacterSelected)
-        {
-            Vector2 newPosition = cursorRect.anchoredPosition + moveInput * cursorSpeed * Time.deltaTime;
-
-            // Clamp the position if we have a Canvas reference
-            if (canvasRect != null)
-            {
-                newPosition = ClampToCanvas(newPosition);
-            }
-
-            cursorRect.anchoredPosition = newPosition;
         }
     }
 

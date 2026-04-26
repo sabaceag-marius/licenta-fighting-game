@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 51f4eae63d93d96438c0d0612b2c5a7b
+guid: 9df026c40f7f10f47a2c60eafa16d002
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: goober_attack_test_0
+      name: gooberAerialNeturalAttack_0
       rect:
         serializedVersion: 2
         x: 0
@@ -137,14 +137,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1610632a9fdcaa6498597554a892fefb
-      internalID: 1974567843
+      spriteID: c8df9f98b5fdc9547be4ab8ecc6edf43
+      internalID: 419105136
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: goober_attack_test_1
+      name: gooberAerialNeturalAttack_1
       rect:
         serializedVersion: 2
         x: 2000
@@ -158,14 +158,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fc3fa82ea16c27b40b6d743b14441851
-      internalID: -1848155344
+      spriteID: fc304e66ee7ad374c9ad35ed4c24eea9
+      internalID: 281307733
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: goober_attack_test_2
+      name: gooberAerialNeturalAttack_2
       rect:
         serializedVersion: 2
         x: 4000
@@ -179,14 +179,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d90e7d527f030940be21c460af47786
-      internalID: -401205161
+      spriteID: c04e401337cdb87479239025757910cf
+      internalID: 273709555
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: goober_attack_test_3
+      name: gooberAerialNeturalAttack_3
       rect:
         serializedVersion: 2
         x: 6000
@@ -200,14 +200,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aa233c8feebf664438604588654b0430
-      internalID: -1220082683
+      spriteID: 5e4e1c8ddd912104e8ee95c69382aeac
+      internalID: 1857099875
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: goober_attack_test_4
+      name: gooberAerialNeturalAttack_4
       rect:
         serializedVersion: 2
         x: 8000
@@ -221,14 +221,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 870654bc9418dca4aac199fb4e9eba19
-      internalID: 1297644719
+      spriteID: bef0216eba4ac004283ec29335fa840f
+      internalID: 1218691245
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: goober_attack_test_5
+      name: gooberAerialNeturalAttack_5
       rect:
         serializedVersion: 2
         x: 10000
@@ -242,14 +242,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2deebfb6a43070745af90835f8eace23
-      internalID: 1266590478
+      spriteID: 23ada9781d5abe14993b1c6442c59167
+      internalID: 1904130026
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: goober_attack_test_6
+      name: gooberAerialNeturalAttack_6
       rect:
         serializedVersion: 2
         x: 12000
@@ -263,8 +263,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b220bd9ea5be5d74a8de0529ed959c6d
-      internalID: 560510049
+      spriteID: ce53ac3bbb4dec543bd0c15a1b8e71a3
+      internalID: 1635939641
       vertices: []
       indices: 
       edges: []
@@ -280,13 +280,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      goober_attack_test_0: 1974567843
-      goober_attack_test_1: -1848155344
-      goober_attack_test_2: -401205161
-      goober_attack_test_3: -1220082683
-      goober_attack_test_4: 1297644719
-      goober_attack_test_5: 1266590478
-      goober_attack_test_6: 560510049
+      gooberAerialNeturalAttack_0: 419105136
+      gooberAerialNeturalAttack_1: 281307733
+      gooberAerialNeturalAttack_2: 273709555
+      gooberAerialNeturalAttack_3: 1857099875
+      gooberAerialNeturalAttack_4: 1218691245
+      gooberAerialNeturalAttack_5: 1904130026
+      gooberAerialNeturalAttack_6: 1635939641
   mipmapLimitGroupName: 
   pSDRemoveMatte: 1
   userData: 

@@ -102,7 +102,13 @@ namespace Data
         #region Hit State
 
         public int HitstunFrames;
-       
+
+        public FixedFloat DamagePercentage;
+
         #endregion
+
+        public FixedFloat Score;
+
+        public int InvincibilityFrames;
     }
 }

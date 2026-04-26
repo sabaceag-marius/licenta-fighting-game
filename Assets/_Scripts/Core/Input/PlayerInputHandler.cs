@@ -23,10 +23,10 @@ public class PlayerHandler : MonoBehaviour
     }
 
     // Called by the Game Manager in the Combat scene
-    public void SpawnCharacter(Transform spawnPoint)
+    public GameObject SpawnCharacter(Transform spawnPoint)
     {
         if (SelectedCharacterPrefab == null)
-            return;
+            return null;
 
         // Spawn the character
         GameObject character = Instantiate(SelectedCharacterPrefab, spawnPoint.position, spawnPoint.rotation);
@@ -42,5 +42,14 @@ public class PlayerHandler : MonoBehaviour
         
         // Assign the input
         character.GetComponent<InputController>().Initialize(playerInput);
+
+        if (PlayerIndex != 0)
+        {
+            var spriteRenderer = character.GetComponentInChildren<SpriteRenderer>();
+
+            spriteRenderer.color = Color.grey;
+        }
+
+        return character;
     }
 }

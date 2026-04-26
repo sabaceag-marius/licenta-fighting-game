@@ -13,6 +13,13 @@ namespace Simulation
             character.IsFastFalling = false;
         }
 
+        public override void Exit(ref CharacterData character)
+        {
+            base.Exit(ref character);
+
+            character.IsFastFalling = false;
+        }
+        
         public override void HandleLogic(ref CharacterData character, ProcessedInput input)
         {
             if (input.DodgePressed && character.RemainingAirDodges > 0 && character.AirDodgeCooldown == 0)

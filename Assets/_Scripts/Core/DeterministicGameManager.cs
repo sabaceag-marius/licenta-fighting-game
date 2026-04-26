@@ -6,14 +6,10 @@ using UnityEngine;
 using Simulation;
 using Data.Combat;
 using Data;
+using UnityEngine.SceneManagement;
 
 public class DeterministicGameManager : MonoBehaviour
 {
-    [Header("Scene settings")]
-
-    [SerializeField]
-    private Transform SpawnPointsTransform;
-
     [Header("Debug settings")]
     
     [SerializeField]
@@ -27,13 +23,18 @@ public class DeterministicGameManager : MonoBehaviour
     [SerializeField]
     private int TargetFPS = 60;
 
+    [SerializeField]
+    private int minutesPerMatch;
+    
+    private long totalMatchFrames;
+
     [Header("Rollback settings")]
 
     [SerializeField]
     private readonly int BufferSize = 60;
     private GameState[] stateBuffer;
 
-    public int CurrentTick { get; private set; }
+    private int currentTick;
     
     private float fixedDeltaTime;
     
@@ -43,13 +44,10 @@ public class DeterministicGameManager : MonoBehaviour
 
     private Character[] characters;
 
-    private void Awake()
-    {
-        InitializeScene();
-    }
-    
     private void Start()
     {
+        totalMatchFrames = (long)(minutesPerMatch * 60 * TargetFPS);
+
         fixedDeltaTime = 1f / TargetFPS;
 
         // Create the GameSimulation class
@@ -68,18 +66,6 @@ public class DeterministicGameManager : MonoBehaviour
         InitializeAttackData();
     }
 
-    private void InitializeScene()
-    {
-        PlayerHandler[] players = FindObjectsOfType<PlayerHandler>();
-
-        Transform[] spawnpoints = SpawnPointsTransform.GetComponentsInChildren<Transform>().Where(t => t != SpawnPointsTransform).ToArray();
-
-        for (int i = 0; i < Math.Min(players.Length, spawnpoints.Length); i++)
-        {
-            players[i].SpawnCharacter(spawnpoints[i]);
-        }
-    }
-
     private void InitializeStartingState()
     {
         ref GameState gameState = ref stateBuffer[0];
@@ -90,26 +76,26 @@ public class DeterministicGameManager : MonoBehaviour
             .Where(c => c.GetComponent<Character>() == null).ToArray();
         //|| allColliders[i].GetComponentInParent<DeterministicRigidBody>() == null)
 
-        gameState.StaticColliderCount = math.min(colliderFactories.Length, 100);
+        var staticColliders = colliderFactories.Where(i => i.Layer != ColliderLayer.Blastzone).ToArray();
+
+        gameState.StaticColliderCount = math.min(staticColliders.Length, 100);
 
         gameState.StaticColliders = new LogicCollider[gameState.StaticColliderCount];
 
         for (int i = 0; i < gameState.StaticColliderCount; i++)
         {
-            LogicCollider collider = colliderFactories[i].GetLogicCollider();
+            LogicCollider collider = staticColliders[i].GetLogicCollider();
+            
+            gameState.StaticColliders[i] = collider;
 
-            if (collider.Layer == ColliderLayer.Blastzone)
-            {
-                gameSimulation.SetBlastzone(collider.GetBoundingBox());
-            }
-            else
-            {
-                gameState.StaticColliders[i] = collider;
-
-                gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();    
-            }
+            gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();
         }
+
+        // Blastzone
         
+        LogicCollider blastzoneCollider = colliderFactories.First(i => i.Layer == ColliderLayer.Blastzone).GetLogicCollider();
+        gameSimulation.SetBlastzone(blastzoneCollider.GetBoundingBox());
+            
         characters = FindObjectsOfType<Character>();
 
         gameState.CharactersCount = math.min(characters.Length, 16);
@@ -183,9 +169,9 @@ public class DeterministicGameManager : MonoBehaviour
     }
 
     private void RunSingleTick()
-    {
-        int previousIndex = CurrentTick % BufferSize;
-        int currentIndex = (CurrentTick + 1) % BufferSize;
+    {        
+        int previousIndex = currentTick % BufferSize;
+        int currentIndex = (currentTick + 1) % BufferSize;
 
         ref GameState previousState = ref stateBuffer[previousIndex];
         ref GameState currentState = ref stateBuffer[currentIndex];
@@ -198,24 +184,41 @@ public class DeterministicGameManager : MonoBehaviour
 
             RawInput input = character.GetRawInput();
 
-            input.FrameId = (ushort)CurrentTick;
+            input.FrameId = (ushort)currentTick;
 
             currentState.Characters[i].RawInput = input;
 
             //TODO: Remove this in actual game
-            // currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
+            currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
         }
 
         // store the game data in the buffer, get the input etc
 
         gameSimulation.AdvanceFrame(ref currentState, previousState);
 
-        CurrentTick++;
+        currentTick++;
+
+        bool matchEnded = false;
+
+        for (int i = 0; i < currentState.Characters.Length; i++)
+        {
+            if (currentState.Characters[i].RemainingStocks == 0)
+            {
+                matchEnded = true;
+                break;
+            }
+        }
+
+        if (currentTick == totalMatchFrames || matchEnded)
+        {
+            EndMatch(currentState);
+        }
     }
 
     private void UpdateVisuals()
     {
-        GameState gameState = stateBuffer[CurrentTick % BufferSize];
+        GameState prevState = stateBuffer[(currentTick -1 + BufferSize) % BufferSize];
+        GameState gameState = stateBuffer[currentTick % BufferSize];
 
         for (int i = 0; i < characters.Length; i++)
         {
@@ -226,12 +229,66 @@ public class DeterministicGameManager : MonoBehaviour
 
             if (ShowHitboxes && debugDrawer != null)
             {
-
                 Data.Combat.AttackData attack = gameSimulation.GetCharacterAttack(i, characterData.AttackType);
 
                 debugDrawer.DrawCharacter(characterData, attack);
             }
+
+            CharacterData prevCharacterData = prevState.Characters[i];
+
+            if (prevCharacterData.DamagePercentage != characterData.DamagePercentage)
+            {
+                UIMatchManager.Instance.UpdateCharacterDamage(i, characterData.DamagePercentage);
+            }
+
+            if (prevCharacterData.RemainingStocks != characterData.RemainingStocks)
+            {
+                UIMatchManager.Instance.UpdateCharacterStocks(i, characterData.RemainingStocks);
+            }
         }
+
+        // Update timer
+        long framesRemaining = totalMatchFrames - currentTick;
+
+        UIMatchManager.Instance.UpdateTimer(framesRemaining, TargetFPS);
+    }
+
+    private void EndMatch(GameState state)
+    {
+        int winningPlayer = -1;
+
+        CharacterData characterOne = state.Characters[0];
+        CharacterData characterTwo = state.Characters[1]; 
+        
+        if (characterOne.RemainingStocks != characterTwo.RemainingStocks)
+        {
+            if (characterOne.RemainingStocks > characterTwo.RemainingStocks)
+            {
+                winningPlayer = 1;
+            }
+            else
+            {
+                winningPlayer = 2;
+            }
+        }
+        else if (characterOne.DamagePercentage != characterTwo.DamagePercentage)
+        {
+            if (characterOne.DamagePercentage > characterTwo.DamagePercentage)
+            {
+                winningPlayer = 1;
+            }
+            else
+            {
+                winningPlayer = 2;
+            }
+        }
+
+        MatchResultsData.WinnerPlayer = winningPlayer;
+
+        MatchResultsData.Player1TotalDamageDealt = characterOne.Score;
+        MatchResultsData.Player2TotalDamageDealt = characterTwo.Score;
+        
+        SceneManager.LoadScene("ResultsScene");
     }
 
     private void DeepCopyGameState(ref GameState source, ref GameState destination)

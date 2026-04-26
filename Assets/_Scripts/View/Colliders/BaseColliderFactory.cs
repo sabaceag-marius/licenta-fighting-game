@@ -5,7 +5,7 @@ public abstract class BaseColliderFactory : MonoBehaviour
     [Header("General settings")]
     
     [SerializeField]
-    protected ColliderLayer Layer;
+    public ColliderLayer Layer;
 
     public bool IsHurtbox = false;
     

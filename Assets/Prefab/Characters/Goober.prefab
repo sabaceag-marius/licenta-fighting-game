@@ -52,7 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Layer: 0
   IsHurtbox: 0
-  ShowCollider: 0
+  ShowCollider: 1
   ShowBoundingBox: 0
   Offset: {x: 0, y: 0}
   Size: {x: 1.12, y: 2}
@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d6aa3f2433bf3e4592d109f51b1c4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Damage: 0
   Attacks:
   - {fileID: 11400000, guid: 150a690febe754db3b3d08dad9b24111, type: 2}
   - {fileID: 11400000, guid: 7acfc46639af843c9bf7dacbc63f8d50, type: 2}
@@ -105,24 +106,25 @@ MonoBehaviour:
     DashAcceleration: 30
     DashFrames: 12
     RunningSpeed: 20
-    NormalJumpForce: 17
+    NormalJumpForce: 15
     ShortJumpForce: 10
     AirJumpForce: 15
     AirJumpCount: 2
     JumpWindupFrames: 4
     LandLagFrames: 4
     FallSpeed: 50
-    Gravity: 10
-    AirSpeed: 20
+    Gravity: 20
+    AirSpeed: 15
     AirAcceleration: 30
-    AirFriction: 20
+    AirFriction: 15
     FastFallSpeed: 20
-    AirDodgePower: 17
+    AirDodgePower: 20
     AirDodgeTraction: 50
     AirDodgeFrames: 40
     IgnorePlatformCollisionFrames: 8
     AirDodgeCooldown: 50
     AirDodgesCount: 2
+    Weight: 100
 --- !u!114 &5654833164165018471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,7 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Layer: 0
   IsHurtbox: 1
-  ShowCollider: 1
+  ShowCollider: 0
   ShowBoundingBox: 0
   Offset: {x: 0, y: -0.15}
   Size: {x: 0.71, y: 1.56}
