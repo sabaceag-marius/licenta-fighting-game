@@ -129,7 +129,7 @@ public class DeterministicGameManager : MonoBehaviour
             
             gameState.Characters[i].Hurtboxes = hurtbox;
 
-            // gameState.Characters[i].HitTargets = new bool[gameState.Characters.Length];
+            gameState.Characters[i].DamagePercentage = characters[i].Damage;
         }
     }
 

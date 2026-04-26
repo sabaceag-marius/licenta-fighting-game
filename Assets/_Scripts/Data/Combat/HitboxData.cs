@@ -7,6 +7,12 @@ namespace Data.Combat
         
         public int Id;
         
-        //TODO: Add damage, knockback etc.
+        public FixedFloat Damage;
+
+        public FixedVector2 LaunchDirection;
+
+        public FixedFloat FixedKnockback;
+
+        public FixedFloat BaseKnockback;
     }
 }

@@ -50,5 +50,7 @@ namespace Data
         public int AirDodgesCount;
 
         public int IgnorePlatformCollisionFrames;
+
+        public FixedFloat Weight;
     }
 }

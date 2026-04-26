@@ -22,9 +22,17 @@ MonoBehaviour:
     - Id: 0
       Center: {x: -2.059945, y: 0.13126779}
       Radius: 0.89661837
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 1
       Center: {x: -0.7888, y: 0.108650446}
       Radius: 0.88716125
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     Hurtboxes:
     - Type: 2
       State: 0

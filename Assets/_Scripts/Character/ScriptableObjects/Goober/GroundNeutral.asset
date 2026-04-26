@@ -19,30 +19,13 @@ MonoBehaviour:
   Frames:
   - frameIndex: 3
     Hitboxes:
-    - Id: 0
-      Center: {x: -1.3279443, y: -0.00000023841858}
-      Radius: 0.46474504
     - Id: 1
       Center: {x: -2.1623163, y: -0.023503542}
-      Radius: 0.39423466
-    Hurtboxes: []
-  - frameIndex: 4
-    Hitboxes:
-    - Id: 0
-      Center: {x: -1.3279443, y: -0.00000023841858}
-      Radius: 0.46474504
-    - Id: 1
-      Center: {x: -2.1623163, y: -0.023503542}
-      Radius: 0.39423466
-    Hurtboxes: []
-  - frameIndex: 5
-    Hitboxes:
-    - Id: 0
-      Center: {x: -1.3279443, y: -0.00000023841858}
-      Radius: 0.46474504
-    - Id: 1
-      Center: {x: -2.1623163, y: -0.023503542}
-      Radius: 0.39423466
+      Radius: 0.6881709
+      Damage: 11
+      Angle: 20
+      FixedKnockback: 0
+      BaseKnockback: 42
     Hurtboxes: []
   - frameIndex: 0
     Hitboxes: []

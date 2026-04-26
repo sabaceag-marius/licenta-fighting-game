@@ -34,19 +34,72 @@ public static class CombatEngine
 
                 Data.Combat.HurtboxData[] hurtboxes = GetActiveHurtboxes(j, targetCharacter, attacks, out hurtboxesBoundingBox);
 
-                Data.Combat.HitboxData? hitbox = CheckForCollision(frameData, hurtboxes, hurtboxesBoundingBox, character, targetCharacter);
+                Data.Combat.HitboxData? hitboxCheck = CheckForCollision(frameData, hurtboxes, hurtboxesBoundingBox, character, targetCharacter);
                 
-                if (hitbox != null)
+                if (hitboxCheck != null)
                 {
                     character.HitTargetsMask |= (1 << j);
 
-                    Debug.Log($"Hit character! with hitbox {hitbox.Value.Id}");
+                    Data.Combat.HitboxData hitbox = hitboxCheck.Value;
+
+                    Debug.Log($"Hit character! with hitbox {hitbox.Id}");
+
+                    // If any of the hurtboxes are in the invincible state, the target is not hit, but the hitstun still applies
+                    // The invincible state should only be used when respawning and shields
+
+                    bool isInvincible = CheckIfInvincible(hurtboxes);
 
                     // TODO: Apply damage, knockback etc.
+                    if (!isInvincible)
+                    {
+                        // Apply the damage
+                        targetCharacter.DamagePercentage += hitbox.Damage;
+
+                        FixedFloat percentage = targetCharacter.DamagePercentage;
+                        FixedFloat damage = hitbox.Damage;
+                        FixedFloat weight = targetCharacter.Stats.Weight;
+                        FixedFloat baseKnockback = hitbox.BaseKnockback;
+
+                        if (hitbox.FixedKnockback > 0)
+                        {
+                            percentage = 10;
+                            damage = hitbox.FixedKnockback;
+                        }
+
+                        FixedFloat knockbackValue = (((percentage * 0.1f + percentage * damage * 0.2f) * 200f / (weight + 100f) * 1.4f) + 18 + baseKnockback); 
+
+                        int hitstunFrames = (int)(knockbackValue * 0.4f);
+
+                        FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * character.FacingDirection, hitbox.LaunchDirection.y)
+                            * knockbackValue * 0.0045f;
+
+                        // To reset the Hit state
+                        targetCharacter.StateChanged = true;
+
+                        //TODO: add tuble for high knockback
+                        targetCharacter.CurrentState = CharacterStateType.Hit;
+
+                        targetCharacter.ExternalVelocity = knockbackDirection;
+                        targetCharacter.HitstunFrames = hitstunFrames;
+
+                        Debug.Log($"Damage: {percentage}; Knockback: {knockbackValue * 0.0045}; Direction {knockbackDirection}");
+                    }
+
                     break;
                 }
             }
         }
+    }
+
+    private static bool CheckIfInvincible(Data.Combat.HurtboxData[] hurtboxes)
+    {
+        for (int i = 0; i < hurtboxes.Length; i++)
+        {
+            if (hurtboxes[i].State == Data.Combat.HurtboxState.Invincible)
+                return true;
+        }
+
+        return false;
     }
 
     private static Data.Combat.HitboxData? CheckForCollision(
@@ -76,7 +129,7 @@ public static class CombatEngine
 
                 hurtbox.Collider.Position = FixedMath.GetGlobalPosition(hurtbox.Collider.Position, target.Position, target.FacingDirection); 
 
-                if (hitbox.Collider.CheckCollision(hurtbox.Collider) && hurtbox.State != Data.Combat.HurtboxState.Invincible)
+                if (hitbox.Collider.CheckCollision(hurtbox.Collider) && hurtbox.State != Data.Combat.HurtboxState.Intangible)
                     return hitbox;
             }
         }

@@ -37,6 +37,16 @@ namespace Data
             }
         }
 
+        public FixedVector2 ExternalVelocity
+        {
+            get => DynamicBody.ExternalVelocity;
+
+            set
+            {
+                DynamicBody.ExternalVelocity = value;
+            }
+        }
+
         // Specific state stuff
 
         public int RemainingAirJumps;
@@ -87,6 +97,12 @@ namespace Data
 
         public FixedVector2 SpawnPosition;
 
+        #endregion
+
+        #region Hit State
+
+        public int HitstunFrames;
+       
         #endregion
     }
 }
