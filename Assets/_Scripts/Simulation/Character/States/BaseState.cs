@@ -30,9 +30,9 @@ namespace Simulation
 
         public void Execute(ref CharacterData character, ProcessedInput input)
         {
-            HandlePhysics(ref character, input);
-
             HandleLogic(ref character, input);
+            
+            HandlePhysics(ref character, input);
         }
 
         /// <summary>
