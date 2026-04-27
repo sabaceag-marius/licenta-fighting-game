@@ -21,7 +21,7 @@ namespace Simulation
             character.Velocity = velocity;
         }
 
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             if (CheckIfFalling(ref character, input))
                 return;

@@ -1,6 +1,30 @@
 
 public static class PhysicsEngine
 {
+    // FixedFloat minStepX, FixedFloat minStepY set as static
+    public static void SimulateCharacterPhysics(ref Data.CharacterData character, LogicCollider[] staticColliders)
+    {
+
+        // clear the variables related to collision hits
+
+        ref LogicDynamicBody dynamicBody = ref character.DynamicBody;
+
+        ApplyVelocity(ref dynamicBody);
+
+        for(int i = 0; i < staticColliders.Length; i++)
+        {
+            LogicCollider staticCollider = staticColliders[i];
+
+            if (staticCollider.Layer == ColliderLayer.Platform && !ShouldCheckPlatformCollisions(character, staticCollider))
+                continue;
+
+            if (!dynamicBody.Collider.BoundingBox.CheckAABBCollision(staticCollider.BoundingBox))
+                continue;
+
+            HandleDynamicBodyCollision(ref dynamicBody, staticCollider);
+        }
+    }
+
     public static void ApplyVelocity(ref LogicDynamicBody dynamicBody)
     {
         FixedVector2 position = dynamicBody.Position;

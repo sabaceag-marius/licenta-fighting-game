@@ -6,7 +6,28 @@ namespace Simulation
 {
     public class RunState : BaseState
     {
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
+        {
+            base.HandlePhysics(ref character, input);
+
+            FixedVector2 velocity = character.Velocity;
+
+            // We decrease the speed if the movement stick is neutral (as opposed to moving to IdleState)
+            // or if we go beyond the maximum running speed
+
+            if (FixedMath.Abs(input.Movement.x) < 0.1f || FixedMath.Abs(velocity.x) > character.Stats.RunningSpeed)
+            {
+                velocity.x.Decelerate(character.Stats.Traction);
+            }
+            else
+            {
+                velocity.x.Accelerate(character.Stats.RunningSpeed * character.FacingDirection, character.Stats.DashAcceleration);
+            }
+
+            character.Velocity = velocity;
+        }
+        
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             if (CheckIfFalling(ref character, input))
                 return;
@@ -28,27 +49,6 @@ namespace Simulation
 
             if (CheckIfAttacking(ref character, input))
                 return;
-        }
-
-        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
-        {
-            base.HandlePhysics(ref character, input);
-
-            FixedVector2 velocity = character.Velocity;
-
-            // We decrease the speed if the movement stick is neutral (as opposed to moving to IdleState)
-            // or if we go beyond the maximum running speed
-
-            if (FixedMath.Abs(input.Movement.x) < 0.1f || FixedMath.Abs(velocity.x) > character.Stats.RunningSpeed)
-            {
-                velocity.x.Decelerate(character.Stats.Traction);
-            }
-            else
-            {
-                velocity.x.Accelerate(character.Stats.RunningSpeed * character.FacingDirection, character.Stats.DashAcceleration);
-            }
-
-            character.Velocity = velocity;
         }
 
         protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)

@@ -20,34 +20,14 @@ namespace Simulation
             character.IsFastFalling = false;
         }
         
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (input.DodgePressed && character.RemainingAirDodges > 0 && character.AirDodgeCooldown == 0)
-            {
-                character.CurrentState = CharacterStateType.AirDodge;
-                return;
-            }
-
             HandlePlatformCollision(ref character, input);
-
-            if (character.RemainingAirJumps > 0 && CheckIfJumping(ref character, input))
-            {
-                character.RemainingAirJumps--;
-                return;
-            }
 
             if (input.FastFalled)
             {
                 character.IsFastFalling = true;
             }
-
-            if (character.DynamicBody.IsGrounded)
-            {
-                character.CurrentState = CharacterStateType.Land;
-            }
-
-            if (CheckIfAttacking(ref character, input))
-                return;
         }
 
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
@@ -81,6 +61,29 @@ namespace Simulation
              }
 
             character.Velocity = velocity;
+        }
+
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        {
+            if (input.DodgePressed && character.RemainingAirDodges > 0 && character.AirDodgeCooldown == 0)
+            {
+                character.CurrentState = CharacterStateType.AirDodge;
+                return;
+            }
+
+            if (character.RemainingAirJumps > 0 && CheckIfJumping(ref character, input))
+            {
+                character.RemainingAirJumps--;
+                return;
+            }
+
+            if (character.DynamicBody.IsGrounded)
+            {
+                character.CurrentState = CharacterStateType.Land;
+            }
+
+            if (CheckIfAttacking(ref character, input))
+                return;
         }
 
         protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)

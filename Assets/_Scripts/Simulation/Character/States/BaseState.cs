@@ -14,6 +14,8 @@ namespace Simulation
 
         public virtual void Exit(ref CharacterData character) { }
 
+        public virtual void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input) { }
+
         public virtual void HandlePhysics(ref CharacterData character, ProcessedInput input)
         {
             if (character.DynamicBody.IsGrounded)
@@ -26,13 +28,18 @@ namespace Simulation
             }
         }
 
-        public abstract void HandleLogic(ref CharacterData character, ProcessedInput input);
+        public virtual void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input) { }
 
-        public void Execute(ref CharacterData character, ProcessedInput input)
+        public void Execute(ref CharacterData character, ProcessedInput input, LogicCollider[] staticColliders)
         {
-            HandleLogic(ref character, input);
+            HandlePrePhysicsLogic(ref character, input);
             
             HandlePhysics(ref character, input);
+
+            // add physics engine
+            PhysicsEngine.SimulateCharacterPhysics(ref character, staticColliders);
+            
+            HandlePostPhysicsLogic(ref character, input);
         }
 
         /// <summary>

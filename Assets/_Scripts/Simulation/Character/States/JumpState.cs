@@ -5,16 +5,6 @@ namespace Simulation
 {
     public class JumpState : BaseState
     {
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
-        {
-            // Swap to fall state after jump squat or instantly if we are midair
-            if (!character.DynamicBody.IsGrounded || character.StateFrame == character.Stats.JumpWindupFrames)
-            {
-                character.CurrentState = CharacterStateType.Fall; 
-                return;
-            }
-        }
-
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
         {
             base.HandlePhysics(ref character, input);
@@ -33,6 +23,16 @@ namespace Simulation
                 character.DynamicBody.Velocity.y = input.JumpHeld 
                     ? character.Stats.NormalJumpForce 
                     : character.Stats.ShortJumpForce;
+            }
+        }
+
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        {
+            // Swap to fall state after jump squat or instantly if we are midair
+            if (!character.DynamicBody.IsGrounded || character.StateFrame == character.Stats.JumpWindupFrames)
+            {
+                character.CurrentState = CharacterStateType.Fall; 
+                return;
             }
         }
     }

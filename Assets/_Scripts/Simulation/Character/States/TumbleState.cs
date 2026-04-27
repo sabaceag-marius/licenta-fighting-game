@@ -4,20 +4,20 @@ using UnityEngine;
 
 namespace Simulation
 {
-    public class HitState : BaseState
+    public class TumbleState : BaseState
     {
         public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
         {
             base.Enter(ref character, input, characterAttacks);
         }
 
-        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (character.DynamicBody.IsGrounded)
-            {
-                //TODO: remove hitstun frames?
-                character.CurrentState = CharacterStateType.Land;
-            }
+            // if (character.DynamicBody.IsGrounded)
+            // {
+            //     //TODO: remove hitstun frames?
+            //     character.CurrentState = CharacterStateType.Land;
+            // }
 
             // Check if hitstun expired -> transition into fall
 

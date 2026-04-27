@@ -19,7 +19,14 @@ namespace Simulation
             base.Exit(ref character);
         }
 
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
+        {
+            base.HandlePhysics(ref character, input);
+
+            character.DynamicBody.Velocity.x.Decelerate(character.Stats.Traction);
+        }
+
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             if (CheckIfFalling(ref character, input))
                 return;
@@ -38,13 +45,6 @@ namespace Simulation
             {
                 character.CurrentState = CharacterStateType.Idle;
             }
-        }
-
-        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
-        {
-            base.HandlePhysics(ref character, input);
-
-            character.DynamicBody.Velocity.x.Decelerate(character.Stats.Traction);
         }
     }
 }

@@ -28,14 +28,14 @@ namespace Simulation
             characterStates[(int)CharacterStateType.Hit ] = new HitState();
         }
 
-        public void AdvanceFrame(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
+        public void AdvanceFrame(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks, LogicCollider[] staticColliders)
         {
             // Save the state we started this frame in, in case we need to swap it
 
             CharacterStateType startingStateType = character.CurrentState;
 
             ICharacterState currentState = characterStates[(int)character.CurrentState];
-            currentState.Execute(ref character, input);
+            currentState.Execute(ref character, input, staticColliders);
 
             character.StateFrame++;
 
@@ -48,7 +48,7 @@ namespace Simulation
                 currentState.Exit(ref character);
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];
-                newState.Enter(ref character, input, characterAttacks);
+                newState.Enter(ref character, input, characterAttacks); // this sets the StateFrame to 0 and StateChange to false
             }
         }
 
