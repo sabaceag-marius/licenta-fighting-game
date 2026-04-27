@@ -7,6 +7,7 @@ using Simulation;
 using Data.Combat;
 using Data;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
 public class DeterministicGameManager : MonoBehaviour
 {
@@ -47,6 +48,16 @@ public class DeterministicGameManager : MonoBehaviour
     private GameSimulation gameSimulation;
 
     private Character[] characters;
+
+    private CinemachineBrain cameraBrain;
+
+    void Awake()
+    {
+        if (Camera.main != null)
+        {
+            cameraBrain = Camera.main.GetComponent<CinemachineBrain>();
+        }
+    }
 
     private void Start()
     {
@@ -119,7 +130,8 @@ public class DeterministicGameManager : MonoBehaviour
             
             gameState.Characters[i].Hurtboxes = hurtbox;
 
-            gameState.Characters[i].DamagePercentage = characters[i].Damage;
+            // gameState.Characters[i].DamagePercentage = characters[i].Damage;
+            gameState.Characters[i].DamagePercentage = 100;
         }
 
         // Input buffers
@@ -280,6 +292,13 @@ public class DeterministicGameManager : MonoBehaviour
         long framesRemaining = totalMatchFrames - currentTick;
 
         UIMatchManager.Instance.UpdateTimer(framesRemaining, TargetFPS);
+
+        // Manually update the camera
+
+        if (cameraBrain != null)
+        {
+            cameraBrain.ManualUpdate();
+        }
     }
 
     private void EndMatch(GameState state)
