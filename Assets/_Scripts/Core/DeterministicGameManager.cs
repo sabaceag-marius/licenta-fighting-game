@@ -31,9 +31,13 @@ public class DeterministicGameManager : MonoBehaviour
     [Header("Rollback settings")]
 
     [SerializeField]
+    [Tooltip("How many frames to delay local inputs to mask network latency.")]
+    private int InputDelay = 3;
+
+    [SerializeField]
     private readonly int BufferSize = 60;
     private GameState[] stateBuffer;
-
+    private RawInput[][] inputBuffer;
     private int currentTick;
     
     private float fixedDeltaTime;
@@ -117,6 +121,15 @@ public class DeterministicGameManager : MonoBehaviour
 
             gameState.Characters[i].DamagePercentage = characters[i].Damage;
         }
+
+        // Input buffers
+
+        inputBuffer = new RawInput[gameState.Characters.Length][];
+
+        for (int i = 0; i < gameState.Characters.Length; i++)
+        {
+            inputBuffer[i] = new RawInput[BufferSize];
+        }
     }
 
     private void InitializeGameStateArrays(ref GameState gameState, int staticColliderCount, int characterCount)
@@ -184,9 +197,25 @@ public class DeterministicGameManager : MonoBehaviour
 
             RawInput input = character.GetRawInput();
 
-            input.FrameId = (ushort)currentTick;
+            RawInput currentHardwareInput = character.GetRawInput();
+            inputBuffer[i][currentTick % BufferSize] = currentHardwareInput;
 
-            currentState.Characters[i].RawInput = input;
+            RawInput simulationInput = new RawInput();
+
+            int delayedTick = currentTick - InputDelay;
+
+            if (delayedTick >= 0)
+            {
+                simulationInput = inputBuffer[i][delayedTick % BufferSize];
+            }
+
+            simulationInput.FrameId = (ushort)currentTick;
+            
+            simulationInput.FrameId = (ushort)currentTick;
+            currentState.Characters[i].RawInput = simulationInput;
+
+            // input.FrameId = (ushort)currentTick;
+            // currentState.Characters[i].RawInput = input;
 
             //TODO: Remove this in actual game
             currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);

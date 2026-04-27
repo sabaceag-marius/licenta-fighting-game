@@ -1816,6 +1816,7 @@ MonoBehaviour:
   debugDrawer: {fileID: 1720767126}
   TargetFPS: 60
   minutesPerMatch: 3
+  InputDelay: 3
 --- !u!4 &1241503783
 Transform:
   m_ObjectHideFlags: 0
