@@ -22,7 +22,7 @@ namespace Simulation
 
             input.AttackPressed = rawInput.Attacked && !previousRawInput.Attacked;
 
-            input.DodgePressed = rawInput.Dodged;
+            input.DodgePressed = rawInput.Dodged && !previousRawInput.Dodged;
 
             // Flick inputs
 

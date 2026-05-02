@@ -56,7 +56,7 @@ namespace Simulation
                 return false;
             
             character.CurrentState = CharacterStateType.Attack;
-            character.AttackType = Data.Combat.AttackType.GroundNeutral;
+            character.AttackType = Data.Combat.AttackType.GroundForward;
 
             return true;
         }

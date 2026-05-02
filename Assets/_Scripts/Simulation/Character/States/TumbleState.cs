@@ -11,8 +11,16 @@ namespace Simulation
             base.Enter(ref character, input, characterAttacks);
 
             Debug.Log("Entered tumble state!");
+        }
 
+        public override void Exit(ref CharacterData character)
+        {
             character.TechPenaltyFrames = 0;
+        }
+
+        public override void ExecuteDuringHitstop(ref CharacterData character, ProcessedInput input)
+        {
+            CheckForTechInput(ref character, input);
         }
 
         public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
@@ -20,11 +28,7 @@ namespace Simulation
             if (character.HitstunFrames == 0)
                 return;
 
-            if (input.DodgePressed && character.TechPenaltyFrames == 0)
-            {
-                character.TechWindowFrames = 20;
-                character.TechPenaltyFrames = 40;
-            }
+            CheckForTechInput(ref character, input);
         }
 
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
@@ -62,6 +66,8 @@ namespace Simulation
         {
             if (CheckForTech(ref character, input))
             {
+                Debug.Log("Teched!");
+
                 character.HitstunFrames = 0;
                 return;
             }
@@ -163,6 +169,15 @@ namespace Simulation
             character.RemainingAirJumps--;
 
             return true;
+        }
+
+        private void CheckForTechInput(ref CharacterData character, ProcessedInput input)
+        {
+            if (input.DodgePressed && character.TechPenaltyFrames == 0)
+            {
+                character.TechWindowFrames = 20;
+                character.TechPenaltyFrames = 40;
+            }
         }
     }
 }

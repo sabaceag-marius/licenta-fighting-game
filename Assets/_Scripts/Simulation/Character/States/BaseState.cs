@@ -42,6 +42,8 @@ namespace Simulation
             HandlePostPhysicsLogic(ref character, input);
         }
 
+        public virtual void ExecuteDuringHitstop(ref CharacterData character, ProcessedInput input) { }
+
         /// <summary>
         /// Check if we should change the character's state to Jump
         /// </summary>

@@ -21,7 +21,19 @@ namespace Simulation
             character.Velocity = velocity;
         }
 
-        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
+        {
+            base.HandlePhysics(ref character, input);
+
+            FixedVector2 velocity = character.Velocity;
+
+            velocity.x.Accelerate(character.Stats.RunningSpeed * character.FacingDirection, 
+                character.Stats.DashAcceleration);
+
+            character.Velocity = velocity;
+        }
+        
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             if (CheckIfFalling(ref character, input))
                 return;
@@ -53,18 +65,6 @@ namespace Simulation
             {
                 character.CurrentState = CharacterStateType.Idle;
             }
-        }
-
-        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
-        {
-            base.HandlePhysics(ref character, input);
-
-            FixedVector2 velocity = character.Velocity;
-
-            velocity.x.Accelerate(character.Stats.RunningSpeed * character.FacingDirection, 
-                character.Stats.DashAcceleration);
-
-            character.Velocity = velocity;
         }
 
         protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)

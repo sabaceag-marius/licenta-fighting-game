@@ -48,7 +48,7 @@ public static class CombatEngine
                     //TODO: Change check when adding shielding
                     bool isInvincible = targetCharacter.InvincibilityFrames > 0;
 
-                    int hitstopFrames = FixedMath.Min(20, FixedMath.CeilToInt(hitbox.Damage / 3));
+                    int hitstopFrames = GetHitstopFramesCount(hitbox, targetCharacter);
 
                     attackerCharacter.HitstopFrames = hitstopFrames;
                     targetCharacter.HitstopFrames = hitstopFrames;
@@ -78,13 +78,19 @@ public static class CombatEngine
                         FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * attackerCharacter.FacingDirection, hitbox.LaunchDirection.y)
                             * knockbackValue * 0.0045f;
 
-                        // To reset the Hit state
-                        targetCharacter.StateChanged = true;
+                        //TODO: add tuble only for high knockback
+                        var hurtState = CharacterStateType.Tumble;
 
-                        //TODO: add tuble for high knockback
-                        // targetCharacter.CurrentState = CharacterStateType.Hit;
-                        targetCharacter.CurrentState = CharacterStateType.Tumble;
-
+                        // We do this in order to always reset the target character's state
+                        if (targetCharacter.CurrentState == hurtState)
+                        {
+                            targetCharacter.StateChanged = true;
+                        }
+                        else
+                        {
+                            targetCharacter.CurrentState = hurtState;
+                        }
+                        
                         targetCharacter.ExternalVelocity = knockbackDirection;
                         targetCharacter.HitstunFrames = hitstunFrames;
 
@@ -95,6 +101,13 @@ public static class CombatEngine
                 }
             }
         }
+    }
+
+    private static int GetHitstopFramesCount(Data.Combat.HitboxData hitbox, CharacterData targetCharacter)
+    {
+        FixedFloat knockbackValue = targetCharacter.InvincibilityFrames > 0 ? 0 : targetCharacter.DamagePercentage;
+
+        return FixedMath.Min(20, FixedMath.CeilToInt(hitbox.Damage / 3 + knockbackValue / 20));
     }
 
     private static Data.Combat.HitboxData? CheckForCollision(

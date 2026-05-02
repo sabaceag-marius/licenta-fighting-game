@@ -39,13 +39,13 @@ namespace Simulation
 
                 - CharacterStateMachine - logic and physics based on the character's state
                     
-                    1. Pre-Physics Logic - processes inputs and timers
+                    1. Pre-Physics Logic - Logic that is not related to changing the state, usually based on the input (fastfall, start tech window, etc.)
 
                     2. Physics Request - based on the logic, we set the velocity and then call the physics engine
 
-                    3. Pos-Physics Logic - Logic happening after physics, based on the collisions (Tech, Land, etc.)
+                    3. Pos-Physics Logic - Logic happening after physics, based on the collisions (Tech, Land, etc.) + Transition between states
 
-            - CombatEngine - check across all characters if there are any collisions between their hitboxes and hurtboxes + Transition handling
+            - CombatEngine - check across all characters if there are any collisions between their hitboxes and hurtboxes
             
             - Check for each character if they left the blastzone
         */
@@ -54,12 +54,6 @@ namespace Simulation
             for (int i = 0; i < gameState.Characters.Length; i++)
             {
                 ref Data.CharacterData character = ref gameState.Characters[i];
-
-                if (character.HitstopFrames > 0)
-                {
-                    character.HitstopFrames--;
-                    continue;
-                }
 
                 // Process input
                 var input = inputProcessor.ProcessInput(character.RawInput, previousGameState.Characters[i].RawInput);

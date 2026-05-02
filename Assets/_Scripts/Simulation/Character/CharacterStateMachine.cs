@@ -42,6 +42,15 @@ namespace Simulation
             CharacterStateType startingStateType = character.CurrentState;
 
             ICharacterState currentState = characterStates[(int)character.CurrentState];
+
+            if (character.HitstopFrames > 0)
+            {
+                character.HitstopFrames--;
+                currentState.ExecuteDuringHitstop(ref character, input);
+                
+                return;
+            }
+
             currentState.Execute(ref character, input, staticColliders, minimumSafeStepX, minimumSafeStepY);
 
             character.StateFrame++;
@@ -52,6 +61,7 @@ namespace Simulation
             if (character.StateChanged || character.CurrentState != startingStateType)
             {
                 // Debug.Log($"Changed state from {startingStateType} to {character.CurrentState}");
+                
                 currentState.Exit(ref character);
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];
