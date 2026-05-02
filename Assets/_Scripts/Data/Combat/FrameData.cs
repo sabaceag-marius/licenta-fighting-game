@@ -10,6 +10,6 @@ namespace Data.Combat
 
         public HurtboxData[] Hurtboxes;
 
-        public LogicBox HurtboxesBoundingBox;
+        public LogicCollider HurtboxesBoundingBox;
     }
 }

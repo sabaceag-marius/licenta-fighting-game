@@ -25,17 +25,16 @@ public static class PhysicsEngine
         
         for (int step = 0; step < iterations; step++)
         {
-            // CRITICAL FIX: Recalculate the step velocity every loop!
+            // Recalculate the step velocity every loop!
             // If the character hits a wall and their Velocity.x is zeroed out (or bounced),
             // currentVelocity updates, and the remaining sub-steps will safely slide or bounce.
             FixedVector2 currentVelocity = body.Velocity + body.ExternalVelocity;
             FixedVector2 stepVelocity = currentVelocity / iterations;
 
-            // We no longer break! Let the loop finish all iterations.
             SimulateCharacterPhysicsStep(ref character, staticColliders, stepVelocity);
         }
-        // Decay external velocity ONCE per frame (after all sub-steps are done)
 
+        // Decay external velocity ONCE per frame (after all sub-steps are done)
         if (body.ExternalVelocity != FixedVector2.zero)
         {
             body.ExternalVelocity = body.ExternalVelocity.MoveTowards(FixedVector2.zero, new FixedFloat(0.15f));
@@ -49,7 +48,6 @@ public static class PhysicsEngine
         ref LogicDynamicBody body = ref character.DynamicBody;
 
         body.Position += velocity;
-        body.Collider.BoundingBox = body.Collider.GetBoundingBox();
 
         for (int i = 0; i < staticColliders.Length; i++)
         {
@@ -69,7 +67,7 @@ public static class PhysicsEngine
         if (staticCollider.Layer == ColliderLayer.Platform && !ShouldCheckPlatformCollisions(body, staticCollider, velocity, ignorePlatformCollisionsFrames))
             return false;
 
-        if (!body.Collider.GetBoundingBox().CheckAABBCollision(staticCollider.BoundingBox))
+        if (!body.Collider.GetBoundingBox().CheckAABBCollision(staticCollider.GetBoundingBox()))
             return false;
 
         return HandleDynamicBodyCollision(ref body, staticCollider);
@@ -88,55 +86,9 @@ public static class PhysicsEngine
         if (velocity.y > 0)
             return false;
 
-        FixedFloat bodyBottomPreviously = body.Collider.BoundingBox.Bottom - velocity.y;
+        FixedFloat bodyBottomPreviously = body.Collider.GetBoundingBox().Bottom - velocity.y;
 
         return bodyBottomPreviously >= platformCollider.Top;
-    }
-
-
-    public static void ApplyVelocity(ref LogicDynamicBody dynamicBody)
-    {
-        FixedVector2 position = dynamicBody.Position;
-
-        position += dynamicBody.Velocity;
-
-        if (dynamicBody.ExternalVelocity != FixedVector2.zero)
-        {
-            position += dynamicBody.ExternalVelocity;
-
-            dynamicBody.ExternalVelocity = dynamicBody.ExternalVelocity.MoveTowards(FixedVector2.zero, 0.15f);
-        }
-
-        dynamicBody.Position = position;
-
-        dynamicBody.Collider.BoundingBox = dynamicBody.Collider.GetBoundingBox();
-
-        dynamicBody.IsGrounded = false;
-    }
-
-    public static void HandleGameStateCollisions(ref GameState state)
-    {
-        // Dynamic body - static collider collision
-
-        for (int i = 0; i < state.CharactersCount; i++)
-        {
-            ref LogicDynamicBody dynamicBody = ref state.Characters[i].DynamicBody;
-
-            for(int j = 0; j < state.StaticColliderCount; j++)
-            {
-                ref LogicCollider staticCollider = ref state.StaticColliders[j];
-
-                if (staticCollider.Layer == ColliderLayer.Platform && !ShouldCheckPlatformCollisions(state.Characters[i], staticCollider))
-                    continue;
-
-                if (!dynamicBody.Collider.BoundingBox.CheckAABBCollision(staticCollider.BoundingBox))
-                    continue;
-
-                HandleDynamicBodyCollision(ref dynamicBody, staticCollider);
-            }
-        }
-
-        // TODO: Dynamic body - Dynamic body collision ?
     }
 
     private static bool HandleDynamicBodyCollision(ref LogicDynamicBody dynamicBody, LogicCollider collider)
@@ -186,23 +138,5 @@ public static class PhysicsEngine
 
         // are there cases when to not return true here?
         return true;
-    }
-
-    private static bool ShouldCheckPlatformCollisions(Data.CharacterData characterData, LogicCollider platformCollider)
-    {
-        // We should only consider the platform collider solid if all of these conditions are met:
-        // 1. The character is not ignoring the platforms (holding down to fall through them)
-        // 2. The character is moving downwards
-        // 3. The character's bottom position was above the platform in the previous frame
-
-        if (characterData.IgnorePlatformCollisionFrames > 0)
-            return false;
-
-        if (characterData.Velocity.y + characterData.ExternalVelocity.y > 0)
-            return false;
-
-        FixedFloat characterBottomPreviousFrame = characterData.DynamicBody.Collider.BoundingBox.Bottom - characterData.Velocity.y;
-
-        return characterBottomPreviousFrame >= platformCollider.Top;
     }
 }

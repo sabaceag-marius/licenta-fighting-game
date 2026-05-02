@@ -5,9 +5,5 @@ public struct GameState
 
     public LogicCollider[] StaticColliders;
 
-    public int StaticColliderCount;
-
     public Data.CharacterData[] Characters;
-
-    public int CharactersCount;
 }

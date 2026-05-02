@@ -8,7 +8,7 @@ public static class CombatEngine
 {
     public static void ProcessAttacks(ref GameState state, Data.Combat.AttackData[][] attacks)
     {
-        for (int i = 0; i < state.CharactersCount; i++)
+        for (int i = 0; i < state.Characters.Length; i++)
         {
             ref Data.CharacterData attackerCharacter = ref state.Characters[i];
 
@@ -21,7 +21,7 @@ public static class CombatEngine
             if (frameData.HitboxCount == 0)
                 continue;
 
-            for (int j = 0; j < state.CharactersCount; j++)
+            for (int j = 0; j < state.Characters.Length; j++)
             {
                 bool alreadyHit = (attackerCharacter.HitTargetsMask & (1 << j)) != 0;
 
@@ -30,7 +30,7 @@ public static class CombatEngine
 
                 ref Data.CharacterData targetCharacter = ref state.Characters[j];
                 
-                LogicBox hurtboxesBoundingBox;
+                LogicCollider hurtboxesBoundingBox;
 
                 Data.Combat.HurtboxData[] hurtboxes = GetActiveHurtboxes(j, targetCharacter, attacks, out hurtboxesBoundingBox);
 
@@ -100,7 +100,7 @@ public static class CombatEngine
     private static Data.Combat.HitboxData? CheckForCollision(
         FrameData frameData, 
         Data.Combat.HurtboxData[] hurtboxes, 
-        LogicBox hurtboxesBoundingBox,
+        LogicCollider hurtboxesBoundingBox,
         CharacterData attacker,
         CharacterData target)
     {
@@ -136,7 +136,7 @@ public static class CombatEngine
         int characterIndex,
         Data.CharacterData character,
         Data.Combat.AttackData[][] attacks,
-        out LogicBox boundingBox)
+        out LogicCollider boundingBox)
     {
         if (character.CurrentState == Data.CharacterStateType.Attack && attacks[characterIndex][(int)character.AttackType].OverrideHurtboxes)
         {

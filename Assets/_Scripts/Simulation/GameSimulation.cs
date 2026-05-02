@@ -11,7 +11,7 @@ namespace Simulation
         
         private CharacterInputProcessor inputProcessor;
 
-        private LogicBox blastzoneBoundingBox;  
+        private LogicCollider blastzoneBoundingBox;  
         private FixedFloat MinimumStaticColliderExtendsX;
         private FixedFloat MinimumStaticColliderExtendsY;      
         
@@ -80,7 +80,7 @@ namespace Simulation
             }
         }
 
-        public void SetBlastzone(LogicBox collider)
+        public void SetBlastzone(LogicCollider collider)
         {
             blastzoneBoundingBox = collider;
         }
@@ -92,7 +92,7 @@ namespace Simulation
 
             for (int i = 0; i < colliders.Length; i++)
             {
-                LogicBox boundingBox = colliders[i].GetBoundingBox();
+                LogicCollider boundingBox = colliders[i].GetBoundingBox();
 
                 if (boundingBox.Extents.x < MinimumStaticColliderExtendsX)
                 {

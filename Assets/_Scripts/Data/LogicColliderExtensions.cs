@@ -4,12 +4,12 @@ using Unity.VisualScripting;
 
 public static class LogicColliderExtensions
 {
-    public static LogicBox GetBoundingBox(this LogicCollider collider)
+    public static LogicCollider GetBoundingBox(this LogicCollider collider)
     {
         switch (collider.Type)
         {
             default:
-                return new LogicBox { };
+                return new LogicCollider { Type = ColliderType.Box };
 
             case ColliderType.Box:
                 return collider.GetBoundingBoxBoxCollider();
@@ -19,38 +19,39 @@ public static class LogicColliderExtensions
 
             case ColliderType.Capsule:
                 return collider.GetBoundingBoxCapsuleCollider();
-
         }
     }
 
-    private static LogicBox GetBoundingBoxBoxCollider(this LogicCollider boxCollider)
+    private static LogicCollider GetBoundingBoxBoxCollider(this LogicCollider boxCollider)
     {
-        return new LogicBox
+        return new LogicCollider
         {
             Position = boxCollider.Position,
-            Extents = boxCollider.Extents
+            Extents = boxCollider.Extents,
+            Type = ColliderType.Box
         };
     }
 
-    private static LogicBox GetBoundingBoxCircleCollider(this LogicCollider circleCollider)
+    private static LogicCollider GetBoundingBoxCircleCollider(this LogicCollider circleCollider)
     {
-        return new LogicBox
+        return new LogicCollider
         {
             Position = circleCollider.Position,
-            Extents = new FixedVector2(circleCollider.Radius, circleCollider.Radius)
+            Extents = new FixedVector2(circleCollider.Radius, circleCollider.Radius),
+            Type = ColliderType.Box
         };
     }
 
-    private static LogicBox GetBoundingBoxCapsuleCollider(this LogicCollider capsuleCollider)
+    private static LogicCollider GetBoundingBoxCapsuleCollider(this LogicCollider capsuleCollider)
     {
         FixedFloat extentX = (FixedMath.Abs(capsuleCollider.Direction.x) * capsuleCollider.HalfInnerLength) + capsuleCollider.Radius;
         FixedFloat extentY = (FixedMath.Abs(capsuleCollider.Direction.y) * capsuleCollider.HalfInnerLength) + capsuleCollider.Radius;
 
-        return new LogicBox
+        return new LogicCollider
         {
             Position = capsuleCollider.Position,
-            Extents = new FixedVector2(extentX, extentY)
+            Extents = new FixedVector2(extentX, extentY),
+            Type = ColliderType.Box
         };
-
     }
 }

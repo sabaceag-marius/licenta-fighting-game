@@ -117,7 +117,7 @@ public class DebugDrawer : MonoBehaviour
     {
         if (ShowHurtboxBoundingBox)
         {
-                DrawAABB(hurtbox.Collider.BoundingBox, playerPosition, facingDirection, boundingBoxParams);
+                DrawAABB(hurtbox.Collider.GetBoundingBox(), playerPosition, facingDirection, boundingBoxParams);
         }
 
         DrawCapsule(hurtbox.Collider, playerPosition, facingDirection, renderParams);
@@ -138,7 +138,7 @@ public class DebugDrawer : MonoBehaviour
         Graphics.RenderMesh(rp, circleMesh, 0, matrix);
     }
 
-    private void DrawAABB(LogicBox box, Vector2 playerPos, int facingDir, RenderParams rp)
+    private void DrawAABB(LogicCollider box, Vector2 playerPos, int facingDir, RenderParams rp)
     {
         Vector3 worldPos = (Vector2)FixedMath.GetGlobalPosition(box.Position, playerPos, facingDir);
 

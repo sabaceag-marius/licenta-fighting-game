@@ -74,8 +74,6 @@ public class Character : MonoBehaviour
 
         hurtbox.Position = hurtbox.Position - new FixedVector2(transform.position.x, transform.position.y);
 
-        hurtbox.BoundingBox = hurtbox.GetBoundingBox();
-
         return hurtbox;
     }
     
