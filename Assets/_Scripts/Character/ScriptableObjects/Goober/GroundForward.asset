@@ -30,7 +30,7 @@ MonoBehaviour:
       Center: {x: -0.7888, y: 0.108650446}
       Radius: 0.88716125
       Damage: 8
-      Angle: 30
+      Angle: 45
       FixedKnockback: 0
       BaseKnockback: 0
     Hurtboxes:

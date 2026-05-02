@@ -42,8 +42,6 @@ public static class CombatEngine
 
                     Data.Combat.HitboxData hitbox = hitboxCheck.Value;
 
-                    Debug.Log($"Hit character! with hitbox {hitbox.Id}");
-
                     // If any of the hurtboxes are in the invincible state, the target is not hit, but the hitstun still applies
                     // The invincible state should only be used when respawning and shields
 
@@ -80,12 +78,13 @@ public static class CombatEngine
                         targetCharacter.StateChanged = true;
 
                         //TODO: add tuble for high knockback
-                        targetCharacter.CurrentState = CharacterStateType.Hit;
+                        // targetCharacter.CurrentState = CharacterStateType.Hit;
+                        targetCharacter.CurrentState = CharacterStateType.Tumble;
 
                         targetCharacter.ExternalVelocity = knockbackDirection;
                         targetCharacter.HitstunFrames = hitstunFrames;
 
-                        Debug.Log($"Damage: {percentage}; Knockback: {knockbackValue * 0.0045}; Direction {knockbackDirection}");
+                        // Debug.Log($"Damage: {percentage}; Knockback: {knockbackValue * 0.0045}; Direction {knockbackDirection}");
                     }
 
                     break;

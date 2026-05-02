@@ -26,16 +26,23 @@ namespace Simulation
             characterStates[(int)CharacterStateType.Walk] = new WalkState();
             characterStates[(int)CharacterStateType.Attack ] = new AttackState();
             characterStates[(int)CharacterStateType.Hit ] = new HitState();
+            characterStates[(int)CharacterStateType.Tumble ] = new TumbleState();
         }
 
-        public void AdvanceFrame(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks, LogicCollider[] staticColliders)
+        public void AdvanceFrame(
+            ref CharacterData character, 
+            ProcessedInput input, 
+            Data.Combat.AttackData[] characterAttacks, 
+            LogicCollider[] staticColliders, 
+            FixedFloat minimumSafeStepX, 
+            FixedFloat minimumSafeStepY)
         {
             // Save the state we started this frame in, in case we need to swap it
 
             CharacterStateType startingStateType = character.CurrentState;
 
             ICharacterState currentState = characterStates[(int)character.CurrentState];
-            currentState.Execute(ref character, input, staticColliders);
+            currentState.Execute(ref character, input, staticColliders, minimumSafeStepX, minimumSafeStepY);
 
             character.StateFrame++;
 

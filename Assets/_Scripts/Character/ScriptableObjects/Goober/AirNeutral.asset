@@ -23,7 +23,7 @@ MonoBehaviour:
       Center: {x: -0.00000017881393, y: 0.06444812}
       Radius: 0.90817267
       Damage: 5
-      Angle: 0
+      Angle: 270
       FixedKnockback: 8
       BaseKnockback: 0
     Hurtboxes: []
@@ -33,7 +33,7 @@ MonoBehaviour:
       Center: {x: -0.042966068, y: 0.021482944}
       Radius: 1.4667246
       Damage: 7
-      Angle: 0
+      Angle: 270
       FixedKnockback: 0
       BaseKnockback: 5
     Hurtboxes: []
@@ -43,7 +43,7 @@ MonoBehaviour:
       Center: {x: 0, y: 0}
       Radius: 2.175656
       Damage: 12
-      Angle: 30
+      Angle: 270
       FixedKnockback: 0
       BaseKnockback: 10
     Hurtboxes: []

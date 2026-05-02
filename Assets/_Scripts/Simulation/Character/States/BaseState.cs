@@ -30,14 +30,14 @@ namespace Simulation
 
         public virtual void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input) { }
 
-        public void Execute(ref CharacterData character, ProcessedInput input, LogicCollider[] staticColliders)
+        public void Execute(ref CharacterData character, ProcessedInput input, LogicCollider[] staticColliders, FixedFloat minimumSafeStepX, FixedFloat minimumSafeStepY)
         {
             HandlePrePhysicsLogic(ref character, input);
             
             HandlePhysics(ref character, input);
 
             // add physics engine
-            PhysicsEngine.SimulateCharacterPhysics(ref character, staticColliders);
+            PhysicsEngine.SimulateCharacterPhysics(ref character, staticColliders, minimumSafeStepX, minimumSafeStepY);
             
             HandlePostPhysicsLogic(ref character, input);
         }

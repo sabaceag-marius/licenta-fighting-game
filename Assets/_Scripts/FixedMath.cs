@@ -2,15 +2,18 @@
 // global using FixedVector2 = Unity.Mathematics.FixedPoint.fp2;
 using UnityEngine;
 using Unity.Mathematics.FixedPoint;
+using System;
 
 public struct FixedFloat
 {
-    public fp rawValue;
+    public fp rawValue = 0;
 
     public FixedFloat(fp value) { rawValue = value; }
     public FixedFloat(float value) { rawValue = (fp)value; }
 
     public static implicit operator FixedFloat(float f) => new FixedFloat((fp)f);
+
+    public static implicit operator FixedFloat(int i) => new FixedFloat((float)i);
 
     public static implicit operator float(FixedFloat f) => (float)f.rawValue;
 
@@ -115,6 +118,16 @@ public static class FixedMath
         return a > b ? a : b;
     }
 
+    public static int Min(int a, int b)
+    {
+        return a < b ? a : b;
+    }
+
+    public static int Max(int a, int b)
+    {
+        return a > b ? a : b;
+    }
+
     public static FixedFloat Clamp(FixedFloat x, FixedFloat a, FixedFloat b)
     {
         return Max(a, Min(b, x));
@@ -190,5 +203,10 @@ public static class FixedMath
         
         return new FixedVector2(fpmath.cos(angleRadian), fpmath.sin(angleRadian)).Normalize();
         // return new FixedVector2(-fpmath.sin(angleRadian), fpmath.cos(angleRadian)).Normalize();
+    }
+
+    public static int CeilToInt(FixedFloat x)
+    {
+        return (int) x;
     }
 }

@@ -23,9 +23,16 @@ MonoBehaviour:
       Center: {x: -2.1623163, y: -0.023503542}
       Radius: 0.6881709
       Damage: 11
-      Angle: 20
+      Angle: 85
       FixedKnockback: 0
       BaseKnockback: 42
+    - Id: 0
+      Center: {x: -0.7264943, y: -0.015457153}
+      Radius: 0.85551834
+      Damage: 11
+      Angle: 85
+      FixedKnockback: 0
+      BaseKnockback: 30
     Hurtboxes: []
   - frameIndex: 0
     Hitboxes: []
@@ -60,5 +67,39 @@ MonoBehaviour:
       Center: {x: -0.08035183, y: 0.30935383}
       Size: {x: 0.64360094, y: 0.7317925}
       Angle: -256.50018
+  - frameIndex: 4
+    Hitboxes:
+    - Id: 1
+      Center: {x: -2.1623163, y: -0.023503542}
+      Radius: 0.6881709
+      Damage: 11
+      Angle: 85
+      FixedKnockback: 0
+      BaseKnockback: 42
+    - Id: 0
+      Center: {x: -0.7264943, y: -0.015457153}
+      Radius: 0.85551834
+      Damage: 11
+      Angle: 85
+      FixedKnockback: 0
+      BaseKnockback: 30
+    Hurtboxes: []
+  - frameIndex: 5
+    Hitboxes:
+    - Id: 1
+      Center: {x: -2.1623163, y: -0.023503542}
+      Radius: 0.6881709
+      Damage: 11
+      Angle: 85
+      FixedKnockback: 0
+      BaseKnockback: 42
+    - Id: 0
+      Center: {x: -0.7264943, y: -0.015457153}
+      Radius: 0.85551834
+      Damage: 11
+      Angle: 85
+      FixedKnockback: 0
+      BaseKnockback: 30
+    Hurtboxes: []
   AnimationClip: {fileID: 7400000, guid: 34f1b359e73254ffda7e7feb347fef0f, type: 2}
   AnimationFrameRate: 30

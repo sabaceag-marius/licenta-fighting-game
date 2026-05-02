@@ -11,7 +11,9 @@ namespace Simulation
         
         private CharacterInputProcessor inputProcessor;
 
-        private LogicBox blastzoneBoundingBox;        
+        private LogicBox blastzoneBoundingBox;  
+        private FixedFloat MinimumStaticColliderExtendsX;
+        private FixedFloat MinimumStaticColliderExtendsY;      
         
         public GameSimulation()
         {
@@ -49,60 +51,59 @@ namespace Simulation
         */
         public void AdvanceFrame(ref GameState gameState, GameState previousGameState)
         {
-            for (int i = 0; i < gameState.CharactersCount; i++)
+            for (int i = 0; i < gameState.Characters.Length; i++)
             {
                 ref Data.CharacterData character = ref gameState.Characters[i];
+
+                if (character.HitstopFrames > 0)
+                {
+                    character.HitstopFrames--;
+                    continue;
+                }
 
                 // Process input
                 var input = inputProcessor.ProcessInput(character.RawInput, previousGameState.Characters[i].RawInput);
 
                 // Handle logic and velocity based on the state
-                characterStateMachine.AdvanceFrame(ref character, input, attackDatabase[i], gameState.StaticColliders);
-
-                // Run physics
-                // PhysicsEngine.ApplyVelocity(ref character.DynamicBody);
-
-                GameRulesEngine.CheckBlastZone(ref character, blastzoneBoundingBox);
+                characterStateMachine.AdvanceFrame(ref character, input, attackDatabase[i], gameState.StaticColliders, MinimumStaticColliderExtendsX, MinimumStaticColliderExtendsY);
             }
             
             // Check for hitbox - hurtbox collision
             CombatEngine.ProcessAttacks(ref gameState, attackDatabase);
 
-            for (int i = 0; i < gameState.CharactersCount; i++)
+            // Check if any character left the blastzone
+            for (int i = 0; i < gameState.Characters.Length; i++)
             {
                 ref Data.CharacterData character = ref gameState.Characters[i];
 
                 GameRulesEngine.CheckBlastZone(ref character, blastzoneBoundingBox);
             }
-            
-            // for (int i = 0; i < gameState.CharactersCount; i++)
-            // {
-            //     ref Data.CharacterData character = ref gameState.Characters[i];
-
-            //     // Process input
-            //     var input = inputProcessor.ProcessInput(character.RawInput, previousGameState.Characters[i].RawInput);
-
-            //     // Handle logic and velocity based on the state
-            //     characterStateMachine.AdvanceFrame(ref character, input, attackDatabase[i]);
-
-            //     // Run physics
-            //     PhysicsEngine.ApplyVelocity(ref character.DynamicBody);
-
-            //     GameRulesEngine.CheckBlastZone(ref character, blastzoneBoundingBox);
-            // }
-
-            // // Check for all collisions for the colliders from the gameState in the PhysicsEngine
-
-            // // Check collisions between the dynamic bodies colliders and the static colliders
-            // PhysicsEngine.HandleGameStateCollisions(ref gameState);
-
-            // // Check for hitbox - hurtbox collision
-            // CombatEngine.ProcessAttacks(ref gameState, attackDatabase);
         }
 
         public void SetBlastzone(LogicBox collider)
         {
             blastzoneBoundingBox = collider;
+        }
+
+        public void SetMinimumStaticColliderExtends(LogicCollider[] colliders)
+        {
+            MinimumStaticColliderExtendsX = 0.5f;
+            MinimumStaticColliderExtendsY = 0.5f;
+
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                LogicBox boundingBox = colliders[i].GetBoundingBox();
+
+                if (boundingBox.Extents.x < MinimumStaticColliderExtendsX)
+                {
+                    MinimumStaticColliderExtendsX = boundingBox.Extents.x;
+                }
+
+                if (boundingBox.Extents.y < MinimumStaticColliderExtendsY)
+                {
+                    MinimumStaticColliderExtendsY = boundingBox.Extents.y;
+                }
+            }
         }
     }
 }

@@ -106,6 +106,8 @@ public class DeterministicGameManager : MonoBehaviour
             gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();
         }
 
+        gameSimulation.SetMinimumStaticColliderExtends(gameState.StaticColliders);
+        
         // Blastzone
         
         LogicCollider blastzoneCollider = colliderFactories.First(i => i.Layer == ColliderLayer.Blastzone).GetLogicCollider();

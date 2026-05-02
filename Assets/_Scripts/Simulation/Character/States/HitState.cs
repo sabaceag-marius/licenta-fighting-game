@@ -6,9 +6,10 @@ namespace Simulation
 {
     public class HitState : BaseState
     {
-        public override void Enter(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
+        public override void Exit(ref CharacterData character)
         {
-            base.Enter(ref character, input, characterAttacks);
+            character.RemainingAirDodges = character.Stats.AirDodgesCount;
+            character.AirDodgeCooldown = 0;
         }
 
         public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
@@ -17,6 +18,7 @@ namespace Simulation
             {
                 //TODO: remove hitstun frames?
                 character.CurrentState = CharacterStateType.Land;
+                return;
             }
 
             // Check if hitstun expired -> transition into fall

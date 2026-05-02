@@ -94,8 +94,6 @@ namespace Data
         
         public int HitTargetsMask;
         
-        // public bool[] HitTargets;
-
         #endregion
 
         #region Respawning
@@ -117,5 +115,7 @@ namespace Data
         public FixedFloat Score;
 
         public int InvincibilityFrames;
+
+        public int HitstopFrames;
     }
 }
