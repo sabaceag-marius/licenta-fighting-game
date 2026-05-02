@@ -132,8 +132,8 @@ public class DeterministicGameManager : MonoBehaviour
             
             gameState.Characters[i].Hurtboxes = hurtbox;
 
-            // gameState.Characters[i].DamagePercentage = characters[i].Damage;
-            gameState.Characters[i].DamagePercentage = 100;
+            gameState.Characters[i].DamagePercentage = characters[i].Damage;
+            gameState.Characters[i].DamagePercentage = 50;
         }
 
         // Input buffers

@@ -117,5 +117,9 @@ namespace Data
         public int InvincibilityFrames;
 
         public int HitstopFrames;
+
+        public int TechWindowFrames;
+
+        public int TechPenaltyFrames;
     }
 }

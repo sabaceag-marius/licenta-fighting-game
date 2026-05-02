@@ -80,6 +80,16 @@ namespace Simulation
             {
                 character.InvincibilityFrames--;
             }
+
+            if (character.TechPenaltyFrames > 0)
+            {
+                character.TechPenaltyFrames--;
+            }
+
+            if (character.TechWindowFrames > 0)
+            {
+                character.TechWindowFrames--;
+            }
         }
     }
 }

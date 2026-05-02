@@ -72,7 +72,6 @@ namespace Simulation
             if (!base.CheckIfAttacking(ref character, input))
                 return false;
             
-            character.CurrentState = CharacterStateType.Attack;
             character.AttackType = Data.Combat.AttackType.GroundForward;
 
             return true;

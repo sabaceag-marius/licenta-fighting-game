@@ -10,12 +10,12 @@ public static class CombatEngine
     {
         for (int i = 0; i < state.CharactersCount; i++)
         {
-            ref Data.CharacterData character = ref state.Characters[i];
+            ref Data.CharacterData attackerCharacter = ref state.Characters[i];
 
-            if (character.CurrentState != Data.CharacterStateType.Attack)
+            if (attackerCharacter.CurrentState != Data.CharacterStateType.Attack)
                 continue;
 
-            Data.Combat.FrameData frameData = GetCurrentFrameData(i, character.AttackType, character.CurrentAttackFrame, attacks);
+            Data.Combat.FrameData frameData = GetCurrentFrameData(i, attackerCharacter.AttackType, attackerCharacter.CurrentAttackFrame, attacks);
 
             // Frame doesn't exist or it doesn't have any hitboxes (wind-up / recovery frame)
             if (frameData.HitboxCount == 0)
@@ -23,7 +23,7 @@ public static class CombatEngine
 
             for (int j = 0; j < state.CharactersCount; j++)
             {
-                bool alreadyHit = (character.HitTargetsMask & (1 << j)) != 0;
+                bool alreadyHit = (attackerCharacter.HitTargetsMask & (1 << j)) != 0;
 
                 if (i == j || alreadyHit)
                     continue;
@@ -34,32 +34,36 @@ public static class CombatEngine
 
                 Data.Combat.HurtboxData[] hurtboxes = GetActiveHurtboxes(j, targetCharacter, attacks, out hurtboxesBoundingBox);
 
-                Data.Combat.HitboxData? hitboxCheck = CheckForCollision(frameData, hurtboxes, hurtboxesBoundingBox, character, targetCharacter);
+                Data.Combat.HitboxData? hitboxCheck = CheckForCollision(frameData, hurtboxes, hurtboxesBoundingBox, attackerCharacter, targetCharacter);
                 
                 if (hitboxCheck != null)
                 {
-                    character.HitTargetsMask |= (1 << j);
+                    attackerCharacter.HitTargetsMask |= (1 << j);
 
                     Data.Combat.HitboxData hitbox = hitboxCheck.Value;
 
                     // If any of the hurtboxes are in the invincible state, the target is not hit, but the hitstun still applies
                     // The invincible state should only be used when respawning and shields
 
-                    // bool isInvincible = CheckIfInvincible(hurtboxes);
+                    //TODO: Change check when adding shielding
                     bool isInvincible = targetCharacter.InvincibilityFrames > 0;
 
-                    // TODO: Apply damage, knockback etc.
+                    int hitstopFrames = FixedMath.Min(20, FixedMath.CeilToInt(hitbox.Damage / 3));
+
+                    attackerCharacter.HitstopFrames = hitstopFrames;
+                    targetCharacter.HitstopFrames = hitstopFrames;
+
                     if (!isInvincible)
                     {
-                        character.Score += hitbox.Damage;
-                        
-                        // Apply the damage
-                        targetCharacter.DamagePercentage += hitbox.Damage;
-
                         FixedFloat percentage = targetCharacter.DamagePercentage;
                         FixedFloat damage = hitbox.Damage;
                         FixedFloat weight = targetCharacter.Stats.Weight;
                         FixedFloat baseKnockback = hitbox.BaseKnockback;
+
+                        attackerCharacter.Score += damage;
+                        
+                        // Apply the damage
+                        targetCharacter.DamagePercentage += damage;
 
                         if (hitbox.FixedKnockback > 0)
                         {
@@ -71,7 +75,7 @@ public static class CombatEngine
 
                         int hitstunFrames = (int)(knockbackValue * 0.4f);
 
-                        FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * character.FacingDirection, hitbox.LaunchDirection.y)
+                        FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * attackerCharacter.FacingDirection, hitbox.LaunchDirection.y)
                             * knockbackValue * 0.0045f;
 
                         // To reset the Hit state
@@ -91,17 +95,6 @@ public static class CombatEngine
                 }
             }
         }
-    }
-
-    private static bool CheckIfInvincible(Data.Combat.HurtboxData[] hurtboxes)
-    {
-        for (int i = 0; i < hurtboxes.Length; i++)
-        {
-            if (hurtboxes[i].State == Data.Combat.HurtboxState.Invincible)
-                return true;
-        }
-
-        return false;
     }
 
     private static Data.Combat.HitboxData? CheckForCollision(
