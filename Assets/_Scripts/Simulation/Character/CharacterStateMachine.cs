@@ -26,16 +26,32 @@ namespace Simulation
             characterStates[(int)CharacterStateType.Walk] = new WalkState();
             characterStates[(int)CharacterStateType.Attack ] = new AttackState();
             characterStates[(int)CharacterStateType.Hit ] = new HitState();
+            characterStates[(int)CharacterStateType.Tumble ] = new TumbleState();
         }
 
-        public void AdvanceFrame(ref CharacterData character, ProcessedInput input, Data.Combat.AttackData[] characterAttacks)
+        public void AdvanceFrame(
+            ref CharacterData character, 
+            ProcessedInput input, 
+            Data.Combat.AttackData[] characterAttacks, 
+            LogicCollider[] staticColliders, 
+            FixedFloat minimumSafeStepX, 
+            FixedFloat minimumSafeStepY)
         {
             // Save the state we started this frame in, in case we need to swap it
 
             CharacterStateType startingStateType = character.CurrentState;
 
             ICharacterState currentState = characterStates[(int)character.CurrentState];
-            currentState.Execute(ref character, input);
+
+            if (character.HitstopFrames > 0)
+            {
+                character.HitstopFrames--;
+                currentState.ExecuteDuringHitstop(ref character, input);
+                
+                return;
+            }
+
+            currentState.Execute(ref character, input, staticColliders, minimumSafeStepX, minimumSafeStepY);
 
             character.StateFrame++;
 
@@ -45,10 +61,11 @@ namespace Simulation
             if (character.StateChanged || character.CurrentState != startingStateType)
             {
                 // Debug.Log($"Changed state from {startingStateType} to {character.CurrentState}");
+                
                 currentState.Exit(ref character);
 
                 ICharacterState newState = characterStates[(int)character.CurrentState];
-                newState.Enter(ref character, input, characterAttacks);
+                newState.Enter(ref character, input, characterAttacks); // this sets the StateFrame to 0 and StateChange to false
             }
         }
 
@@ -72,6 +89,16 @@ namespace Simulation
             if (character.InvincibilityFrames > 0)
             {
                 character.InvincibilityFrames--;
+            }
+
+            if (character.TechPenaltyFrames > 0)
+            {
+                character.TechPenaltyFrames--;
+            }
+
+            if (character.TechWindowFrames > 0)
+            {
+                character.TechWindowFrames--;
             }
         }
     }

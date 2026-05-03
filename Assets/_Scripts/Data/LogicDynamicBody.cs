@@ -18,4 +18,12 @@ public struct LogicDynamicBody
     public FixedVector2 ExternalVelocity;
 
     public bool IsGrounded;
+    
+    public bool HitFloor;
+
+    public bool HitCeiling;
+    
+    public bool HitWall;
+
+    public FixedVector2 ExternalVelocityAtImpact;
 }

@@ -14,19 +14,19 @@ namespace Simulation
             character.AirDodgeCooldown = 0;
         }
 
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
-        {
-            if (character.StateFrame == character.Stats.LandLagFrames)
-            {
-                character.CurrentState = CharacterStateType.Idle;
-            }
-        }
-
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
         {
             base.HandlePhysics(ref character, input);
 
             character.DynamicBody.Velocity.x.Decelerate(character.Stats.Traction);
+        }
+
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        {
+            if (character.StateFrame == character.Stats.LandLagFrames)
+            {
+                character.CurrentState = CharacterStateType.Idle;
+            }
         }
     }
 }

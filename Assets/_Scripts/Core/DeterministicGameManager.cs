@@ -75,7 +75,7 @@ public class DeterministicGameManager : MonoBehaviour
 
         for (int i = 1; i < BufferSize; i++)
         {
-            InitializeGameStateArrays(ref stateBuffer[i], stateBuffer[0].StaticColliderCount, stateBuffer[0].CharactersCount);
+            InitializeGameStateArrays(ref stateBuffer[i], stateBuffer[0].StaticColliders.Length, stateBuffer[0].Characters.Length);
         }
 
         InitializeAttackData();
@@ -85,7 +85,7 @@ public class DeterministicGameManager : MonoBehaviour
     {
         ref GameState gameState = ref stateBuffer[0];
 
-        // skip the colliders that are attached to the deterministic rigidbody
+        // Skip the colliders that are attached to the deterministic rigidbody or characters
 
         BaseColliderFactory[] colliderFactories = FindObjectsOfType<BaseColliderFactory>()
             .Where(c => c.GetComponent<Character>() == null).ToArray();
@@ -93,19 +93,17 @@ public class DeterministicGameManager : MonoBehaviour
 
         var staticColliders = colliderFactories.Where(i => i.Layer != ColliderLayer.Blastzone).ToArray();
 
-        gameState.StaticColliderCount = math.min(staticColliders.Length, 100);
+        gameState.StaticColliders = new LogicCollider[math.min(staticColliders.Length, 100)];
 
-        gameState.StaticColliders = new LogicCollider[gameState.StaticColliderCount];
-
-        for (int i = 0; i < gameState.StaticColliderCount; i++)
+        for (int i = 0; i < gameState.StaticColliders.Length; i++)
         {
             LogicCollider collider = staticColliders[i].GetLogicCollider();
             
             gameState.StaticColliders[i] = collider;
-
-            gameState.StaticColliders[i].BoundingBox = gameState.StaticColliders[i].GetBoundingBox();
         }
 
+        gameSimulation.SetMinimumStaticColliderExtends(gameState.StaticColliders);
+        
         // Blastzone
         
         LogicCollider blastzoneCollider = colliderFactories.First(i => i.Layer == ColliderLayer.Blastzone).GetLogicCollider();
@@ -113,10 +111,9 @@ public class DeterministicGameManager : MonoBehaviour
             
         characters = FindObjectsOfType<Character>();
 
-        gameState.CharactersCount = math.min(characters.Length, 16);
-        gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
+        gameState.Characters = new Data.CharacterData[math.min(characters.Length, 16)];
 
-        for (int i = 0; i < gameState.CharactersCount; i++)
+        for (int i = 0; i < gameState.Characters.Length; i++)
         {
             gameState.Characters[i].FacingDirection = (int)characters[i].transform.lossyScale.x;
             gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
@@ -130,8 +127,8 @@ public class DeterministicGameManager : MonoBehaviour
             
             gameState.Characters[i].Hurtboxes = hurtbox;
 
-            // gameState.Characters[i].DamagePercentage = characters[i].Damage;
-            gameState.Characters[i].DamagePercentage = 100;
+            gameState.Characters[i].DamagePercentage = characters[i].Damage;
+            gameState.Characters[i].DamagePercentage = 50;
         }
 
         // Input buffers
@@ -146,11 +143,9 @@ public class DeterministicGameManager : MonoBehaviour
 
     private void InitializeGameStateArrays(ref GameState gameState, int staticColliderCount, int characterCount)
     {
-        gameState.StaticColliderCount = math.min(staticColliderCount, 100);
-        gameState.StaticColliders = new LogicCollider[gameState.StaticColliderCount];
+        gameState.StaticColliders = new LogicCollider[staticColliderCount];
 
-        gameState.CharactersCount = math.min(characterCount, 100);
-        gameState.Characters = new Data.CharacterData[gameState.CharactersCount];
+        gameState.Characters = new Data.CharacterData[characterCount];
 
         for (int i = 0; i < gameState.Characters.Length; i++)
         {
@@ -344,15 +339,12 @@ public class DeterministicGameManager : MonoBehaviour
         destination.FrameNumber = source.FrameNumber;
         destination.FrameNumber++;
 
-        destination.StaticColliderCount = source.StaticColliderCount;
-        destination.CharactersCount = source.CharactersCount;
-
-        for (int i = 0; i < destination.StaticColliderCount; i++)
+        for (int i = 0; i < destination.StaticColliders.Length; i++)
         {
             destination.StaticColliders[i] = source.StaticColliders[i];
         }
 
-        for (int i = 0; i < destination.CharactersCount; i++)
+        for (int i = 0; i < destination.Characters.Length; i++)
         {
             // We save the hurtbox for the character before copying it because
             // otherwise the hurtbox array of the character will have the pointer

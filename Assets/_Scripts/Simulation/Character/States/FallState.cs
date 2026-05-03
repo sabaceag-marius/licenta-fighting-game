@@ -20,34 +20,14 @@ namespace Simulation
             character.IsFastFalling = false;
         }
         
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (input.DodgePressed && character.RemainingAirDodges > 0 && character.AirDodgeCooldown == 0)
-            {
-                character.CurrentState = CharacterStateType.AirDodge;
-                return;
-            }
-
             HandlePlatformCollision(ref character, input);
-
-            if (character.RemainingAirJumps > 0 && CheckIfJumping(ref character, input))
-            {
-                character.RemainingAirJumps--;
-                return;
-            }
 
             if (input.FastFalled)
             {
                 character.IsFastFalling = true;
             }
-
-            if (character.DynamicBody.IsGrounded)
-            {
-                character.CurrentState = CharacterStateType.Land;
-            }
-
-            if (CheckIfAttacking(ref character, input))
-                return;
         }
 
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
@@ -83,6 +63,23 @@ namespace Simulation
             character.Velocity = velocity;
         }
 
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        {
+            if (CheckIfAirDodging(ref character, input))
+                return;
+
+            if (CheckIfJumping(ref character, input))
+                return;
+
+            if (character.DynamicBody.IsGrounded)
+            {
+                character.CurrentState = CharacterStateType.Land;
+            }
+
+            if (CheckIfAttacking(ref character, input))
+                return;
+        }
+
         protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)
         {
             if (!base.CheckIfAttacking(ref character, input))
@@ -90,6 +87,19 @@ namespace Simulation
             
             character.CurrentState = CharacterStateType.Attack;
             character.AttackType = Data.Combat.AttackType.AirNeutral;
+
+            return true;
+        }
+
+        protected override bool CheckIfJumping(ref CharacterData character, ProcessedInput input)
+        {
+            if (character.RemainingAirJumps <= 0)
+                return false;
+
+            if (!base.CheckIfJumping(ref character, input))
+                return false;
+
+            character.RemainingAirJumps--;
 
             return true;
         }

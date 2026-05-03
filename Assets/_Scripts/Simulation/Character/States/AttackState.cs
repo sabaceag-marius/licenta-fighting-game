@@ -25,15 +25,8 @@ namespace Simulation
 
         }
 
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (character.StateFrame >= character.AttackDurationCount
-                || character.AttackFrameCount == 0)
-            {
-                character.CurrentState = character.DynamicBody.IsGrounded ? CharacterStateType.Idle : CharacterStateType.Fall;
-                return;
-            }
-
             FixedFloat logicProgress = (FixedFloat)character.StateFrame / (FixedFloat)character.AttackDurationCount;
 
             int currentAnimationFrame = (int)Math.Floor(logicProgress * character.AttackFrameCount);
@@ -43,23 +36,9 @@ namespace Simulation
                 character.CurrentAttackFrame = currentAnimationFrame;
             }
 
-            if (character.AttackType >= Data.Combat.AttackType.AirNeutral 
-                && character.AttackType <= Data.Combat.AttackType.AirUpward)
-            {
-                HandleAerialAttackLogic(ref character, input);
-            }
-        }
-
-        private void HandleAerialAttackLogic(ref CharacterData character, ProcessedInput input)
-        {
-            if (input.FastFalled)
+            if (character.IsAerialAttack && input.FastFalled)
             {
                 character.IsFastFalling = true;
-            }
-
-            if (character.DynamicBody.IsGrounded)
-            {
-                character.CurrentState = CharacterStateType.Land;
             }
         }
 
@@ -67,8 +46,7 @@ namespace Simulation
         {
             base.HandlePhysics(ref character, input);
 
-            if (!(character.AttackType >= Data.Combat.AttackType.AirNeutral 
-                && character.AttackType <= Data.Combat.AttackType.AirUpward))
+            if (!character.IsAerialAttack)
                 return;
 
             FixedVector2 velocity = character.Velocity;
@@ -99,6 +77,21 @@ namespace Simulation
              }
 
             character.Velocity = velocity;
+        }
+
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        {
+            if (character.StateFrame >= character.AttackDurationCount
+                || character.AttackFrameCount == 0)
+            {
+                character.CurrentState = character.DynamicBody.IsGrounded ? CharacterStateType.Idle : CharacterStateType.Fall;
+                return;
+            }
+            
+            if (character.IsAerialAttack && character.DynamicBody.IsGrounded)
+            {
+                character.CurrentState = CharacterStateType.Land;
+            }
         }
     }
 }

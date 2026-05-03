@@ -79,6 +79,13 @@ namespace Data
         
         public int CurrentAttackFrame;
 
+        public bool IsAerialAttack => 
+            AttackType == Combat.AttackType.AirNeutral ||
+            AttackType == Combat.AttackType.AirForward ||
+            AttackType == Combat.AttackType.AirBackward ||
+            AttackType == Combat.AttackType.AirDownward ||
+            AttackType == Combat.AttackType.AirUpward;
+
         /// <summary>
         /// Hurtboxes of the character when not performing an attack that overrides its hurtboxes. 
         /// Note: For now there is only one hurtbox in this list.
@@ -87,8 +94,6 @@ namespace Data
         
         public int HitTargetsMask;
         
-        // public bool[] HitTargets;
-
         #endregion
 
         #region Respawning
@@ -110,5 +115,11 @@ namespace Data
         public FixedFloat Score;
 
         public int InvincibilityFrames;
+
+        public int HitstopFrames;
+
+        public int TechWindowFrames;
+
+        public int TechPenaltyFrames;
     }
 }

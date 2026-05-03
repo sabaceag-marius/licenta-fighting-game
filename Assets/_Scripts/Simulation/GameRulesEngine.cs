@@ -3,9 +3,9 @@ namespace Simulation
 {
     public static class GameRulesEngine
     {
-        public static void CheckBlastZone(ref Data.CharacterData character, LogicBox blastzoneBoundingBox)
+        public static void CheckBlastZone(ref Data.CharacterData character, LogicCollider blastzoneBoundingBox)
         {
-            if (!character.DynamicBody.Collider.BoundingBox.CheckAABBCollision(blastzoneBoundingBox))
+            if (!character.DynamicBody.Collider.GetBoundingBox().CheckAABBCollision(blastzoneBoundingBox))
             {
                 RespawnCharacter(ref character);
             }

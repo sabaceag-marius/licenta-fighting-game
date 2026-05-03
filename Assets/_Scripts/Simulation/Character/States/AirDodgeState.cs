@@ -25,8 +25,20 @@ namespace Simulation
 
             character.Hurtboxes[0].State = Data.Combat.HurtboxState.Normal;
         }
-        
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+
+        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
+        {
+            //base.HandlePhysics(ref character, input);
+
+            FixedVector2 velocity = character.Velocity;
+
+            velocity.x.Decelerate(character.Stats.AirDodgeTraction);
+            velocity.y.Decelerate(character.Stats.AirDodgeTraction);
+
+            character.Velocity = velocity;
+        }
+
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             if (character.DynamicBody.IsGrounded)
             {
@@ -40,18 +52,6 @@ namespace Simulation
             {
                 character.CurrentState = CharacterStateType.Fall;
             }
-        }
-
-        public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
-        {
-            //base.HandlePhysics(ref character, input);
-
-            FixedVector2 velocity = character.Velocity;
-
-            velocity.x.Decelerate(character.Stats.AirDodgeTraction);
-            velocity.y.Decelerate(character.Stats.AirDodgeTraction);
-
-            character.Velocity = velocity;
         }
     }
 }

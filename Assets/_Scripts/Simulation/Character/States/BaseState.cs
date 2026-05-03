@@ -14,6 +14,8 @@ namespace Simulation
 
         public virtual void Exit(ref CharacterData character) { }
 
+        public virtual void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input) { }
+
         public virtual void HandlePhysics(ref CharacterData character, ProcessedInput input)
         {
             if (character.DynamicBody.IsGrounded)
@@ -26,14 +28,21 @@ namespace Simulation
             }
         }
 
-        public abstract void HandleLogic(ref CharacterData character, ProcessedInput input);
+        public virtual void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input) { }
 
-        public void Execute(ref CharacterData character, ProcessedInput input)
+        public void Execute(ref CharacterData character, ProcessedInput input, LogicCollider[] staticColliders, FixedFloat minimumSafeStepX, FixedFloat minimumSafeStepY)
         {
+            HandlePrePhysicsLogic(ref character, input);
+            
             HandlePhysics(ref character, input);
 
-            HandleLogic(ref character, input);
+            // add physics engine
+            PhysicsEngine.SimulateCharacterPhysics(ref character, staticColliders, minimumSafeStepX, minimumSafeStepY);
+            
+            HandlePostPhysicsLogic(ref character, input);
         }
+
+        public virtual void ExecuteDuringHitstop(ref CharacterData character, ProcessedInput input) { }
 
         /// <summary>
         /// Check if we should change the character's state to Jump
@@ -41,7 +50,7 @@ namespace Simulation
         /// <param name="character"></param>
         /// <param name="input"></param>
         /// <returns>true if the state changed, false otherwise</returns>
-        protected bool CheckIfJumping(ref CharacterData character, ProcessedInput input)
+        protected virtual bool CheckIfJumping(ref CharacterData character, ProcessedInput input)
         {
             if (!input.JumpPressed)
                 return false;
@@ -77,6 +86,30 @@ namespace Simulation
         {
             if (!input.AttackPressed)
                 return false;
+
+            character.CurrentState = CharacterStateType.Attack;
+
+            return true;
+        }
+
+        // <summary>
+        /// Check if we should change the character's state to Attack
+        /// </summary>
+        /// <param name="character"></param>
+        /// <param name="input"></param>
+        /// <returns>true if the state changed, false otherwise</returns>
+        protected virtual bool CheckIfAirDodging(ref CharacterData character, ProcessedInput input)
+        {
+            if (!input.DodgePressed)
+                return false;
+
+            if (character.RemainingAirDodges <= 0)
+                return false;
+
+            if (character.AirDodgeCooldown > 0)
+                return false;
+
+            character.CurrentState = CharacterStateType.AirDodge;
 
             return true;
         }

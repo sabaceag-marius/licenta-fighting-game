@@ -14,5 +14,6 @@ namespace Data
         Attack,
         AirDodge,
         Hit,
+        Tumble,
     }
 }

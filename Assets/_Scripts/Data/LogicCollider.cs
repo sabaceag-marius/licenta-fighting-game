@@ -8,15 +8,11 @@ public enum ColliderType
 
 public struct LogicCollider
 {
+    public FixedVector2 Position;
+
     public ColliderLayer Layer;
 
     public ColliderType Type;
-
-    public bool IsTrigger;
-
-    public LogicBox BoundingBox;
-
-    public FixedVector2 Position;
 
     /// <summary>
     /// [CircleCollider]: Radius of the circle; 
@@ -26,7 +22,7 @@ public struct LogicCollider
     public FixedFloat Radius;
 
     /// <summary>
-    /// [CapsuleCollider]: The distance from the center to the top / bottom of the capsule TODO CHANGE
+    /// [CapsuleCollider]: The distance from the center to the top / bottom points of the segment
     /// </summary>
     
     public FixedFloat HalfInnerLength;
@@ -42,7 +38,6 @@ public struct LogicCollider
     /// </summary>
     
     public FixedVector2 Direction;
-
 
     // BoxCollider specifics
 

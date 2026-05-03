@@ -1,16 +1,27 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Data;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Core
 {
     public class CharacterAnimator : MonoBehaviour
     {
+        [Header("General Settings")]
         [SerializeField]
         private bool IsAnimated = true;
 
+        [Header("Hitstop shake settings")]
+        [SerializeField]
+        private float BaseShakeIntensity = 0.15f;
+        private float DefenderMultiplier = 1.5f;
+
+        private Vector3 originalSpritePosition;
+
         private Animator animator;
+
+        private Transform spriteTransform;
 
         private Dictionary<Data.CharacterStateType, int> animationNames = new();
 
@@ -66,9 +77,13 @@ namespace Core
 
                 attackAnimationLengths.Add(attackType, Mathf.RoundToInt(clip.length * 60f));
             }
+
+            spriteTransform = animator.gameObject.transform;
+
+            originalSpritePosition = spriteTransform.localPosition;
         }
 
-        public void UpdateAnimation(Data.CharacterData characterData) //TODO: Add attack type when needed
+        public void UpdateAnimation(Data.CharacterData characterData)
         {
             if (!IsAnimated)
                 return;
@@ -76,8 +91,8 @@ namespace Core
             Data.CharacterStateType stateType = characterData.CurrentState;
             int stateFrame = characterData.StateFrame;
 
-            int animationName = 0;
-            int animationLength = 0;
+            int animationName;
+            int animationLength;
 
             if (stateType != Data.CharacterStateType.Attack)
             {
@@ -90,8 +105,6 @@ namespace Core
                     animationName = animationNames[Data.CharacterStateType.Idle];
                     animationLength = animationLengths[Data.CharacterStateType.Idle];
                 }
-
-                
             }
             else
             {
@@ -114,6 +127,36 @@ namespace Core
 
             animator.Play(animationName, 0, normalizedTime);
             animator.speed = 0;
+
+            if (characterData.HitstopFrames > 0)
+            {
+                HandleHitstopShake(characterData);
+            }
+            else
+            {
+                spriteTransform.localPosition = originalSpritePosition;
+            }
+        }
+
+        private void HandleHitstopShake(CharacterData characterData)
+        {
+            float currentIntensity = BaseShakeIntensity;
+
+            if (characterData.CurrentState == Data.CharacterStateType.Hit ||
+                characterData.CurrentState == Data.CharacterStateType.Tumble)
+            {
+                currentIntensity *= DefenderMultiplier;
+            }
+
+            float offsetX = Random.Range(-currentIntensity, currentIntensity);
+            float offsetY = 0f;
+
+            if (!characterData.DynamicBody.IsGrounded)
+            {
+                offsetY = Random.Range(-currentIntensity, currentIntensity);
+            }
+
+            spriteTransform.localPosition = originalSpritePosition + new Vector3(offsetX, offsetY, 0f);
         }
     }
 }

@@ -5,30 +5,9 @@ namespace Simulation
 {
     public class WalkState : BaseState
     {
-        public override void HandleLogic(ref CharacterData character, ProcessedInput input)
+        public override void HandlePrePhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             HandlePlatformCollision(ref character, input);
-
-            if (CheckIfFalling(ref character, input))
-                return;
-
-            if (CheckIfJumping(ref character, input))
-                return;
-
-            if (input.Dashed)
-            {
-                character.CurrentState = CharacterStateType.Dash;
-                return;
-            }
-
-            if (FixedMath.Abs(input.Movement.x) < 0.1)
-            {
-                character.CurrentState = CharacterStateType.Idle;
-                return;
-            }
-
-            if (CheckIfAttacking(ref character, input))
-                return;
         }
 
         public override void HandlePhysics(ref CharacterData character, ProcessedInput input)
@@ -62,6 +41,29 @@ namespace Simulation
             character.Velocity = velocity;
         }
 
+        public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
+        {
+            if (CheckIfFalling(ref character, input))
+                return;
+
+            if (CheckIfJumping(ref character, input))
+                return;
+
+            if (input.Dashed)
+            {
+                character.CurrentState = CharacterStateType.Dash;
+                return;
+            }
+
+            if (FixedMath.Abs(input.Movement.x) < 0.1)
+            {
+                character.CurrentState = CharacterStateType.Idle;
+                return;
+            }
+
+            if (CheckIfAttacking(ref character, input))
+                return;
+        }
         protected override bool CheckIfAttacking(ref CharacterData character, ProcessedInput input)
         {
             if (!base.CheckIfAttacking(ref character, input))

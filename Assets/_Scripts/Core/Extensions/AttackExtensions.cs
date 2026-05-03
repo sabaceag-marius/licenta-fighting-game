@@ -126,10 +126,11 @@ public static class AttackExtensions
             Vector2 bbCenter = new Vector2((minX + maxX) / 2f, (minY + maxY) / 2f);
             Vector2 bbExtents = new Vector2((maxX - minX) / 2f, (maxY - minY) / 2f);
 
-            frameData.HurtboxesBoundingBox = new LogicBox
+            frameData.HurtboxesBoundingBox = new LogicCollider
             {
                 Position = bbCenter,
-                Extents = bbExtents
+                Extents = bbExtents,
+                Type = ColliderType.Box
             };
         }
 

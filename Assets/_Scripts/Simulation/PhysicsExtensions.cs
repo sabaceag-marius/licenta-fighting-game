@@ -3,8 +3,8 @@
 public static class PhysicsExtensions
 {
     #region Collision detection
-
-    public static bool CheckAABBCollision(this LogicBox boxA, LogicBox boxB)
+    
+    public static bool CheckAABBCollision(this LogicCollider boxA, LogicCollider boxB)
     {
         if (boxA.Right < boxB.Left || boxA.Left > boxB.Right ||
             boxA.Top < boxB.Bottom || boxA.Bottom > boxB.Top)
