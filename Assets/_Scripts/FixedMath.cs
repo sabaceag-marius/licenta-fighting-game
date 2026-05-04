@@ -3,7 +3,9 @@
 using UnityEngine;
 using Unity.Mathematics.FixedPoint;
 using System;
+using Newtonsoft.Json;
 
+[JsonConverter(typeof(FixedFloatConverter))]
 public struct FixedFloat
 {
     public fp rawValue = 0;
@@ -78,7 +80,7 @@ public struct FixedVector2
     public override bool Equals(object obj) => obj is FixedVector2 other && this == other;
     public override int GetHashCode() => (int)fpmath.hash(this);
 
-    public override string ToString() => $"({(float)x}, {(float)y})";
+    public override string ToString() => $"({x.rawValue}f, {y.rawValue}f)";
 }
 
 public static class FixedMath
@@ -208,5 +210,24 @@ public static class FixedMath
     public static int CeilToInt(FixedFloat x)
     {
         return (int) x;
+    }
+}
+
+public class FixedFloatConverter : JsonConverter<FixedFloat>
+{
+    public override void WriteJson(JsonWriter writer, FixedFloat value, JsonSerializer serializer)
+    {
+        // Write ONLY the raw deterministic long. 
+        // This changes your JSON from {"rawValue":{"RawValue":1011086}} to simply 1011086
+        writer.WriteValue(value.rawValue.RawValue);
+    }
+
+    public override FixedFloat ReadJson(JsonReader reader, Type objectType, FixedFloat existingValue, bool hasExistingValue, JsonSerializer serializer)
+    {
+        long extractedRawValue = 0;
+
+        extractedRawValue = (long)reader.Value;
+
+        return new FixedFloat(fp.FromRaw(extractedRawValue));
     }
 }

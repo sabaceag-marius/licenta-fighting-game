@@ -1,9 +1,8 @@
-using Project.Tools.DictionaryHelp;
+// using Project.Tools.DictionaryHelp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class CharacterManager : MonoBehaviour, ICharacterManager
 {
@@ -28,7 +27,7 @@ public class CharacterManager : MonoBehaviour, ICharacterManager
     #endregion
 
     [SerializeField]
-    private SerializableDictionary<AttackType, AttackDataSO> attackData;
+    private Dictionary<AttackType, AttackDataSO> attackData;
 
     public Vector2 Velocity { get; set; }
 

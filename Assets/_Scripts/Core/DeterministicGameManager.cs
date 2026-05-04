@@ -8,11 +8,15 @@ using Data.Combat;
 using Data;
 using UnityEngine.SceneManagement;
 using Cinemachine;
+using System.IO;
 
 public class DeterministicGameManager : MonoBehaviour
 {
     [Header("Debug settings")]
     
+    [SerializeField]
+    private bool saveData = false;
+
     [SerializeField]
     private bool ShowHitboxes = true;
 
@@ -36,7 +40,7 @@ public class DeterministicGameManager : MonoBehaviour
     private int InputDelay = 3;
 
     [SerializeField]
-    private readonly int BufferSize = 60;
+    private int BufferSize = 60;
     private GameState[] stateBuffer;
     private RawInput[][] inputBuffer;
     private int currentTick;
@@ -93,7 +97,7 @@ public class DeterministicGameManager : MonoBehaviour
 
         var staticColliders = colliderFactories.Where(i => i.Layer != ColliderLayer.Blastzone).ToArray();
 
-        gameState.StaticColliders = new LogicCollider[math.min(staticColliders.Length, 100)];
+        gameState.StaticColliders = new LogicCollider[Math.Min(staticColliders.Length, 100)];
 
         for (int i = 0; i < gameState.StaticColliders.Length; i++)
         {
@@ -111,7 +115,7 @@ public class DeterministicGameManager : MonoBehaviour
             
         characters = FindObjectsOfType<Character>();
 
-        gameState.Characters = new Data.CharacterData[math.min(characters.Length, 16)];
+        gameState.Characters = new Data.CharacterData[Math.Min(characters.Length, 16)];
 
         for (int i = 0; i < gameState.Characters.Length; i++)
         {
@@ -127,8 +131,13 @@ public class DeterministicGameManager : MonoBehaviour
             
             gameState.Characters[i].Hurtboxes = hurtbox;
 
-            gameState.Characters[i].DamagePercentage = characters[i].Damage;
-            gameState.Characters[i].DamagePercentage = 50;
+            // gameState.Characters[i].DamagePercentage = characters[i].Damage;
+            // gameState.Characters[i].DamagePercentage = 50;
+        }
+
+        using (StreamWriter writer = new StreamWriter("Assets/TestData/initial-gamestate.json", false))
+        {
+            writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(gameState));
         }
 
         // Input buffers
@@ -176,6 +185,9 @@ public class DeterministicGameManager : MonoBehaviour
 
     private void Update()
     {
+        if (saveData)
+            SaveData();
+
         accumulator += Time.deltaTime;
 
         while (accumulator >= fixedDeltaTime)
@@ -201,8 +213,6 @@ public class DeterministicGameManager : MonoBehaviour
         for (int i = 0; i < characters.Length; i++)
         {
             Character character = characters[i];
-
-            RawInput input = character.GetRawInput();
 
             RawInput currentHardwareInput = character.GetRawInput();
             inputBuffer[i][currentTick % BufferSize] = currentHardwareInput;
@@ -286,7 +296,7 @@ public class DeterministicGameManager : MonoBehaviour
         // Update timer
         long framesRemaining = totalMatchFrames - currentTick;
 
-        UIMatchManager.Instance.UpdateTimer(framesRemaining, TargetFPS);
+        // UIMatchManager.Instance.UpdateTimer(framesRemaining, TargetFPS);
 
         // Manually update the camera
 
@@ -359,5 +369,40 @@ public class DeterministicGameManager : MonoBehaviour
 
             destination.Characters[i].Hurtboxes[0] = source.Characters[i].Hurtboxes[0];
         }
+    }
+
+    private void SaveData()
+    {
+        saveData = false;
+
+        var date = DateTime.Now;
+
+        string path = $"Assets/TestData/{date.Year}-{date.Month}-{date.Day}/{date.Hour}-{date.Minute}/";
+
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        for (int i = 0; i < inputBuffer.Length; i++)
+        {
+            // 2. Safer path combining (optional, but good practice)
+            string filePath = Path.Combine(path, $"character-{i + 1}.txt");
+            
+            using (StreamWriter writer = new StreamWriter(filePath, false))
+            {
+                writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(inputBuffer[i]));
+            }
+        }
+
+        string statePath = Path.Combine(path, "gameState.txt");
+        using (StreamWriter writer = new StreamWriter(statePath, false))
+        {
+            writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(stateBuffer));
+        }
+
+    #if UNITY_EDITOR
+        UnityEditor.AssetDatabase.Refresh();
+    #endif
     }
 }
