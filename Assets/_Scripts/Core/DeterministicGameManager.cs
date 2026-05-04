@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using Simulation;
 using Data.Combat;
+using Data.Character;
 using Data;
 using UnityEngine.SceneManagement;
 using Cinemachine;
@@ -67,7 +68,7 @@ public class DeterministicGameManager : MonoBehaviour
     {
         totalMatchFrames = (long)(minutesPerMatch * 60 * TargetFPS);
 
-        fixedDeltaTime = 1f / TargetFPS;
+        fixedDeltaTime = (FixedFloat)1f / TargetFPS;
 
         // Create the GameSimulation class
 
@@ -115,14 +116,14 @@ public class DeterministicGameManager : MonoBehaviour
             
         characters = FindObjectsOfType<Character>();
 
-        gameState.Characters = new Data.CharacterData[Math.Min(characters.Length, 16)];
+        gameState.Characters = new Data.Character.CharacterData[Math.Min(characters.Length, 16)];
 
         for (int i = 0; i < gameState.Characters.Length; i++)
         {
             gameState.Characters[i].FacingDirection = (int)characters[i].transform.lossyScale.x;
             gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
             gameState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
-            gameState.Characters[i].CurrentState = Data.CharacterStateType.Fall;
+            gameState.Characters[i].CurrentState = Data.Character.CharacterStateType.Fall;
             gameState.Characters[i].SpawnPosition = (Vector2)characters[i].transform.position;
             gameState.Characters[i].RemainingStocks = 3;
 
@@ -135,10 +136,17 @@ public class DeterministicGameManager : MonoBehaviour
             // gameState.Characters[i].DamagePercentage = 50;
         }
 
+    #if UNITY_EDITOR
         using (StreamWriter writer = new StreamWriter("Assets/TestData/initial-gamestate.json", false))
         {
             writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(gameState));
         }
+
+        using (StreamWriter writer = new StreamWriter("Assets/TestData/global-stats.json", false))
+        {
+            writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(Simulation.Character.GlobalCharacterStats.GetData()));
+        }
+    #endif
 
         // Input buffers
 
@@ -154,7 +162,7 @@ public class DeterministicGameManager : MonoBehaviour
     {
         gameState.StaticColliders = new LogicCollider[staticColliderCount];
 
-        gameState.Characters = new Data.CharacterData[characterCount];
+        gameState.Characters = new Data.Character.CharacterData[characterCount];
 
         for (int i = 0; i < gameState.Characters.Length; i++)
         {
@@ -180,7 +188,7 @@ public class DeterministicGameManager : MonoBehaviour
             }
         }
 
-        gameSimulation.InitializeAttackData(attacks);
+        gameSimulation.SetAttackData(attacks);
     }
 
     private void Update()
@@ -269,7 +277,7 @@ public class DeterministicGameManager : MonoBehaviour
         for (int i = 0; i < characters.Length; i++)
         {
             Character character = characters[i];
-            CharacterData characterData = gameState.Characters[i];
+            Data.Character.CharacterData characterData = gameState.Characters[i];
 
             character.UpdateState(characterData);
 
@@ -282,9 +290,9 @@ public class DeterministicGameManager : MonoBehaviour
 
             CharacterData prevCharacterData = prevState.Characters[i];
 
-            if (prevCharacterData.DamagePercentage != characterData.DamagePercentage)
+            if (prevCharacterData.Damage != characterData.Damage)
             {
-                UIMatchManager.Instance.UpdateCharacterDamage(i, characterData.DamagePercentage);
+                UIMatchManager.Instance.UpdateCharacterDamage(i, characterData.Damage);
             }
 
             if (prevCharacterData.RemainingStocks != characterData.RemainingStocks)
@@ -324,9 +332,9 @@ public class DeterministicGameManager : MonoBehaviour
                 winningPlayer = 2;
             }
         }
-        else if (characterOne.DamagePercentage != characterTwo.DamagePercentage)
+        else if (characterOne.Damage != characterTwo.Damage)
         {
-            if (characterOne.DamagePercentage > characterTwo.DamagePercentage)
+            if (characterOne.Damage > characterTwo.Damage)
             {
                 winningPlayer = 1;
             }

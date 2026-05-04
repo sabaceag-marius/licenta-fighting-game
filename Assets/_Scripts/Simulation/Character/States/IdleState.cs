@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 
 namespace Simulation
 {
@@ -10,7 +10,7 @@ namespace Simulation
             base.Enter(ref character, input, characterAttacks);
 
             character.RemainingAirJumps = character.Stats.AirJumpCount;
-            character.RemainingAirDodges = character.Stats.AirDodgesCount;
+            character.RemainingAirDodges = Simulation.Character.GlobalCharacterStats.AirDodgesCount;
             character.AirDodgeCooldown = 0;
         }
 

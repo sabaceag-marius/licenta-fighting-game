@@ -1,9 +1,12 @@
 
-public struct GameState
+namespace Data
 {
-    public ushort FrameNumber;
+    public struct GameState
+    {
+        public ushort FrameNumber;
 
-    public LogicCollider[] StaticColliders;
+        public LogicCollider[] StaticColliders;
 
-    public Data.CharacterData[] Characters;
+        public Data.Character.CharacterData[] Characters;
+    }
 }

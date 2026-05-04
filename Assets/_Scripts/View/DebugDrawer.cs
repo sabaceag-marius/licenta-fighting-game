@@ -1,6 +1,6 @@
 using UnityEngine;
 using Data.Combat;
-using Data;
+using Data.Character;
 using System;
 
 public class DebugDrawer : MonoBehaviour
@@ -51,9 +51,9 @@ public class DebugDrawer : MonoBehaviour
         boundingBoxParams = new RenderParams(BoundingBoxMaterial);
     }
 
-    public void DrawCharacter(Data.CharacterData characterData, Data.Combat.AttackData attack)
+    public void DrawCharacter(Data.Character.CharacterData characterData, Data.Combat.AttackData attack)
     {
-        if (characterData.CurrentState == Data.CharacterStateType.Attack)
+        if (characterData.CurrentState == CharacterStateType.Attack)
         {
             DrawAttackState(attack, characterData.CurrentAttackFrame, characterData.Position, -characterData.FacingDirection, characterData);
         }
@@ -66,7 +66,7 @@ public class DebugDrawer : MonoBehaviour
     /// <summary>
     /// Call this every frame from your View/Visuals script, passing the current player position.
     /// </summary>
-    public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection, Data.CharacterData characterData)
+    public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection, Data.Character.CharacterData characterData)
     {
         // Safety check to ensure we don't read out of bounds
         if (currentFrame < 0 || currentFrame >= attack.FrameCount) return;
@@ -105,7 +105,7 @@ public class DebugDrawer : MonoBehaviour
         }
     }
 
-    private RenderParams GetHurtboxParams(CharacterData characterData, Data.Combat.HurtboxState hurtboxState)
+    private RenderParams GetHurtboxParams(Data.Character.CharacterData characterData, Data.Combat.HurtboxState hurtboxState)
     {
         if (characterData.InvincibilityFrames > 0)
             return invincibleHurtboxParams;

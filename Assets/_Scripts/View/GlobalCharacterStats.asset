@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc674d0f2d91141868b0e00e0ec9316a, type: 3}
+  m_Name: GlobalCharacterStats
+  m_EditorClassIdentifier: 
+  IgnorePlatformCollisionFrames: 6
+  JumpWindupFrames: 4
+  AirJumpWindupFrames: 2
+  LandLagFrames: 4
+  TechWindowFrames: 20
+  TechCooldownFrames: 40
+  InvincibilityFrames: 120
+  AirDodgeFrames: 40
+  AirDodgeCooldownFrames: 50
+  AirDodgesCount: 2
+  ExternalVelocityTraction: 0.15
+  AirDodgePower: 20
+  AirDodgeTraction: 50

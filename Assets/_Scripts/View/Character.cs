@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Data.Character;
 
 [RequireComponent(typeof(DynamicBody), typeof(Core.CharacterAnimator))]
 // [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
@@ -30,9 +31,9 @@ public class Character : MonoBehaviour
         hurtboxFactory = GetComponents<BaseColliderFactory>().First(col => col.IsHurtbox);
     }
 
-    public Data.CharacterStats GetLogicCharacterStats(float fixedDeltaTime)
+    public Data.Character.CharacterStats GetLogicCharacterStats(float fixedDeltaTime)
     {
-        return new Data.CharacterStats
+        return new Data.Character.CharacterStats
         {
             // --- Target Speeds & Instant Impulses (Passed Directly) ---
             WalkSpeed = CharacterStats.WalkSpeed / 100,
@@ -44,7 +45,6 @@ public class Character : MonoBehaviour
             FallSpeed = CharacterStats.FallSpeed / 100,
             AirSpeed = CharacterStats.AirSpeed / 100,
             FastFallSpeed = CharacterStats.FastFallSpeed / 100,
-            AirDodgePower = CharacterStats.AirDodgePower / 100,
 
             // --- Continuous Forces (Multiplied by fixedDeltaTime) ---
             Traction = CharacterStats.Traction * fixedDeltaTime / 100,
@@ -52,17 +52,10 @@ public class Character : MonoBehaviour
             Gravity = CharacterStats.Gravity * fixedDeltaTime / 100,
             AirAcceleration = CharacterStats.AirAcceleration * fixedDeltaTime / 100,
             AirFriction = CharacterStats.AirFriction * fixedDeltaTime / 100,
-            AirDodgeTraction = CharacterStats.AirDodgeTraction * fixedDeltaTime / 100,
 
             // --- Integer Frames (Passed Directly) ---
             DashFrames = CharacterStats.DashFrames,
-            JumpWindupFrames = CharacterStats.JumpWindupFrames,
-            LandLagFrames = CharacterStats.LandLagFrames,
             AirJumpCount = CharacterStats.AirJumpCount,
-            AirDodgeFrames = CharacterStats.AirDodgeFrames,
-            IgnorePlatformCollisionFrames = CharacterStats.IgnorePlatformCollisionFrames,
-            AirDodgeCooldown = CharacterStats.AirDodgeCooldown,
-            AirDodgesCount = CharacterStats.AirDodgesCount,
         };
     }
 
@@ -79,7 +72,7 @@ public class Character : MonoBehaviour
     
     public RawInput GetRawInput() => inputController == null ? new RawInput() : inputController.GetRawInput();
 
-    public void UpdateState(Data.CharacterData data)
+    public void UpdateState(Data.Character.CharacterData data)
     {
         dynamicBody.transform.position = new Vector2(data.Position.x, data.Position.y);
 

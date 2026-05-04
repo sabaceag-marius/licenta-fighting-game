@@ -21,7 +21,7 @@ namespace Simulation
             inputProcessor = new CharacterInputProcessor();
         }
 
-        public void InitializeAttackData(Data.Combat.AttackData[][] attacks)
+        public void SetAttackData(Data.Combat.AttackData[][] attacks)
         {
             attackDatabase = attacks;
         }
@@ -49,11 +49,11 @@ namespace Simulation
             
             - Check for each character if they left the blastzone
         */
-        public void AdvanceFrame(ref GameState gameState, GameState previousGameState)
+        public void AdvanceFrame(ref Data.GameState gameState, Data.GameState previousGameState)
         {
             for (int i = 0; i < gameState.Characters.Length; i++)
             {
-                ref Data.CharacterData character = ref gameState.Characters[i];
+                ref Data.Character.CharacterData character = ref gameState.Characters[i];
 
                 // Process input
                 var input = inputProcessor.ProcessInput(character.RawInput, previousGameState.Characters[i].RawInput);
@@ -68,7 +68,7 @@ namespace Simulation
             // Check if any character left the blastzone
             for (int i = 0; i < gameState.Characters.Length; i++)
             {
-                ref Data.CharacterData character = ref gameState.Characters[i];
+                ref Data.Character.CharacterData character = ref gameState.Characters[i];
 
                 GameRulesEngine.CheckBlastZone(ref character, blastzoneBoundingBox);
             }

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Data;
+using Data.Character;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -23,9 +23,9 @@ namespace Core
 
         private Transform spriteTransform;
 
-        private Dictionary<Data.CharacterStateType, int> animationNames = new();
+        private Dictionary<CharacterStateType, int> animationNames = new();
 
-        private Dictionary<Data.CharacterStateType, int> animationLengths = new();
+        private Dictionary<CharacterStateType, int> animationLengths = new();
 
         private Dictionary<Data.Combat.AttackType, int> attackAnimationNames = new();
 
@@ -42,7 +42,7 @@ namespace Core
 
             Debug.Log(clips);
 
-            foreach(Data.CharacterStateType stateType in System.Enum.GetValues(typeof(Data.CharacterStateType)))
+            foreach(CharacterStateType stateType in System.Enum.GetValues(typeof(CharacterStateType)))
             {
                 animationNames.Add(stateType, Animator.StringToHash(stateType.ToString()));
 
@@ -83,18 +83,18 @@ namespace Core
             originalSpritePosition = spriteTransform.localPosition;
         }
 
-        public void UpdateAnimation(Data.CharacterData characterData)
+        public void UpdateAnimation(Data.Character.CharacterData characterData)
         {
             if (!IsAnimated)
                 return;
 
-            Data.CharacterStateType stateType = characterData.CurrentState;
+            CharacterStateType stateType = characterData.CurrentState;
             int stateFrame = characterData.StateFrame;
 
             int animationName;
             int animationLength;
 
-            if (stateType != Data.CharacterStateType.Attack)
+            if (stateType != CharacterStateType.Attack)
             {
                 animationName = animationNames[stateType];
 
@@ -102,8 +102,8 @@ namespace Core
                 {
                     //Debug.LogWarning($"There was no animation found for the state {stateType}");
 
-                    animationName = animationNames[Data.CharacterStateType.Idle];
-                    animationLength = animationLengths[Data.CharacterStateType.Idle];
+                    animationName = animationNames[CharacterStateType.Idle];
+                    animationLength = animationLengths[CharacterStateType.Idle];
                 }
             }
             else
@@ -116,8 +116,8 @@ namespace Core
                 {
                     //Debug.LogWarning($"There was no animation found for the state {stateType}");
 
-                    animationName = animationNames[Data.CharacterStateType.Idle];
-                    animationLength = animationLengths[Data.CharacterStateType.Idle];
+                    animationName = animationNames[CharacterStateType.Idle];
+                    animationLength = animationLengths[CharacterStateType.Idle];
                 }
             }
 
@@ -138,12 +138,12 @@ namespace Core
             }
         }
 
-        private void HandleHitstopShake(CharacterData characterData)
+        private void HandleHitstopShake(Data.Character.CharacterData characterData)
         {
             float currentIntensity = BaseShakeIntensity;
 
-            if (characterData.CurrentState == Data.CharacterStateType.Hit ||
-                characterData.CurrentState == Data.CharacterStateType.Tumble)
+            if (characterData.CurrentState == Data.Character.CharacterStateType.Hit ||
+                characterData.CurrentState == Data.Character.CharacterStateType.Tumble)
             {
                 currentIntensity *= DefenderMultiplier;
             }

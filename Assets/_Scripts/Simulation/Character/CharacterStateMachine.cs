@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 using UnityEngine;
 
 namespace Simulation
@@ -10,7 +10,7 @@ namespace Simulation
         
         public CharacterStateMachine()
         {
-            int totalStates = System.Enum.GetValues(typeof(Data.CharacterStateType)).Length;
+            int totalStates = System.Enum.GetValues(typeof(CharacterStateType)).Length;
 
             characterStates = new ICharacterState[totalStates];
 
