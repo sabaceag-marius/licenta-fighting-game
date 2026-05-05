@@ -145,14 +145,17 @@ namespace Core
                 }
 
                 if (prevState.Characters[i].Damage != gameState.Characters[i].Damage)
-                    UIMatchManager.Instance.UpdateCharacterDamage(i, gameState.Characters[i].Damage);
+                    Core.UI.MatchEventBus.OnCharacterDamageChanged?.Invoke(i, gameState.Characters[i].Damage);
 
                 if (prevState.Characters[i].RemainingStocks != gameState.Characters[i].RemainingStocks)
-                    UIMatchManager.Instance.UpdateCharacterStocks(i, gameState.Characters[i].RemainingStocks);
+                    Core.UI.MatchEventBus.OnCharacterStocksChanged?.Invoke(i, gameState.Characters[i].RemainingStocks);
             }
 
             if (cameraBrain != null)
                 cameraBrain.ManualUpdate();
+
+            long framesRemaining = logicEngine.TotalMatchFrames - currentTick;
+            UI.MatchEventBus.OnTimerUpdated?.Invoke(framesRemaining, config.TargetFPS);
         }
 
         private void EndMatch(GameState state)

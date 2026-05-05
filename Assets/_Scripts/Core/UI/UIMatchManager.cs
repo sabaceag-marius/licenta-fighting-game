@@ -4,80 +4,86 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class UIMatchManager : MonoBehaviour
+namespace Core.UI
 {
-    public static UIMatchManager Instance { get; private set; }
-
-    [Header("UI objects")]
-
-    [SerializeField]
-    private TMP_Text TimerLabel;
-
-    [SerializeField]
-    private PlayerHUD[] playerHUDs;
-
-    private char[] timerChars = new char[] { '0', '0', ':', '0', '0', '.', '0', '0' };
-
-    private void Awake() 
-    { 
-        if (Instance != null && Instance != this) 
-        { 
-            Destroy(this); 
-        } 
-        else 
-        { 
-            Instance = this; 
-        } 
-    }
-
-    public void UpdateTimer(long framesRemaining, int gameFPS)
+    
+    public class UIMatchManager : MonoBehaviour
     {
-        if (TimerLabel == null)
+        public static UIMatchManager Instance { get; private set; }
+
+        [Header("UI objects")]
+
+        [SerializeField]
+        private TMP_Text TimerLabel;
+
+        [SerializeField]
+        private PlayerHUD[] playerHUDs;
+
+        private char[] timerChars = new char[] { '0', '0', ':', '0', '0', '.', '0', '0' };
+
+        private void OnEnable()
         {
-            Debug.LogWarning("Timer label was not set in the scene!");
-            return;
+            MatchEventBus.OnTimerUpdated += UpdateTimer;
+            MatchEventBus.OnCharacterStocksChanged += UpdateCharacterStocks;
+            MatchEventBus.OnCharacterDamageChanged += UpdateCharacterDamage;
         }
 
-        if (framesRemaining < 0)
+        private void OnDisable()
         {
-            framesRemaining = 0;
+            MatchEventBus.OnTimerUpdated -= UpdateTimer;
+            MatchEventBus.OnCharacterStocksChanged -= UpdateCharacterStocks;
+            MatchEventBus.OnCharacterDamageChanged -= UpdateCharacterDamage;
         }
 
-        // 1. Convert frames to total raw seconds (with decimals)
-        double totalSecondsRemaining = (double)framesRemaining / gameFPS;
+        private void UpdateTimer(long framesRemaining, int gameFPS)
+        {
+            if (TimerLabel == null)
+            {
+                Debug.LogWarning("Timer label was not set in the scene!");
+                return;
+            }
 
-        // Extract Minutes, Seconds, and Milliseconds
-        int minutes = (int)(totalSecondsRemaining / 60);
-        int seconds = (int)(totalSecondsRemaining % 60);
-        int milliseconds = (int)((totalSecondsRemaining - Mathf.Floor((float)totalSecondsRemaining)) * 100);
+            if (framesRemaining < 0)
+            {
+                framesRemaining = 0;
+            }
 
-        timerChars[0] = (char)('0' + (minutes / 10));
-        timerChars[1] = (char)('0' + (minutes % 10));
+            // 1. Convert frames to total raw seconds (with decimals)
+            double totalSecondsRemaining = (double)framesRemaining / gameFPS;
 
-        timerChars[3] = (char)('0' + (seconds / 10));
-        timerChars[4] = (char)('0' + (seconds % 10));
-        
-        timerChars[6] = (char)('0' + (milliseconds / 10));
-        timerChars[7] = (char)('0' + (milliseconds % 10));
+            // Extract Minutes, Seconds, and Milliseconds
+            int minutes = (int)(totalSecondsRemaining / 60);
+            int seconds = (int)(totalSecondsRemaining % 60);
+            int milliseconds = (int)((totalSecondsRemaining - Mathf.Floor((float)totalSecondsRemaining)) * 100);
 
-        // Display the format MM:SS:ms
-        // {0:00} ensures 2 digits (e.g., 01 instead of 1)
-        TimerLabel.SetText("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
-    }
+            timerChars[0] = (char)('0' + (minutes / 10));
+            timerChars[1] = (char)('0' + (minutes % 10));
 
-    public void UpdateCharacterStocks(int i, int stockCount)
-    {
-        if (playerHUDs == null || i >= playerHUDs.Length)
-            return;
+            timerChars[3] = (char)('0' + (seconds / 10));
+            timerChars[4] = (char)('0' + (seconds % 10));
+            
+            timerChars[6] = (char)('0' + (milliseconds / 10));
+            timerChars[7] = (char)('0' + (milliseconds % 10));
 
-        playerHUDs[i].UpdateStocks(stockCount);
-    }
+            // Display the format MM:SS:ms
+            // {0:00} ensures 2 digits (e.g., 01 instead of 1)
+            TimerLabel.SetText("{0:00}:{1:00}:{2:00}", minutes, seconds, milliseconds);
+        }
 
-    public void UpdateCharacterDamage(int i, FixedFloat damagePercentage)
-    {
-        if (playerHUDs == null || i >= playerHUDs.Length)
-            return;
+        private void UpdateCharacterStocks(int i, int stockCount)
+        {
+            if (playerHUDs == null || i >= playerHUDs.Length)
+                return;
 
-        playerHUDs[i].UpdateDamage(damagePercentage);
+            playerHUDs[i].UpdateStocks(stockCount);
+        }
+
+        private void UpdateCharacterDamage(int i, FixedFloat damagePercentage)
+        {
+            if (playerHUDs == null || i >= playerHUDs.Length)
+                return;
+
+            playerHUDs[i].UpdateDamage(damagePercentage);
+        }
     }
 }
