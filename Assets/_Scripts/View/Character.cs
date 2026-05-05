@@ -56,6 +56,7 @@ public class Character : MonoBehaviour
             // --- Integer Frames (Passed Directly) ---
             DashFrames = CharacterStats.DashFrames,
             AirJumpCount = CharacterStats.AirJumpCount,
+            Weight = CharacterStats.Weight
         };
     }
 
