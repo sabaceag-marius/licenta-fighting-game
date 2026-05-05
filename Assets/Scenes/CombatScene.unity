@@ -1812,13 +1812,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be5d91dfbe98f734aa6f096c56e2945f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveData: 0
+  config:
+    TargetFPS: 60
+    MinutesPerMatch: 3
+    InputDelay: 3
+    BufferSize: 60
   ShowHitboxes: 1
   debugDrawer: {fileID: 1720767126}
-  TargetFPS: 60
-  minutesPerMatch: 10
-  InputDelay: 3
-  BufferSize: 3600
 --- !u!4 &1241503783
 Transform:
   m_ObjectHideFlags: 0

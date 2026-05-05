@@ -6,6 +6,7 @@ using Cinemachine;
 using System.IO;
 using Data;
 using Data.Combat;
+using System.Threading;
 
 namespace Core
 {
@@ -15,7 +16,6 @@ namespace Core
         [SerializeField] private SimulationConfig config = new SimulationConfig { TargetFPS = 60, MinutesPerMatch = 3, InputDelay = 3, BufferSize = 60 };
 
         [Header("Debug settings")]
-        [SerializeField] private bool saveData = false;
         [SerializeField] private bool ShowHitboxes = true;
         [SerializeField] private DebugDrawer debugDrawer;
 
@@ -32,7 +32,6 @@ namespace Core
 
         private void Start()
         {
-            
             // Build initial data from Unity Scene
             GameState initialState = BuildInitialState(out LogicCollider blastzone);
             AttackData[][] attackData = GatherAttackData();
@@ -44,8 +43,6 @@ namespace Core
 
         private void Update()
         {
-            if (saveData) SaveData();
-
             float dt = Time.deltaTime;
             float fixedDeltaTime = (float)logicEngine.FixedDeltaTime;
             accumulator += dt;
@@ -108,6 +105,21 @@ namespace Core
                 gameState.Characters[i].Hurtboxes[0] = new Data.Combat.HurtboxData { Collider = characters[i].GetHurtbox() };
             }
 
+            // #if UNITY_EDITOR
+            // string path = $"Assets/TestData/";
+
+            // if (!Directory.Exists(path))
+            // {
+            //     Directory.CreateDirectory(path);
+            // }
+
+            // string statePath = Path.Combine(path, "initial-gamestate.json");
+            // using (StreamWriter writer = new StreamWriter(statePath, false))
+            // {
+            //     writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(gameState));
+            // }
+            // #endif
+
             return gameState;
         }
 
@@ -154,8 +166,8 @@ namespace Core
             if (cameraBrain != null)
                 cameraBrain.ManualUpdate();
 
-            long framesRemaining = logicEngine.TotalMatchFrames - currentTick;
-            UI.MatchEventBus.OnTimerUpdated?.Invoke(framesRemaining, config.TargetFPS);
+            // long framesRemaining = logicEngine.TotalMatchFrames - currentTick;
+            // UI.MatchEventBus.OnTimerUpdated?.Invoke(framesRemaining, config.TargetFPS);
         }
 
         private void EndMatch(GameState state)
@@ -197,38 +209,38 @@ namespace Core
             SceneManager.LoadScene("ResultsScene");
         }
 
-        private void SaveData()
-        {
-            saveData = false;
+        // private void SaveData()
+        // {
+        //     saveData = false;
 
-            var date = DateTime.Now;
+        //     var date = DateTime.Now;
 
-            string path = $"Assets/TestData/{date.Year}-{date.Month}-{date.Day}/{date.Hour}-{date.Minute}/";
+        //     string path = $"Assets/TestData/{date.Year}-{date.Month}-{date.Day}/{date.Hour}-{date.Minute}/";
 
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+        //     if (!Directory.Exists(path))
+        //     {
+        //         Directory.CreateDirectory(path);
+        //     }
 
-            for (int i = 0; i < logicEngine.InputBuffer.Length; i++)
-            {
-                string filePath = Path.Combine(path, $"character-{i + 1}.txt");
+        //     for (int i = 0; i < 1; i++)
+        //     {
+        //         string filePath = Path.Combine(path, $"inputs.json");
                 
-                using (StreamWriter writer = new StreamWriter(filePath, false))
-                {
-                    writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(logicEngine.InputBuffer[i]));
-                }
-            }
+        //         using (StreamWriter writer = new StreamWriter(filePath, false))
+        //         {
+        //             writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(logicEngine.InputBuffer[i]));
+        //         }
+        //     }
 
-            string statePath = Path.Combine(path, "gameState.txt");
-            using (StreamWriter writer = new StreamWriter(statePath, false))
-            {
-                writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(logicEngine.StateBuffer));
-            }
+        //     string statePath = Path.Combine(path, "game-states.json");
+        //     using (StreamWriter writer = new StreamWriter(statePath, false))
+        //     {
+        //         writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(logicEngine.StateBuffer));
+        //     }
 
-        #if UNITY_EDITOR
-            UnityEditor.AssetDatabase.Refresh();
-        #endif
-        }
+        // #if UNITY_EDITOR
+        //     UnityEditor.AssetDatabase.Refresh();
+        // #endif
+        // }
     }
 }

@@ -84,6 +84,11 @@ namespace Core
             CheckMatchEnd(currentState);
         }
 
+        public GameState GetCurrentGameState()
+        {
+            return StateBuffer[CurrentTick % Config.BufferSize];
+        }
+
         private void CheckMatchEnd(GameState currentState)
         {
             if (CurrentTick >= TotalMatchFrames) 
