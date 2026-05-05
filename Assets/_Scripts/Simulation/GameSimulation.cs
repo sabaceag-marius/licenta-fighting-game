@@ -1,12 +1,11 @@
 
 using System;
+using Data.Combat;
 
 namespace Simulation
 {
     public class GameSimulation
     {
-        private Data.Combat.AttackData[][] attackDatabase;
-        
         private CharacterStateMachine characterStateMachine;
         
         private CharacterInputProcessor inputProcessor;
@@ -19,16 +18,6 @@ namespace Simulation
         {
             characterStateMachine = new CharacterStateMachine();
             inputProcessor = new CharacterInputProcessor();
-        }
-
-        public void SetAttackData(Data.Combat.AttackData[][] attacks)
-        {
-            attackDatabase = attacks;
-        }
-
-        public Data.Combat.AttackData GetCharacterAttack(int characterIndex, Data.Combat.AttackType attackType)
-        {
-            return attackDatabase[characterIndex][(int)attackType];
         }
 
         /*
@@ -49,7 +38,7 @@ namespace Simulation
             
             - Check for each character if they left the blastzone
         */
-        public void AdvanceFrame(ref Data.GameState gameState, Data.GameState previousGameState)
+        public void AdvanceFrame(ref Data.GameState gameState, Data.GameState previousGameState, AttackData[][] attacksDatabase)
         {
             for (int i = 0; i < gameState.Characters.Length; i++)
             {
@@ -59,11 +48,11 @@ namespace Simulation
                 var input = inputProcessor.ProcessInput(character.RawInput, previousGameState.Characters[i].RawInput);
 
                 // Handle logic and velocity based on the state
-                characterStateMachine.AdvanceFrame(ref character, input, attackDatabase[i], gameState.StaticColliders, MinimumStaticColliderExtendsX, MinimumStaticColliderExtendsY);
+                characterStateMachine.AdvanceFrame(ref character, input, attacksDatabase[i], gameState.StaticColliders, MinimumStaticColliderExtendsX, MinimumStaticColliderExtendsY);
             }
             
             // Check for hitbox - hurtbox collision
-            CombatEngine.ProcessAttacks(ref gameState, attackDatabase);
+            CombatEngine.ProcessAttacks(ref gameState, attacksDatabase);
 
             // Check if any character left the blastzone
             for (int i = 0; i < gameState.Characters.Length; i++)

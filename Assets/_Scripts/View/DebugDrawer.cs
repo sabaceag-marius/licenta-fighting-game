@@ -3,6 +3,7 @@ using Data.Combat;
 using Data.Character;
 using System;
 
+//TODO: Make it a singleton
 public class DebugDrawer : MonoBehaviour
 {
     [Header("Setup")]

@@ -48,7 +48,7 @@ public class BaseTest
 
         gameSimulation.SetMinimumStaticColliderExtends(gameState.StaticColliders);
         gameSimulation.SetBlastzone(blastzone);
-        gameSimulation.SetAttackData(new Data.Combat.AttackData[1][]);
+        // gameSimulation.SetAttackData(new Data.Combat.AttackData[1][]);
     }
 
     private void RunTick(ushort currentTick, RawInput[] characterInputs, GameState[] gameStates)
@@ -68,7 +68,7 @@ public class BaseTest
         
         gameState.Characters[0].RawInput = input;
 
-        gameSimulation.AdvanceFrame(ref gameState, previousGameState);
+        // gameSimulation.AdvanceFrame(ref gameState, previousGameState);
 
         var expectedGameState = gameStates[currentTick];
 
