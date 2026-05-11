@@ -7,6 +7,12 @@ using System.IO;
 using Data;
 using Data.Combat;
 using System.Threading;
+using System.Diagnostics;
+using UnityEngine.Profiling;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Core
 {
@@ -24,6 +30,23 @@ namespace Core
         private Character[] characters;
         private CinemachineBrain cameraBrain;
 
+        #region Multi-threading variables
+
+        private Thread simulationThread;
+        private volatile bool isRunning;
+
+        private RawInput[] threadInputs;
+        private object inputLock = new object();
+
+        private GameState renderState, previousRenderState;
+        private object stateLock = new object();
+
+        // private volatile float threadInterpolationAlpha;
+
+        private volatile bool isGamePaused = false;
+
+        #endregion
+
         void Awake()
         {
             if (Camera.main != null)
@@ -37,41 +60,127 @@ namespace Core
             AttackData[][] attackData = GatherAttackData();
 
             logicEngine = new Core.GameLogicEngine();
-
             logicEngine.Initialize(config, initialState, attackData, blastzone);
+
+            threadInputs = new RawInput[initialState.Characters.Length];
+
+            // Get initial render states
+
+            renderState = new GameState();
+            previousRenderState = new GameState();
+
+            Core.GameLogicEngine.DeepCopyGameState(initialState, ref renderState);
+            Core.GameLogicEngine.DeepCopyGameState(initialState, ref previousRenderState);
+            // Start the thread
+
+            isRunning = true;
+            simulationThread = new Thread(SimulationThreadLoop)
+            {
+                IsBackground = true
+            };
+
+            simulationThread.Start();
+
+            #if UNITY_EDITOR
+                EditorApplication.pauseStateChanged += OnEditorPauseStateChanged;
+            #endif
+        }
+
+        private void SimulationThreadLoop()
+        {
+            Profiler.BeginThreadProfiling("RollbackEngine", "SimulationThread");
+            
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            double accumulator = 0;
+            double fixedDeltaTime = logicEngine.FixedDeltaTime;
+            double lastTime = stopwatch.Elapsed.TotalSeconds;
+
+            RawInput[] currentInputs = new RawInput[characters.Length];
+
+            while (isRunning)
+            {
+                if (isGamePaused)
+                {
+                    lastTime = stopwatch.Elapsed.TotalSeconds;
+                    Thread.Sleep(1);
+                    continue;    
+                }
+
+                // Calculate delta time
+                double currentTime = stopwatch.Elapsed.TotalSeconds;
+                double frameTime = currentTime - lastTime;
+                lastTime = currentTime;
+                accumulator += frameTime;
+
+                //TODO: NETWORK PROCESSING
+
+                while (accumulator >= fixedDeltaTime)
+                {
+                    // Get the inputs from the Unity thread
+                    lock (inputLock)
+                    {
+                        for (int i = 0; i < characters.Length; i++)
+                        {
+                            currentInputs[i] = threadInputs[i];
+                        }
+                    }
+
+                    Profiler.BeginSample("LogicEngine.RunSingleTick");
+
+                    // Tick the logic
+                    logicEngine.RunSingleTick(currentInputs);
+
+                    Profiler.EndSample();
+
+                    // C. Pass the new state to the Unity thread for rendering
+                    lock (stateLock)
+                    {
+                        GameLogicEngine.CopyGameStateData(renderState, ref previousRenderState);
+                        GameLogicEngine.CopyGameStateData(logicEngine.GetCurrentGameState(), ref renderState);
+                    }
+
+                    if (logicEngine.MatchEnded)
+                    {
+                        isRunning = false;
+                    }
+
+                    accumulator -= fixedDeltaTime;
+                }
+
+                // Interpolation factor for unity to draw smooth movement
+                // threadInterpolationAlpha = (float)(accumulator / fixedDeltaTime);
+
+                // If the accumulator is empty, let the thread sleep for 1 millisecond
+                Thread.Sleep(1);
+            }
+
+            Profiler.EndThreadProfiling();
         }
 
         private void Update()
         {
-            float dt = Time.deltaTime;
-            float fixedDeltaTime = (float)logicEngine.FixedDeltaTime;
-            accumulator += dt;
-
-            while (accumulator >= fixedDeltaTime)
+            if (logicEngine.MatchEnded)
             {
-                // Gather hardware inputs
-                RawInput[] currentInputs = new RawInput[characters.Length];
+                EndMatch(logicEngine.StateBuffer[logicEngine.CurrentTick % config.BufferSize]);
+                return; 
+            }
+
+            lock (inputLock)
+            {
                 for (int i = 0; i < characters.Length; i++)
                 {
-                    currentInputs[i] = characters[i].GetRawInput();
+                    threadInputs[i] = characters[i].GetRawInput();
                     
                     // TODO: Remove
                     // logicEngine.StateBuffer[logicEngine.CurrentTick % config.BufferSize].Characters[i].Stats = characters[i].GetLogicCharacterStats(logicEngine.FixedDeltaTime);
                 }
-
-                // Run the logic
-                logicEngine.RunSingleTick(currentInputs);
-
-                if (logicEngine.MatchEnded)
-                {
-                    EndMatch(logicEngine.StateBuffer[logicEngine.CurrentTick % config.BufferSize]);
-                    return; 
-                }
-
-                accumulator -= fixedDeltaTime;
             }
 
-            UpdateVisuals();
+            lock (stateLock)
+            {
+                UpdateVisuals(renderState, previousRenderState, logicEngine.CurrentTick);
+            }
         }
 
         private GameState BuildInitialState(out LogicCollider blastzoneCollider)
@@ -103,22 +212,9 @@ namespace Core
 
                 gameState.Characters[i].Hurtboxes = new Data.Combat.HurtboxData[1];
                 gameState.Characters[i].Hurtboxes[0] = new Data.Combat.HurtboxData { Collider = characters[i].GetHurtbox() };
+
+                gameState.Characters[i].Damage = 50;
             }
-
-            // #if UNITY_EDITOR
-            // string path = $"Assets/TestData/";
-
-            // if (!Directory.Exists(path))
-            // {
-            //     Directory.CreateDirectory(path);
-            // }
-
-            // string statePath = Path.Combine(path, "initial-gamestate.json");
-            // using (StreamWriter writer = new StreamWriter(statePath, false))
-            // {
-            //     writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(gameState));
-            // }
-            // #endif
 
             return gameState;
         }
@@ -140,12 +236,8 @@ namespace Core
             return attacks;
         }
 
-        private void UpdateVisuals()
+        private void UpdateVisuals(GameState gameState, GameState prevState, int currentTick)
         {
-            int currentTick = logicEngine.CurrentTick;
-            GameState prevState = logicEngine.StateBuffer[(currentTick - 1 + config.BufferSize) % config.BufferSize];
-            GameState gameState = logicEngine.StateBuffer[currentTick % config.BufferSize];
-
             for (int i = 0; i < characters.Length; i++)
             {
                 characters[i].UpdateState(gameState.Characters[i]);
@@ -166,8 +258,8 @@ namespace Core
             if (cameraBrain != null)
                 cameraBrain.ManualUpdate();
 
-            // long framesRemaining = logicEngine.TotalMatchFrames - currentTick;
-            // UI.MatchEventBus.OnTimerUpdated?.Invoke(framesRemaining, config.TargetFPS);
+            long framesRemaining = logicEngine.TotalMatchFrames - currentTick;
+            UI.MatchEventBus.OnTimerUpdated?.Invoke(framesRemaining, config.TargetFPS);
         }
 
         private void EndMatch(GameState state)
@@ -175,8 +267,7 @@ namespace Core
             int winningPlayer = -1;
 
             Data.Character.CharacterData characterOne = state.Characters[0];
-            Data.Character.CharacterData characterTwo = new Data.Character.CharacterData(); 
-            // Data.Character.CharacterData characterTwo = state.Characters[1]; 
+            Data.Character.CharacterData characterTwo = state.Characters.Length > 1 ? state.Characters[1] : new Data.Character.CharacterData(); 
             
             if (characterOne.RemainingStocks != characterTwo.RemainingStocks)
             {
@@ -208,6 +299,33 @@ namespace Core
             
             SceneManager.LoadScene("ResultsScene");
         }
+
+        private void OnDestroy()
+        {
+            // Clean up the thread
+            isRunning = false;
+            simulationThread?.Join(500); 
+
+            #if UNITY_EDITOR
+                EditorApplication.pauseStateChanged -= OnEditorPauseStateChanged;
+            #endif
+        }
+
+        #if UNITY_EDITOR
+        private void OnEditorPauseStateChanged(PauseState state)
+        {
+            if (state == PauseState.Paused)
+            {
+                isGamePaused = true;
+                UnityEngine.Debug.Log("<color=yellow>Editor Paused:</color> Simulation Thread Frozen.");
+            }
+            else if (state == PauseState.Unpaused)
+            {
+                isGamePaused = false;
+                UnityEngine.Debug.Log("<color=green>Editor Unpaused:</color> Simulation Thread Resumed.");
+            }
+        }
+        #endif
 
         // private void SaveData()
         // {

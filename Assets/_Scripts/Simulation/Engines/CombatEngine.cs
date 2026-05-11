@@ -73,7 +73,7 @@ public static class CombatEngine
 
                         FixedFloat knockbackValue = (((percentage * 0.1f + percentage * damage * 0.2f) * 200f / (weight + 100f) * 1.4f) + 18 + baseKnockback); 
 
-                        int hitstunFrames = (int)(knockbackValue * 0.4f);
+                        int hitstunFrames = (int)(knockbackValue * 0.25f);
 
                         FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * attackerCharacter.FacingDirection, hitbox.LaunchDirection.y)
                             * knockbackValue * 0.0045f;

@@ -39,7 +39,7 @@ namespace Core
 
             for (int i = 1; i < config.BufferSize; i++)
             {
-                InitializeGameStateArrays(ref StateBuffer[i], initialState.StaticColliders.Length, initialState.Characters.Length);
+                InitializeGameStateMemory(ref StateBuffer[i], initialState.StaticColliders.Length, initialState.Characters.Length);
             }
 
             // Setup Input Buffers
@@ -58,7 +58,9 @@ namespace Core
             ref GameState previousState = ref StateBuffer[previousIndex];
             ref GameState currentState = ref StateBuffer[currentIndex];
 
-            DeepCopyGameState(ref previousState, ref currentState);
+            CopyGameStateData(previousState, ref currentState);
+
+            currentState.FrameNumber++;
 
             for (int i = 0; i < currentState.Characters.Length; i++)
             {
@@ -107,7 +109,7 @@ namespace Core
             }
         }
 
-        private void InitializeGameStateArrays(ref GameState gameState, int staticColliderCount, int characterCount)
+        private static void InitializeGameStateMemory(ref GameState gameState, int staticColliderCount, int characterCount)
         {
             gameState.StaticColliders = new LogicCollider[staticColliderCount];
             gameState.Characters = new Data.Character.CharacterData[characterCount];
@@ -118,10 +120,9 @@ namespace Core
             }
         }
 
-        private void DeepCopyGameState(ref GameState source, ref GameState destination)
+        public static void CopyGameStateData(GameState source, ref GameState destination)
         {
             destination.FrameNumber = source.FrameNumber;
-            destination.FrameNumber++;
 
             for (int i = 0; i < destination.StaticColliders.Length; i++)
             {
@@ -136,6 +137,14 @@ namespace Core
                 destination.Characters[i].Hurtboxes = preAllocatedHurtboxes;
                 destination.Characters[i].Hurtboxes[0] = source.Characters[i].Hurtboxes[0];
             }
+        }
+
+        public static void DeepCopyGameState(GameState source, ref GameState destination)
+        {
+            InitializeGameStateMemory(ref destination, source.StaticColliders.Length, source.Characters.Length);
+
+            CopyGameStateData(source, ref destination);
+
         }
     }
 }
