@@ -3,9 +3,10 @@ using Data.Combat;
 using Data.Character;
 using System;
 
-//TODO: Make it a singleton
 public class DebugDrawer : MonoBehaviour
 {
+    public static DebugDrawer Instance {get; private set; }
+
     [Header("Setup")]
     [SerializeField]
     private bool ShowHurtboxBoundingBox;
@@ -39,17 +40,26 @@ public class DebugDrawer : MonoBehaviour
 
     private void Awake()
     {
-        // Generate primitive meshes via code so we don't need asset references
-        boxMesh = CreateQuadMesh();
-        circleMesh = CreateCircleMesh(24); // 24 segments for a smooth circle
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
 
-        // Cache RenderParams
+            // Generate primitive meshes via code so we don't need asset references
+            boxMesh = CreateQuadMesh();
+            circleMesh = CreateCircleMesh(24); // 24 segments for a smooth circle
 
-        hitboxParams = new RenderParams(HitboxMaterial);
-        hurtboxParams = new RenderParams(HurtboxMaterial);
-        intangibleHurtboxParams = new RenderParams(IntangibleHurtboxMaterial);
-        invincibleHurtboxParams = new RenderParams(InvincibleHurtboxMaterial);
-        boundingBoxParams = new RenderParams(BoundingBoxMaterial);
+            // Cache RenderParams
+
+            hitboxParams = new RenderParams(HitboxMaterial);
+            hurtboxParams = new RenderParams(HurtboxMaterial);
+            intangibleHurtboxParams = new RenderParams(IntangibleHurtboxMaterial);
+            invincibleHurtboxParams = new RenderParams(InvincibleHurtboxMaterial);
+            boundingBoxParams = new RenderParams(BoundingBoxMaterial);
+        }
     }
 
     public void DrawCharacter(Data.Character.CharacterData characterData, Data.Combat.AttackData attack)

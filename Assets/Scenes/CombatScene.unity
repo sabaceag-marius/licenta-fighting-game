@@ -1818,7 +1818,6 @@ MonoBehaviour:
     InputDelay: 3
     BufferSize: 60
   ShowHitboxes: 1
-  debugDrawer: {fileID: 1720767126}
 --- !u!4 &1241503783
 Transform:
   m_ObjectHideFlags: 0
@@ -2531,7 +2530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b62a58425d542dd81c0f6afc51e24b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowHurtboxBoundingBox: 0
+  ShowHurtboxBoundingBox: 1
   HitboxMaterial: {fileID: 2100000, guid: 9a745e255966e4c468cd5655199a4cc7, type: 2}
   HurtboxMaterial: {fileID: 2100000, guid: 97a7710f2decc4b349b9f6a84197cabc, type: 2}
   IntangibleHurtboxMaterial: {fileID: 2100000, guid: 48a12d56b09834374818aa7a70dc5d19, type: 2}

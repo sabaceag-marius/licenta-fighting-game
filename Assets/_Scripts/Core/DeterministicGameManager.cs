@@ -23,7 +23,6 @@ namespace Core
 
         [Header("Debug settings")]
         [SerializeField] private bool ShowHitboxes = true;
-        [SerializeField] private DebugDrawer debugDrawer;
 
         private float accumulator = 0;
         private Core.GameLogicEngine logicEngine;
@@ -242,10 +241,10 @@ namespace Core
             {
                 characters[i].UpdateState(gameState.Characters[i]);
 
-                if (ShowHitboxes && debugDrawer != null)
+                if (ShowHitboxes && DebugDrawer.Instance != null)
                 {
                     AttackData attack = logicEngine.Attacks[i][(int)gameState.Characters[i].AttackType];
-                    debugDrawer.DrawCharacter(gameState.Characters[i], attack);
+                    DebugDrawer.Instance.DrawCharacter(gameState.Characters[i], attack);
                 }
 
                 if (prevState.Characters[i].Damage != gameState.Characters[i].Damage)
