@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 using UnityEngine;
 
 namespace Simulation

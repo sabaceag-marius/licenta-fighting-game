@@ -64,8 +64,9 @@ public class CharacterSelectManager : MonoBehaviour
     // Called by the VirtualCursor when a player locks in a character
     public void CheckStartCondition()
     {
-        canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
-        startLabel.gameObject.SetActive(canStartMatch);
+        canStartMatch = true;
+        // canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
+        startLabel?.gameObject.SetActive(canStartMatch);
     }
 
     // Called by the VirtualCursor when a player presses Start

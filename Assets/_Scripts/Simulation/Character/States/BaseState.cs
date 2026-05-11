@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 using UnityEngine;
 
 namespace Simulation
@@ -128,7 +128,7 @@ namespace Simulation
             if ((character.DynamicBody.IsGrounded && input.FlickDirection.y == -1) ||
                 (!character.DynamicBody.IsGrounded && character.DynamicBody.Velocity.y < 0 && input.Movement.y <= -0.5))
             {
-                character.IgnorePlatformCollisionFrames = character.Stats.IgnorePlatformCollisionFrames;
+                character.IgnorePlatformCollisionFrames = Simulation.Character.GlobalCharacterStats.IgnorePlatformCollisionFrames;
             }
         }
     }

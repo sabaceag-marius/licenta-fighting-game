@@ -1,5 +1,5 @@
 
-namespace Data
+namespace Data.Character
 {
     public struct CharacterStats
     {
@@ -23,10 +23,6 @@ namespace Data
 
         public int AirJumpCount;
 
-        public int JumpWindupFrames;
-
-        public int LandLagFrames;
-
         public FixedFloat FallSpeed;
 
         public FixedFloat Gravity;
@@ -38,18 +34,6 @@ namespace Data
         public FixedFloat AirFriction;
 
         public FixedFloat FastFallSpeed;
-
-        public FixedFloat AirDodgePower;
-
-        public FixedFloat AirDodgeTraction;
-
-        public int AirDodgeFrames;
-
-        public int AirDodgeCooldown;
-
-        public int AirDodgesCount;
-
-        public int IgnorePlatformCollisionFrames;
 
         public FixedFloat Weight;
     }

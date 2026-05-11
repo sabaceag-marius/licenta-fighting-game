@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 
 namespace Simulation
 {
@@ -18,7 +18,7 @@ namespace Simulation
 
             // Grounded jump - We only apply the jump force after the jump squat is finished
 
-            if (character.StateFrame == character.Stats.JumpWindupFrames)
+            if (character.StateFrame == Simulation.Character.GlobalCharacterStats.JumpWindupFrames)
             {
                 character.DynamicBody.Velocity.y = input.JumpHeld 
                     ? character.Stats.NormalJumpForce 
@@ -29,7 +29,7 @@ namespace Simulation
         public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             // Swap to fall state after jump squat or instantly if we are midair
-            if (!character.DynamicBody.IsGrounded || character.StateFrame == character.Stats.JumpWindupFrames)
+            if (!character.DynamicBody.IsGrounded || character.StateFrame == Simulation.Character.GlobalCharacterStats.JumpWindupFrames)
             {
                 character.CurrentState = CharacterStateType.Fall; 
                 return;

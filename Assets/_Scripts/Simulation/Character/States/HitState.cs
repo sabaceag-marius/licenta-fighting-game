@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 using UnityEngine;
 
 namespace Simulation
@@ -8,7 +8,7 @@ namespace Simulation
     {
         public override void Exit(ref CharacterData character)
         {
-            character.RemainingAirDodges = character.Stats.AirDodgesCount;
+            character.RemainingAirDodges = Simulation.Character.GlobalCharacterStats.AirDodgesCount;
             character.AirDodgeCooldown = 0;
         }
 

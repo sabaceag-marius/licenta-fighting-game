@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 using UnityEngine;
 
 namespace Simulation
@@ -160,10 +160,10 @@ namespace Simulation
 
         protected override bool CheckIfJumping(ref CharacterData character, ProcessedInput input)
         {
-            if (character.RemainingAirJumps <= 0)
-                return false;
-
             if (!base.CheckIfJumping(ref character, input))
+                return false;
+                
+            if (character.RemainingAirJumps <= 0)
                 return false;
 
             character.RemainingAirJumps--;

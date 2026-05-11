@@ -1,10 +1,12 @@
 using UnityEngine;
 using Data.Combat;
-using Data;
+using Data.Character;
 using System;
 
 public class DebugDrawer : MonoBehaviour
 {
+    public static DebugDrawer Instance {get; private set; }
+
     [Header("Setup")]
     [SerializeField]
     private bool ShowHurtboxBoundingBox;
@@ -38,22 +40,31 @@ public class DebugDrawer : MonoBehaviour
 
     private void Awake()
     {
-        // Generate primitive meshes via code so we don't need asset references
-        boxMesh = CreateQuadMesh();
-        circleMesh = CreateCircleMesh(24); // 24 segments for a smooth circle
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
 
-        // Cache RenderParams
+            // Generate primitive meshes via code so we don't need asset references
+            boxMesh = CreateQuadMesh();
+            circleMesh = CreateCircleMesh(24); // 24 segments for a smooth circle
 
-        hitboxParams = new RenderParams(HitboxMaterial);
-        hurtboxParams = new RenderParams(HurtboxMaterial);
-        intangibleHurtboxParams = new RenderParams(IntangibleHurtboxMaterial);
-        invincibleHurtboxParams = new RenderParams(InvincibleHurtboxMaterial);
-        boundingBoxParams = new RenderParams(BoundingBoxMaterial);
+            // Cache RenderParams
+
+            hitboxParams = new RenderParams(HitboxMaterial);
+            hurtboxParams = new RenderParams(HurtboxMaterial);
+            intangibleHurtboxParams = new RenderParams(IntangibleHurtboxMaterial);
+            invincibleHurtboxParams = new RenderParams(InvincibleHurtboxMaterial);
+            boundingBoxParams = new RenderParams(BoundingBoxMaterial);
+        }
     }
 
-    public void DrawCharacter(Data.CharacterData characterData, Data.Combat.AttackData attack)
+    public void DrawCharacter(Data.Character.CharacterData characterData, Data.Combat.AttackData attack)
     {
-        if (characterData.CurrentState == Data.CharacterStateType.Attack)
+        if (characterData.CurrentState == CharacterStateType.Attack)
         {
             DrawAttackState(attack, characterData.CurrentAttackFrame, characterData.Position, -characterData.FacingDirection, characterData);
         }
@@ -66,7 +77,7 @@ public class DebugDrawer : MonoBehaviour
     /// <summary>
     /// Call this every frame from your View/Visuals script, passing the current player position.
     /// </summary>
-    public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection, Data.CharacterData characterData)
+    public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection, Data.Character.CharacterData characterData)
     {
         // Safety check to ensure we don't read out of bounds
         if (currentFrame < 0 || currentFrame >= attack.FrameCount) return;
@@ -105,7 +116,7 @@ public class DebugDrawer : MonoBehaviour
         }
     }
 
-    private RenderParams GetHurtboxParams(CharacterData characterData, Data.Combat.HurtboxState hurtboxState)
+    private RenderParams GetHurtboxParams(Data.Character.CharacterData characterData, Data.Combat.HurtboxState hurtboxState)
     {
         if (characterData.InvincibilityFrames > 0)
             return invincibleHurtboxParams;

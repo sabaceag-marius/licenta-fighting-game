@@ -5,8 +5,6 @@ namespace Data.Combat
         // Capsule collider
         public LogicCollider Collider;
 
-        //HurtboxType Type; ?
-
         public HurtboxState State;
     }
 }

@@ -1,31 +1,9 @@
 
-namespace Data
+namespace Data.Character
 {
     public struct CharacterData
     {
-        public LogicDynamicBody DynamicBody;
-
-        public RawInput RawInput;
-
-        public int FacingDirection;
-
-        public CharacterStateType CurrentState;
-
-        public bool StateChanged;
-
-        public int StateFrame;
-
-        public CharacterStats Stats;
-
-        public FixedVector2 Velocity
-        {
-            get => DynamicBody.Velocity;
-
-            set
-            {
-                DynamicBody.Velocity = value;
-            }
-        }
+        #region General
 
         public FixedVector2 Position
         {
@@ -34,6 +12,16 @@ namespace Data
             set
             {
                 DynamicBody.Position = value;
+            }
+        }
+
+        public FixedVector2 Velocity
+        {
+            get => DynamicBody.Velocity;
+
+            set
+            {
+                DynamicBody.Velocity = value;
             }
         }
 
@@ -47,25 +35,51 @@ namespace Data
             }
         }
 
-        // Specific state stuff
+        public LogicDynamicBody DynamicBody;
 
+        public RawInput RawInput;
+
+        //TODO: Move this from here to save space
+        public CharacterStats Stats;
+
+        public int FacingDirection;
+
+        public int RemainingStocks;
+
+        public FixedVector2 SpawnPosition;
+
+        public FixedFloat Score;
+
+        public FixedFloat Damage;
+
+        public int IgnorePlatformCollisionFrames;
+
+        #endregion
+
+        #region State Machine
+
+        public CharacterStateType CurrentState;
+
+        public bool StateChanged;
+
+        public int StateFrame;
+
+        #endregion
+
+        #region Fall State
+        
         public int RemainingAirJumps;
 
         public bool IsFastFalling;
 
+        #endregion
+
+        #region Air Dodge State
+
         public FixedVector2 AirDodgeDirection;
-
-        #region Countdowns
-
-        public int IgnorePlatformCollisionFrames;
 
         public int AirDodgeCooldown;
 
-        #endregion
-
-        #region AirDodgeState
-
-        //TODO: reset after being hit
         public int RemainingAirDodges;
 
         #endregion
@@ -93,33 +107,21 @@ namespace Data
         public Data.Combat.HurtboxData[] Hurtboxes;
         
         public int HitTargetsMask;
-        
-        #endregion
-
-        #region Respawning
-
-        public int RemainingStocks;
-
-        public FixedVector2 SpawnPosition;
-
-        #endregion
-
-        #region Hit State
-
-        public int HitstunFrames;
-
-        public FixedFloat DamagePercentage;
-
-        #endregion
-
-        public FixedFloat Score;
 
         public int InvincibilityFrames;
 
         public int HitstopFrames;
+        
+        #endregion
+
+        #region Hit & Tumble State
+
+        public int HitstunFrames;
 
         public int TechWindowFrames;
 
         public int TechPenaltyFrames;
+
+        #endregion
     }
 }

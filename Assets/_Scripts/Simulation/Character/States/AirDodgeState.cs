@@ -1,5 +1,5 @@
 
-using Data;
+using Data.Character;
 
 namespace Simulation
 {
@@ -11,7 +11,7 @@ namespace Simulation
 
             character.AirDodgeDirection = input.Movement.Normalize();
 
-            character.Velocity = character.AirDodgeDirection * character.Stats.AirDodgePower;
+            character.Velocity = character.AirDodgeDirection * Simulation.Character.GlobalCharacterStats.AirDodgePower;
 
             character.Hurtboxes[0].State = Data.Combat.HurtboxState.Intangible;
         }
@@ -21,7 +21,7 @@ namespace Simulation
             base.Exit(ref character);
 
             character.RemainingAirDodges--;
-            character.AirDodgeCooldown = character.Stats.AirDodgeCooldown;
+            character.AirDodgeCooldown = Simulation.Character.GlobalCharacterStats.AirDodgeCooldownFrames;
 
             character.Hurtboxes[0].State = Data.Combat.HurtboxState.Normal;
         }
@@ -32,8 +32,8 @@ namespace Simulation
 
             FixedVector2 velocity = character.Velocity;
 
-            velocity.x.Decelerate(character.Stats.AirDodgeTraction);
-            velocity.y.Decelerate(character.Stats.AirDodgeTraction);
+            velocity.x.Decelerate(Simulation.Character.GlobalCharacterStats.AirDodgeTraction);
+            velocity.y.Decelerate(Simulation.Character.GlobalCharacterStats.AirDodgeTraction);
 
             character.Velocity = velocity;
         }
@@ -42,13 +42,13 @@ namespace Simulation
         {
             if (character.DynamicBody.IsGrounded)
             {
-                character.Velocity = character.AirDodgeDirection * character.Stats.AirDodgePower;
+                character.Velocity = character.AirDodgeDirection * Simulation.Character.GlobalCharacterStats.AirDodgePower;
 
                 character.CurrentState = CharacterStateType.Idle;
                 return;
             }
 
-            if (character.StateFrame == character.Stats.AirDodgeFrames)
+            if (character.StateFrame == Simulation.Character.GlobalCharacterStats.AirDodgeFrames)
             {
                 character.CurrentState = CharacterStateType.Fall;
             }

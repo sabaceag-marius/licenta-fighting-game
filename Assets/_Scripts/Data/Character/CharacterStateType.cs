@@ -1,5 +1,5 @@
 
-namespace Data
+namespace Data.Character
 {
     public enum CharacterStateType
     {

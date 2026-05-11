@@ -207,7 +207,7 @@ GameObject:
   m_Component:
   - component: {fileID: 44879003}
   m_Layer: 0
-  m_Name: Spawnpoint (1)
+  m_Name: Spawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -878,7 +878,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &898386734
 Transform:
   m_ObjectHideFlags: 0
@@ -1445,8 +1445,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 44879003}
   - {fileID: 1451068923}
+  - {fileID: 44879003}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1098187854
@@ -1812,11 +1812,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be5d91dfbe98f734aa6f096c56e2945f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowHitboxes: 0
-  debugDrawer: {fileID: 1720767126}
-  TargetFPS: 60
-  minutesPerMatch: 10
-  InputDelay: 3
+  config:
+    TargetFPS: 60
+    MinutesPerMatch: 3
+    InputDelay: 3
+    BufferSize: 60
+  ShowHitboxes: 1
 --- !u!4 &1241503783
 Transform:
   m_ObjectHideFlags: 0
@@ -1832,6 +1833,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1647232393}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1309635828
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1309635829}
+  - component: {fileID: 1309635830}
+  m_Layer: 0
+  m_Name: GlobalConfigSyncer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1309635829
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309635828}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1647232393}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1309635830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1309635828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dbe589a486a84f789b7121dee0bb588, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StatsConfig: {fileID: 11400000, guid: 8a3a60cddace441a4b01121ec5ad80e9, type: 2}
 --- !u!1 &1362288347
 GameObject:
   m_ObjectHideFlags: 0
@@ -2098,7 +2144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1451068923}
   m_Layer: 0
-  m_Name: Spawnpoint
+  m_Name: Spawnpoint (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2318,6 +2364,7 @@ Transform:
   m_Children:
   - {fileID: 1241503783}
   - {fileID: 1875315182}
+  - {fileID: 1309635829}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1678076839
@@ -2483,7 +2530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b62a58425d542dd81c0f6afc51e24b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowHurtboxBoundingBox: 0
+  ShowHurtboxBoundingBox: 1
   HitboxMaterial: {fileID: 2100000, guid: 9a745e255966e4c468cd5655199a4cc7, type: 2}
   HurtboxMaterial: {fileID: 2100000, guid: 97a7710f2decc4b349b9f6a84197cabc, type: 2}
   IntangibleHurtboxMaterial: {fileID: 2100000, guid: 48a12d56b09834374818aa7a70dc5d19, type: 2}
@@ -3119,7 +3166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2022315399
 Transform:
   m_ObjectHideFlags: 0
@@ -3431,7 +3478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2128502762
 Transform:
   m_ObjectHideFlags: 0

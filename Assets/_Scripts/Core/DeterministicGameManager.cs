@@ -1,363 +1,329 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
 using UnityEngine;
-using Simulation;
-using Data.Combat;
-using Data;
 using UnityEngine.SceneManagement;
 using Cinemachine;
+using System.IO;
+using Data;
+using Data.Combat;
+using System.Threading;
+using System.Diagnostics;
+using UnityEngine.Profiling;
 
-public class DeterministicGameManager : MonoBehaviour
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+namespace Core
 {
-    [Header("Debug settings")]
-    
-    [SerializeField]
-    private bool ShowHitboxes = true;
-
-    [SerializeField]
-    private DebugDrawer debugDrawer;
-
-    [Header("Simulation Settings")]
-
-    [SerializeField]
-    private int TargetFPS = 60;
-
-    [SerializeField]
-    private int minutesPerMatch;
-    
-    private long totalMatchFrames;
-
-    [Header("Rollback settings")]
-
-    [SerializeField]
-    [Tooltip("How many frames to delay local inputs to mask network latency.")]
-    private int InputDelay = 3;
-
-    [SerializeField]
-    private readonly int BufferSize = 60;
-    private GameState[] stateBuffer;
-    private RawInput[][] inputBuffer;
-    private int currentTick;
-    
-    private float fixedDeltaTime;
-    
-    private float accumulator = 0;
-
-    private GameSimulation gameSimulation;
-
-    private Character[] characters;
-
-    private CinemachineBrain cameraBrain;
-
-    void Awake()
+    public class DeterministicGameManager : MonoBehaviour
     {
-        if (Camera.main != null)
+        [Header("Simulation Configuration")]
+        [SerializeField] private SimulationConfig config = new SimulationConfig { TargetFPS = 60, MinutesPerMatch = 3, InputDelay = 3, BufferSize = 60 };
+
+        [Header("Debug settings")]
+        [SerializeField] private bool ShowHitboxes = true;
+
+        private float accumulator = 0;
+        private Core.GameLogicEngine logicEngine;
+        private Character[] characters;
+        private CinemachineBrain cameraBrain;
+
+        #region Multi-threading variables
+
+        private Thread simulationThread;
+        private volatile bool isRunning;
+
+        private RawInput[] threadInputs;
+        private object inputLock = new object();
+
+        private GameState renderState, previousRenderState;
+        private object stateLock = new object();
+
+        // private volatile float threadInterpolationAlpha;
+
+        private volatile bool isGamePaused = false;
+
+        #endregion
+
+        void Awake()
         {
-            cameraBrain = Camera.main.GetComponent<CinemachineBrain>();
-        }
-    }
-
-    private void Start()
-    {
-        totalMatchFrames = (long)(minutesPerMatch * 60 * TargetFPS);
-
-        fixedDeltaTime = 1f / TargetFPS;
-
-        // Create the GameSimulation class
-
-        gameSimulation = new GameSimulation();
-
-        stateBuffer = new GameState[BufferSize];
-
-        InitializeStartingState();
-
-        for (int i = 1; i < BufferSize; i++)
-        {
-            InitializeGameStateArrays(ref stateBuffer[i], stateBuffer[0].StaticColliders.Length, stateBuffer[0].Characters.Length);
+            if (Camera.main != null)
+                cameraBrain = Camera.main.GetComponent<CinemachineBrain>();
         }
 
-        InitializeAttackData();
-    }
-
-    private void InitializeStartingState()
-    {
-        ref GameState gameState = ref stateBuffer[0];
-
-        // Skip the colliders that are attached to the deterministic rigidbody or characters
-
-        BaseColliderFactory[] colliderFactories = FindObjectsOfType<BaseColliderFactory>()
-            .Where(c => c.GetComponent<Character>() == null).ToArray();
-        //|| allColliders[i].GetComponentInParent<DeterministicRigidBody>() == null)
-
-        var staticColliders = colliderFactories.Where(i => i.Layer != ColliderLayer.Blastzone).ToArray();
-
-        gameState.StaticColliders = new LogicCollider[math.min(staticColliders.Length, 100)];
-
-        for (int i = 0; i < gameState.StaticColliders.Length; i++)
+        private void Start()
         {
-            LogicCollider collider = staticColliders[i].GetLogicCollider();
+            // Build initial data from Unity Scene
+            GameState initialState = BuildInitialState(out LogicCollider blastzone);
+            AttackData[][] attackData = GatherAttackData();
+
+            logicEngine = new Core.GameLogicEngine();
+            logicEngine.Initialize(config, initialState, attackData, blastzone);
+
+            threadInputs = new RawInput[initialState.Characters.Length];
+
+            // Get initial render states
+
+            renderState = new GameState();
+            previousRenderState = new GameState();
+
+            Core.GameLogicEngine.DeepCopyGameState(initialState, ref renderState);
+            Core.GameLogicEngine.DeepCopyGameState(initialState, ref previousRenderState);
+            // Start the thread
+
+            isRunning = true;
+            simulationThread = new Thread(SimulationThreadLoop)
+            {
+                IsBackground = true
+            };
+
+            simulationThread.Start();
+
+            #if UNITY_EDITOR
+                EditorApplication.pauseStateChanged += OnEditorPauseStateChanged;
+            #endif
+        }
+
+        private void SimulationThreadLoop()
+        {
+            Profiler.BeginThreadProfiling("RollbackEngine", "SimulationThread");
             
-            gameState.StaticColliders[i] = collider;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            double accumulator = 0;
+            double fixedDeltaTime = logicEngine.FixedDeltaTime;
+            double lastTime = stopwatch.Elapsed.TotalSeconds;
+
+            RawInput[] currentInputs = new RawInput[characters.Length];
+
+            while (isRunning)
+            {
+                if (isGamePaused)
+                {
+                    lastTime = stopwatch.Elapsed.TotalSeconds;
+                    Thread.Sleep(1);
+                    continue;    
+                }
+
+                // Calculate delta time
+                double currentTime = stopwatch.Elapsed.TotalSeconds;
+                double frameTime = currentTime - lastTime;
+                lastTime = currentTime;
+                accumulator += frameTime;
+
+                //TODO: NETWORK PROCESSING
+
+                while (accumulator >= fixedDeltaTime)
+                {
+                    // Get the inputs from the Unity thread
+                    lock (inputLock)
+                    {
+                        for (int i = 0; i < characters.Length; i++)
+                        {
+                            currentInputs[i] = threadInputs[i];
+                        }
+                    }
+
+                    Profiler.BeginSample("LogicEngine.RunSingleTick");
+
+                    // Tick the logic
+                    logicEngine.RunSingleTick(currentInputs);
+
+                    Profiler.EndSample();
+
+                    // C. Pass the new state to the Unity thread for rendering
+                    lock (stateLock)
+                    {
+                        GameLogicEngine.CopyGameStateData(renderState, ref previousRenderState);
+                        GameLogicEngine.CopyGameStateData(logicEngine.GetCurrentGameState(), ref renderState);
+                    }
+
+                    if (logicEngine.MatchEnded)
+                    {
+                        isRunning = false;
+                    }
+
+                    accumulator -= fixedDeltaTime;
+                }
+
+                // Interpolation factor for unity to draw smooth movement
+                // threadInterpolationAlpha = (float)(accumulator / fixedDeltaTime);
+
+                // If the accumulator is empty, let the thread sleep for 1 millisecond
+                Thread.Sleep(1);
+            }
+
+            Profiler.EndThreadProfiling();
         }
 
-        gameSimulation.SetMinimumStaticColliderExtends(gameState.StaticColliders);
-        
-        // Blastzone
-        
-        LogicCollider blastzoneCollider = colliderFactories.First(i => i.Layer == ColliderLayer.Blastzone).GetLogicCollider();
-        gameSimulation.SetBlastzone(blastzoneCollider.GetBoundingBox());
+        private void Update()
+        {
+            if (logicEngine.MatchEnded)
+            {
+                EndMatch(logicEngine.StateBuffer[logicEngine.CurrentTick % config.BufferSize]);
+                return; 
+            }
+
+            lock (inputLock)
+            {
+                for (int i = 0; i < characters.Length; i++)
+                {
+                    threadInputs[i] = characters[i].GetRawInput();
+                    
+                    // For changing the stats while playing
+                    // logicEngine.StateBuffer[logicEngine.CurrentTick % config.BufferSize].Characters[i].Stats = characters[i].GetLogicCharacterStats(logicEngine.FixedDeltaTime);
+                }
+            }
+
+            lock (stateLock)
+            {
+                UpdateVisuals(renderState, previousRenderState, logicEngine.CurrentTick);
+            }
+        }
+
+        private GameState BuildInitialState(out LogicCollider blastzoneCollider)
+        {
+            GameState gameState = new GameState();
+
+            BaseColliderFactory[] colliderFactories = FindObjectsOfType<BaseColliderFactory>().Where(c => c.GetComponent<Character>() == null).ToArray();
+            var staticColliders = colliderFactories.Where(i => i.Layer != ColliderLayer.Blastzone).ToArray();
+
+            gameState.StaticColliders = new LogicCollider[Math.Min(staticColliders.Length, 100)];
+            for (int i = 0; i < gameState.StaticColliders.Length; i++)
+            {
+                gameState.StaticColliders[i] = staticColliders[i].GetLogicCollider();
+            }
+
+            blastzoneCollider = colliderFactories.First(i => i.Layer == ColliderLayer.Blastzone).GetLogicCollider();
+                
+            characters = FindObjectsOfType<Character>();
+            gameState.Characters = new Data.Character.CharacterData[Math.Min(characters.Length, 16)];
+
+            for (int i = 0; i < gameState.Characters.Length; i++)
+            {
+                gameState.Characters[i].FacingDirection = (int)characters[i].transform.lossyScale.x;
+                gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
+                gameState.Characters[i].Stats = characters[i].GetLogicCharacterStats(logicEngine != null ? logicEngine.FixedDeltaTime : (FixedFloat)(1f/config.TargetFPS));
+                gameState.Characters[i].CurrentState = Data.Character.CharacterStateType.Fall;
+                gameState.Characters[i].SpawnPosition = (Vector2)characters[i].transform.position;
+                gameState.Characters[i].RemainingStocks = 3;
+
+                gameState.Characters[i].Hurtboxes = new Data.Combat.HurtboxData[1];
+                gameState.Characters[i].Hurtboxes[0] = new Data.Combat.HurtboxData { Collider = characters[i].GetHurtbox() };
+
+                gameState.Characters[i].Damage = 50;
+            }
+
+            return gameState;
+        }
+
+        private AttackData[][] GatherAttackData()
+        {
+            int totalAttackTypes = Enum.GetValues(typeof(AttackType)).Length;
+            AttackData[][] attacks = new AttackData[characters.Length][];
+
+            for (int i = 0; i < characters.Length; i++)
+            {
+                attacks[i] = new AttackData[totalAttackTypes];
+                foreach (AttackDataSO attack in characters[i].Attacks)
+                {
+                    AttackData attackData = attack.GetAttackData();
+                    attacks[i][(int)attackData.Type] = attackData;
+                }
+            }
+            return attacks;
+        }
+
+        private void UpdateVisuals(GameState gameState, GameState prevState, int currentTick)
+        {
+            for (int i = 0; i < characters.Length; i++)
+            {
+                characters[i].UpdateState(gameState.Characters[i]);
+
+                if (ShowHitboxes && DebugDrawer.Instance != null)
+                {
+                    AttackData attack = logicEngine.Attacks[i][(int)gameState.Characters[i].AttackType];
+                    DebugDrawer.Instance.DrawCharacter(gameState.Characters[i], attack);
+                }
+
+                if (prevState.Characters[i].Damage != gameState.Characters[i].Damage)
+                    Core.UI.MatchEventBus.OnCharacterDamageChanged?.Invoke(i, gameState.Characters[i].Damage);
+
+                if (prevState.Characters[i].RemainingStocks != gameState.Characters[i].RemainingStocks)
+                    Core.UI.MatchEventBus.OnCharacterStocksChanged?.Invoke(i, gameState.Characters[i].RemainingStocks);
+            }
+
+            if (cameraBrain != null)
+                cameraBrain.ManualUpdate();
+
+            long framesRemaining = logicEngine.TotalMatchFrames - currentTick;
+            UI.MatchEventBus.OnTimerUpdated?.Invoke(framesRemaining, config.TargetFPS);
+        }
+
+        private void EndMatch(GameState state)
+        {
+            int winningPlayer = -1;
+
+            Data.Character.CharacterData characterOne = state.Characters[0];
+            Data.Character.CharacterData characterTwo = state.Characters.Length > 1 ? state.Characters[1] : new Data.Character.CharacterData(); 
             
-        characters = FindObjectsOfType<Character>();
+            if (characterOne.RemainingStocks != characterTwo.RemainingStocks)
+            {
+                if (characterOne.RemainingStocks > characterTwo.RemainingStocks)
+                {
+                    winningPlayer = 1;
+                }
+                else
+                {
+                    winningPlayer = 2;
+                }
+            }
+            else if (characterOne.Damage != characterTwo.Damage)
+            {
+                if (characterOne.Damage > characterTwo.Damage)
+                {
+                    winningPlayer = 1;
+                }
+                else
+                {
+                    winningPlayer = 2;
+                }
+            }
 
-        gameState.Characters = new Data.CharacterData[math.min(characters.Length, 16)];
+            MatchResultsData.WinnerPlayer = winningPlayer;
 
-        for (int i = 0; i < gameState.Characters.Length; i++)
-        {
-            gameState.Characters[i].FacingDirection = (int)characters[i].transform.lossyScale.x;
-            gameState.Characters[i].DynamicBody = characters[i].GetLogicBody();
-            gameState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
-            gameState.Characters[i].CurrentState = Data.CharacterStateType.Fall;
-            gameState.Characters[i].SpawnPosition = (Vector2)characters[i].transform.position;
-            gameState.Characters[i].RemainingStocks = 3;
-
-            var hurtbox = new Data.Combat.HurtboxData[1];
-            hurtbox[0] = new Data.Combat.HurtboxData {Collider = characters[i].GetHurtbox()};
+            MatchResultsData.Player1TotalDamageDealt = characterOne.Score;
+            MatchResultsData.Player2TotalDamageDealt = characterTwo.Score;
             
-            gameState.Characters[i].Hurtboxes = hurtbox;
-
-            gameState.Characters[i].DamagePercentage = characters[i].Damage;
-            gameState.Characters[i].DamagePercentage = 50;
+            SceneManager.LoadScene("ResultsScene");
         }
 
-        // Input buffers
-
-        inputBuffer = new RawInput[gameState.Characters.Length][];
-
-        for (int i = 0; i < gameState.Characters.Length; i++)
+        private void OnDestroy()
         {
-            inputBuffer[i] = new RawInput[BufferSize];
+            // Clean up the thread
+            isRunning = false;
+            simulationThread?.Join(500); 
+
+            #if UNITY_EDITOR
+                EditorApplication.pauseStateChanged -= OnEditorPauseStateChanged;
+            #endif
         }
-    }
 
-    private void InitializeGameStateArrays(ref GameState gameState, int staticColliderCount, int characterCount)
-    {
-        gameState.StaticColliders = new LogicCollider[staticColliderCount];
-
-        gameState.Characters = new Data.CharacterData[characterCount];
-
-        for (int i = 0; i < gameState.Characters.Length; i++)
+        #if UNITY_EDITOR
+        private void OnEditorPauseStateChanged(PauseState state)
         {
-            gameState.Characters[i].Hurtboxes = new Data.Combat.HurtboxData[1];
-        }
-    }    
-
-    private void InitializeAttackData()
-    {
-        int totalAttackTypes = System.Enum.GetValues(typeof(Data.Combat.AttackType)).Length;
-
-        AttackData[][] attacks = new Data.Combat.AttackData[characters.Count()][];
-
-        for (int i = 0; i < characters.Count(); i++)
-        {
-            attacks[i] = new Data.Combat.AttackData[totalAttackTypes];
-
-            foreach (AttackDataSO attack in characters[i].Attacks)
+            if (state == PauseState.Paused)
             {
-                AttackData attackData = attack.GetAttackData();
-
-                attacks[i][(int)attackData.Type] = attackData;
+                isGamePaused = true;
+                UnityEngine.Debug.Log("<color=yellow>Editor Paused:</color> Simulation Thread Frozen.");
+            }
+            else if (state == PauseState.Unpaused)
+            {
+                isGamePaused = false;
+                UnityEngine.Debug.Log("<color=green>Editor Unpaused:</color> Simulation Thread Resumed.");
             }
         }
-
-        gameSimulation.InitializeAttackData(attacks);
-    }
-
-    private void Update()
-    {
-        accumulator += Time.deltaTime;
-
-        while (accumulator >= fixedDeltaTime)
-        {
-            RunSingleTick();
-
-            accumulator -= fixedDeltaTime;
-        }
-
-        UpdateVisuals();
-    }
-
-    private void RunSingleTick()
-    {        
-        int previousIndex = currentTick % BufferSize;
-        int currentIndex = (currentTick + 1) % BufferSize;
-
-        ref GameState previousState = ref stateBuffer[previousIndex];
-        ref GameState currentState = ref stateBuffer[currentIndex];
-
-        DeepCopyGameState(ref previousState, ref currentState);
-
-        for (int i = 0; i < characters.Length; i++)
-        {
-            Character character = characters[i];
-
-            RawInput input = character.GetRawInput();
-
-            RawInput currentHardwareInput = character.GetRawInput();
-            inputBuffer[i][currentTick % BufferSize] = currentHardwareInput;
-
-            RawInput simulationInput = new RawInput();
-
-            int delayedTick = currentTick - InputDelay;
-
-            if (delayedTick >= 0)
-            {
-                simulationInput = inputBuffer[i][delayedTick % BufferSize];
-            }
-
-            simulationInput.FrameId = (ushort)currentTick;
-            
-            simulationInput.FrameId = (ushort)currentTick;
-            currentState.Characters[i].RawInput = simulationInput;
-
-            // input.FrameId = (ushort)currentTick;
-            // currentState.Characters[i].RawInput = input;
-
-            //TODO: Remove this in actual game
-            currentState.Characters[i].Stats = characters[i].GetLogicCharacterStats(fixedDeltaTime);
-        }
-
-        // store the game data in the buffer, get the input etc
-
-        gameSimulation.AdvanceFrame(ref currentState, previousState);
-
-        currentTick++;
-
-        bool matchEnded = false;
-
-        for (int i = 0; i < currentState.Characters.Length; i++)
-        {
-            if (currentState.Characters[i].RemainingStocks == 0)
-            {
-                matchEnded = true;
-                break;
-            }
-        }
-
-        if (currentTick == totalMatchFrames || matchEnded)
-        {
-            EndMatch(currentState);
-        }
-    }
-
-    private void UpdateVisuals()
-    {
-        GameState prevState = stateBuffer[(currentTick -1 + BufferSize) % BufferSize];
-        GameState gameState = stateBuffer[currentTick % BufferSize];
-
-        for (int i = 0; i < characters.Length; i++)
-        {
-            Character character = characters[i];
-            CharacterData characterData = gameState.Characters[i];
-
-            character.UpdateState(characterData);
-
-            if (ShowHitboxes && debugDrawer != null)
-            {
-                Data.Combat.AttackData attack = gameSimulation.GetCharacterAttack(i, characterData.AttackType);
-
-                debugDrawer.DrawCharacter(characterData, attack);
-            }
-
-            CharacterData prevCharacterData = prevState.Characters[i];
-
-            if (prevCharacterData.DamagePercentage != characterData.DamagePercentage)
-            {
-                UIMatchManager.Instance.UpdateCharacterDamage(i, characterData.DamagePercentage);
-            }
-
-            if (prevCharacterData.RemainingStocks != characterData.RemainingStocks)
-            {
-                UIMatchManager.Instance.UpdateCharacterStocks(i, characterData.RemainingStocks);
-            }
-        }
-
-        // Update timer
-        long framesRemaining = totalMatchFrames - currentTick;
-
-        UIMatchManager.Instance.UpdateTimer(framesRemaining, TargetFPS);
-
-        // Manually update the camera
-
-        if (cameraBrain != null)
-        {
-            cameraBrain.ManualUpdate();
-        }
-    }
-
-    private void EndMatch(GameState state)
-    {
-        int winningPlayer = -1;
-
-        CharacterData characterOne = state.Characters[0];
-        CharacterData characterTwo = state.Characters[1]; 
-        
-        if (characterOne.RemainingStocks != characterTwo.RemainingStocks)
-        {
-            if (characterOne.RemainingStocks > characterTwo.RemainingStocks)
-            {
-                winningPlayer = 1;
-            }
-            else
-            {
-                winningPlayer = 2;
-            }
-        }
-        else if (characterOne.DamagePercentage != characterTwo.DamagePercentage)
-        {
-            if (characterOne.DamagePercentage > characterTwo.DamagePercentage)
-            {
-                winningPlayer = 1;
-            }
-            else
-            {
-                winningPlayer = 2;
-            }
-        }
-
-        MatchResultsData.WinnerPlayer = winningPlayer;
-
-        MatchResultsData.Player1TotalDamageDealt = characterOne.Score;
-        MatchResultsData.Player2TotalDamageDealt = characterTwo.Score;
-        
-        SceneManager.LoadScene("ResultsScene");
-    }
-
-    private void DeepCopyGameState(ref GameState source, ref GameState destination)
-    {
-        destination.FrameNumber = source.FrameNumber;
-        destination.FrameNumber++;
-
-        for (int i = 0; i < destination.StaticColliders.Length; i++)
-        {
-            destination.StaticColliders[i] = source.StaticColliders[i];
-        }
-
-        for (int i = 0; i < destination.Characters.Length; i++)
-        {
-            // We save the hurtbox for the character before copying it because
-            // otherwise the hurtbox array of the character will have the pointer
-            // to the array of the source AND will leave this array unused, whill
-            // will lead to the GarbageCollector triggering
-
-            var preAllocatedHurtboxes = destination.Characters[i].Hurtboxes;
-
-            destination.Characters[i] = source.Characters[i];
-
-            destination.Characters[i].Hurtboxes = preAllocatedHurtboxes;
-
-            destination.Characters[i].Hurtboxes[0] = source.Characters[i].Hurtboxes[0];
-        }
+        #endif
     }
 }
