@@ -8,7 +8,6 @@ namespace Simulation
     {
         private const int minimumFlickValue = 45;
 
-        //TODO: Add previous frame input
         public ProcessedInput ProcessInput(RawInput rawInput, RawInput previousRawInput)
         {
             ProcessedInput input = new ProcessedInput();

@@ -171,7 +171,7 @@ namespace Core
                 {
                     threadInputs[i] = characters[i].GetRawInput();
                     
-                    // TODO: Remove
+                    // For changing the stats while playing
                     // logicEngine.StateBuffer[logicEngine.CurrentTick % config.BufferSize].Characters[i].Stats = characters[i].GetLogicCharacterStats(logicEngine.FixedDeltaTime);
                 }
             }
@@ -325,39 +325,5 @@ namespace Core
             }
         }
         #endif
-
-        // private void SaveData()
-        // {
-        //     saveData = false;
-
-        //     var date = DateTime.Now;
-
-        //     string path = $"Assets/TestData/{date.Year}-{date.Month}-{date.Day}/{date.Hour}-{date.Minute}/";
-
-        //     if (!Directory.Exists(path))
-        //     {
-        //         Directory.CreateDirectory(path);
-        //     }
-
-        //     for (int i = 0; i < 1; i++)
-        //     {
-        //         string filePath = Path.Combine(path, $"inputs.json");
-                
-        //         using (StreamWriter writer = new StreamWriter(filePath, false))
-        //         {
-        //             writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(logicEngine.InputBuffer[i]));
-        //         }
-        //     }
-
-        //     string statePath = Path.Combine(path, "game-states.json");
-        //     using (StreamWriter writer = new StreamWriter(statePath, false))
-        //     {
-        //         writer.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(logicEngine.StateBuffer));
-        //     }
-
-        // #if UNITY_EDITOR
-        //     UnityEditor.AssetDatabase.Refresh();
-        // #endif
-        // }
     }
 }

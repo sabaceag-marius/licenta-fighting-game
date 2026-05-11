@@ -59,7 +59,7 @@ public static class PhysicsExtensions
         FixedFloat distanceSquared = (differenceVector.x * differenceVector.x) + (differenceVector.y * differenceVector.y);
         FixedFloat radiusSquared = circleCollider.Radius * circleCollider.Radius;
 
-        //TODO: handle = case
+        //TODO: handle = case ?
         return distanceSquared < radiusSquared;
     }
 

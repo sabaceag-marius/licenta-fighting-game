@@ -78,7 +78,7 @@ public static class CombatEngine
                         FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * attackerCharacter.FacingDirection, hitbox.LaunchDirection.y)
                             * knockbackValue * 0.0045f;
 
-                        //TODO: add tuble only for high knockback
+                        //TODO: add tumble only for high knockback
                         var hurtState = CharacterStateType.Tumble;
 
                         // We do this in order to always reset the target character's state
