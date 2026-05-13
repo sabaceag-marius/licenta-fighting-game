@@ -1824,7 +1824,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1241503781}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7790b1b46769c46f6a68c3d6db80800a, type: 3}
+  m_Script: {fileID: 11500000, guid: e5b2cfe39eaf1484cb9d84e929a67459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   config:
@@ -1832,7 +1832,7 @@ MonoBehaviour:
     MinutesPerMatch: 3
     InputDelay: 3
     BufferSize: 60
-  ShowHitboxes: 1
+  ShowHitboxes: 0
 --- !u!1 &1309635828
 GameObject:
   m_ObjectHideFlags: 0

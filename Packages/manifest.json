@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync",
     "com.danielmansson.mathematics.fixedpoint": "https://github.com/danielmansson/Unity.Mathematics.FixedPoint.git",
     "com.nfysoft.gamecubecontroller": "git@github.com:enfyy/Unity-GameCubeController.git",
     "com.unity.cinemachine": "2.10.7",

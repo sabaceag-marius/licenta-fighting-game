@@ -11,6 +11,12 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private GameObject cursorPrefab;
     [SerializeField] private TMP_Text startLabel;
 
+    [SerializeField] private TMP_InputField localPortField;
+
+    [SerializeField] private TMP_InputField remotePortField;
+
+    [SerializeField] private bool isOnline = false;
+
     private List<PlayerHandler> joinedPlayers = new List<PlayerHandler>();
     private int MaxPlayerCount;
     private bool canStartMatch;
@@ -75,7 +81,24 @@ public class CharacterSelectManager : MonoBehaviour
         if (canStartMatch)
         {
             canStartMatch = false;
-            SceneManager.LoadScene("CombatScene");
+
+            if (isOnline)
+            {
+                int localPort = 0;
+                int remotePort = 0;
+
+                int.TryParse(localPortField?.text, out localPort);
+                int.TryParse(remotePortField?.text, out remotePort);
+
+                Core.NetworkConfig.LocalPort = localPort; 
+                Core.NetworkConfig.RemotePort = remotePort; 
+                
+                SceneManager.LoadScene("MultiplayerCombatScene");
+            }
+            else
+            {
+                SceneManager.LoadScene("CombatScene");
+            }
         }
     }
 

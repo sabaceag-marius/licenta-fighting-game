@@ -12,7 +12,7 @@ namespace Core
         //TODO: Change to Character Type Enum based-array and do the same thing for CharacterStats
         public AttackData[][] Attacks {get; private set;}
         
-        public int CurrentTick { get; private set; }
+        public ushort CurrentTick { get; private set; }
         public long TotalMatchFrames { get; private set; }
         public bool MatchEnded { get; private set; }
         public FixedFloat FixedDeltaTime { get; private set; }
@@ -75,7 +75,6 @@ namespace Core
                     simulationInput = InputBuffer[i][delayedTick % Config.BufferSize];
                 }
 
-                simulationInput.FrameId = (ushort)CurrentTick;
                 currentState.Characters[i].RawInput = simulationInput;
             }
 
