@@ -205,7 +205,7 @@ namespace Core
 
             blastzoneCollider = colliderFactories.First(i => i.Layer == ColliderLayer.Blastzone).GetLogicCollider();
                 
-            characters = FindObjectsOfType<Character>();
+            characters = FindObjectsOfType<Character>().OrderBy(c => c.Index).ToArray();
             gameState.Characters = new Data.Character.CharacterData[Math.Min(characters.Length, 16)];
 
             for (int i = 0; i < gameState.Characters.Length; i++)

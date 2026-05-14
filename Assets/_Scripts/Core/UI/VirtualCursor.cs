@@ -13,7 +13,7 @@ public class VirtualCursor : MonoBehaviour
     
     private TMP_Text tmpText;
 
-    public PlayerHandler PlayerHandler;
+    public PlayerHandlerBase PlayerHandler;
 
     private int playerIndex;
     private RectTransform canvasRect;
@@ -32,7 +32,7 @@ public class VirtualCursor : MonoBehaviour
     private bool isCharacterSelected;
 
     private PlayerInput myInput;
-    private CharacterSelectManager selectManager;
+    private BaseCharacterSelectManager selectManager;
     private InputAction moveAction;
     private InputAction selectAction;
     private InputAction startAction;
@@ -55,7 +55,7 @@ public class VirtualCursor : MonoBehaviour
     }
 
     // Called by the CharacterSelectManager right after this cursor is instantiated
-    public void Initialize(PlayerInput input, CharacterSelectManager manager)
+    public void Initialize(PlayerInput input, BaseCharacterSelectManager manager)
     {
         myInput = input;
         selectManager = manager;

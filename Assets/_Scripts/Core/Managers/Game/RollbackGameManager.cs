@@ -5,13 +5,15 @@ namespace Core
 {
     public class RollbackGameManager : BaseGameManager
     {
-        private int localPlayerId = 0;
+        private int localPlayerId;
 
         private Networking.NetworkManager networkManager;
 
         protected override void Start()
         {
             base.Start();
+
+            localPlayerId = NetworkConfig.LocalPlayerId;
             
             networkManager = new Networking.NetworkManager();
             networkManager.Start(NetworkConfig.LocalPort, NetworkConfig.IPAddress, NetworkConfig.RemotePort);
@@ -26,7 +28,7 @@ namespace Core
 
             if (networkManager.IncomingPackets.TryDequeue(out Data.NetworkPacket result))
             {
-                Debug.Log($"Got packet for latest frame {result.LatestExecutionFrame}; size = {result.Inputs.Length}; ({result.Inputs[0].LeftStickX}, {result.Inputs[0].LeftStickY})");
+                // Debug.Log($"Got packet for latest frame {result.LatestExecutionFrame}; size = {result.Inputs.Length}; ({result.Inputs[0].LeftStickX}, {result.Inputs[0].LeftStickY})");
             } 
         }
 
@@ -70,6 +72,11 @@ namespace Core
         protected override void ProcessBackgroundTasks()
         {
             
+        }
+
+        void OnDestroy()
+        {
+            networkManager?.Dispose();
         }
     }
 }

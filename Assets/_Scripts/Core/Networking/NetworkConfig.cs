@@ -8,5 +8,7 @@ namespace Core
         public static int RemotePort { get; set; }
 
         public static string IPAddress { get; set; } = "127.0.0.1";
+
+        public static int LocalPlayerId {get; set;}
     }
 }

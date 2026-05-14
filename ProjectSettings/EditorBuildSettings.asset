@@ -15,8 +15,11 @@ EditorBuildSettings:
     path: Assets/Scenes/ResultsScene.unity
     guid: 0984ac26b8e9a46d883107f7b030d4cf
   - enabled: 1
-    path: Assets/Scenes/MultiplayerCharacterSelectScene.unity
+    path: Assets/Scenes/JoinLobbyCharacterSelectScene.unity
     guid: 39c11360da383481db26cab4b525f6fb
+  - enabled: 1
+    path: Assets/Scenes/CreateLobbyCharacterSelectScene.unity
+    guid: 4b71a00b128cf45058efdf61eb236f0e
   - enabled: 1
     path: Assets/Scenes/MultiplayerCombatScene.unity
     guid: 9ebaf8a640f0d464bb031769bdc05a98

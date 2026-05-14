@@ -1,25 +1,30 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
-public class CharacterSelectManager : MonoBehaviour
+public abstract class BaseCharacterSelectManager : MonoBehaviour
 {
-    [SerializeField] private Transform canvasTransform;
-    [SerializeField] private GameObject cursorPrefab;
-    [SerializeField] private TMP_Text startLabel;
+    [SerializeField]
+    protected GameObject[] characterPool; 
 
-    [SerializeField] private TMP_InputField localPortField;
+    [SerializeField] 
+    private Transform canvasTransform;
+    [SerializeField] 
+    private GameObject cursorPrefab;
+    [SerializeField] 
+    protected TMP_Text startLabel;
 
-    [SerializeField] private TMP_InputField remotePortField;
+    [SerializeField]
+    protected GameObject remotePlayerPrefab;
 
-    [SerializeField] private bool isOnline = false;
-
-    private List<PlayerHandler> joinedPlayers = new List<PlayerHandler>();
+    protected List<PlayerHandlerBase> joinedPlayers = new List<PlayerHandlerBase>();
     private int MaxPlayerCount;
-    private bool canStartMatch;
+    protected bool canStartMatch;
+    
+    public Core.CharacterType SelectedCharacter;
 
     void Awake()
     {
@@ -28,9 +33,9 @@ public class CharacterSelectManager : MonoBehaviour
 
     void Start()
     {
-        PlayerHandler[] returningPlayers = FindObjectsOfType<PlayerHandler>();
+        PlayerHandlerBase[] returningPlayers = FindObjectsOfType<PlayerHandlerBase>();
 
-        foreach (PlayerHandler player in returningPlayers)
+        foreach (PlayerHandlerBase player in returningPlayers)
         {
             // Reset their previous character choice so they have to pick again
             player.SetCharacter(null); 
@@ -41,11 +46,11 @@ public class CharacterSelectManager : MonoBehaviour
 
     public void OnPlayerJoined(PlayerInput playerInput)
     {
-        PlayerHandler newPlayer = playerInput.GetComponent<PlayerHandler>();
+        PlayerHandlerBase newPlayer = playerInput.GetComponent<PlayerHandlerBase>();
         SetupPlayerUI(newPlayer, playerInput);
     }
 
-    private void SetupPlayerUI(PlayerHandler playerHandler, PlayerInput playerInput)
+    private void SetupPlayerUI(PlayerHandlerBase playerHandler, PlayerInput playerInput)
     {
         if (!joinedPlayers.Contains(playerHandler))
         {
@@ -58,6 +63,8 @@ public class CharacterSelectManager : MonoBehaviour
         // Spawn the visual cursor
         GameObject newCursor = Instantiate(cursorPrefab, canvasTransform);
         VirtualCursor cursorScript = newCursor.GetComponent<VirtualCursor>();
+
+        Debug.Log(newCursor);
         
         cursorScript.PlayerHandler = playerHandler;
         cursorScript.PlayerIndex = playerInput.playerIndex;
@@ -70,41 +77,16 @@ public class CharacterSelectManager : MonoBehaviour
     // Called by the VirtualCursor when a player locks in a character
     public void CheckStartCondition()
     {
-        canStartMatch = true;
-        // canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
-        startLabel?.gameObject.SetActive(canStartMatch);
+        canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
+        startLabel?.gameObject?.SetActive(canStartMatch);
     }
 
     // Called by the VirtualCursor when a player presses Start
-    public void TryStartMatch()
-    {
-        if (canStartMatch)
-        {
-            canStartMatch = false;
-
-            if (isOnline)
-            {
-                int localPort = 0;
-                int remotePort = 0;
-
-                int.TryParse(localPortField?.text, out localPort);
-                int.TryParse(remotePortField?.text, out remotePort);
-
-                Core.NetworkConfig.LocalPort = localPort; 
-                Core.NetworkConfig.RemotePort = remotePort; 
-                
-                SceneManager.LoadScene("MultiplayerCombatScene");
-            }
-            else
-            {
-                SceneManager.LoadScene("CombatScene");
-            }
-        }
-    }
+    public abstract void TryStartMatch();
 
     public void OnPlayerLeft(PlayerInput playerInput)
     {
-        PlayerHandler player = playerInput.GetComponent<PlayerHandler>();
+        PlayerHandlerBase player = playerInput.GetComponent<PlayerHandlerBase>();
         
         if (joinedPlayers.Contains(player))
         {

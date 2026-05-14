@@ -7,6 +7,8 @@ using Data.Character;
 // [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
 public class Character : MonoBehaviour
 {
+    public int Index {get; set;}
+    
     [Header("Debug settings")]
     public float Damage = 0;
     
