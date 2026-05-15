@@ -209,6 +209,11 @@ public static class FixedMath
     {
         return (int) x;
     }
+
+    public static int RoundToInt(FixedFloat x)
+    {
+        return (int)Math.Round(x);
+    }
 }
 
 public class FixedFloatConverter : JsonConverter<FixedFloat>

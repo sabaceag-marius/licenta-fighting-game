@@ -24,6 +24,8 @@ namespace Core
                 for (int i = 0; i < characters.Length; i++)
                 {
                     threadInput[i].FrameId = (ushort)(logicEngine.CurrentTick + config.InputDelay);
+                    threadInput[i].IsConfirmed = true;
+                    
                     simulationInput[i] = threadInput[i];
                 }
             }

@@ -19,17 +19,25 @@ namespace Core
             networkManager.Start(NetworkConfig.LocalPort, NetworkConfig.IPAddress, NetworkConfig.RemotePort);
         }
 
+        protected override bool ShouldTickAccumulator()
+        {
+            int executionFrame = logicEngine.CurrentTick + config.InputDelay;
+            int trueAdvantage = logicEngine.GetTrueFrameAdvantage(executionFrame);
+
+            // If we are more than 2 frames ahead of the opponent, freeze the logic tick!
+            if (trueAdvantage > 2)
+            {
+                return false; 
+            }
+            return true;
+        }
+
         protected override void GatherLocalInput()
         {
             lock (inputLock)
             {
                 threadInput[localPlayerId] = characters[localPlayerId].GetRawInput();
             }
-
-            if (networkManager.IncomingPackets.TryDequeue(out Data.NetworkPacket result))
-            {
-                // Debug.Log($"Got packet for latest frame {result.LatestExecutionFrame}; size = {result.Inputs.Length}; ({result.Inputs[0].LeftStickX}, {result.Inputs[0].LeftStickY})");
-            } 
         }
 
         protected override void GetSimulationInput(ref RawInput[] simulationInput)
@@ -41,14 +49,38 @@ namespace Core
                 RawInput localInput = threadInput[localPlayerId];
 
                 localInput.FrameId = executionFrame;
+                localInput.IsConfirmed = true;
 
                 simulationInput[localPlayerId] = localInput;
  
-                Data.NetworkPacket packet = new Data.NetworkPacket
+                SendNetworkPacket(executionFrame, localInput);
+            }
+        }
+
+        protected override void ProcessBackgroundTasks()
+        {
+            while (networkManager.IncomingPackets.TryDequeue(out Data.NetworkPacket result))
+            {
+                // Debug.Log($"Got packet for frame {result.LatestExecutionFrame}; RawAdvantage: {result.RawAdvantage} ");
+
+                logicEngine.ReceiveNetworkPacket(result);
+            } 
+
+            // Its rollback time, rollback all over the place
+            if (logicEngine.OldestDesyncFrame != -1)
+            {
+                Debug.Log($"Rollback {logicEngine.CurrentTick - logicEngine.OldestDesyncFrame} frames");
+                logicEngine.ProcessRollback();
+            }
+        }
+
+        private void SendNetworkPacket(ushort executionFrame, RawInput currentInput)
+        {
+            Data.NetworkPacket packet = new Data.NetworkPacket
                 {
                     PlayerId = (byte)localPlayerId,
                     LatestExecutionFrame = executionFrame,
-                    RawAdvantage = 0,
+                    RawAdvantage = (sbyte)logicEngine.GetLocalRawAdvantage(executionFrame),
                     Inputs = new RawInput[Networking.PacketSerializer.REDUNDANCY_COUNT]
                 };
 
@@ -63,15 +95,9 @@ namespace Core
                 }
 
                 // Override the local input as it is not inside the logic engine yet
-                packet.Inputs[0] = localInput;
+                packet.Inputs[0] = currentInput;
 
                 networkManager.SendPacket(packet);
-            }
-        }
-
-        protected override void ProcessBackgroundTasks()
-        {
-            
         }
 
         void OnDestroy()

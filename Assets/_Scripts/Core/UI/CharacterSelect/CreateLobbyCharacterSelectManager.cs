@@ -6,11 +6,21 @@ using System.Threading;
 using Codice.Client.BaseCommands.Merge.Xml;
 using Core;
 using Core.Networking;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class CreateLobbyCharacterSelectManager : BaseCharacterSelectManager
 {
+    [SerializeField]
+    private TMP_InputField minDelayInput;
+
+    [SerializeField]
+    private TMP_InputField maxDelayInput;
+
+    [SerializeField]
+    private TMP_InputField packetLossInput;
+
     private volatile bool changeScene = false;
     private LocalLobbyManager lobby = new LocalLobbyManager();
 
@@ -30,6 +40,14 @@ public class CreateLobbyCharacterSelectManager : BaseCharacterSelectManager
             {
                 remotePlayerHandler.SetCharacter(characterPool[(int)characterType]);
             }
+
+            int.TryParse(minDelayInput?.text, out int minDelay);
+            int.TryParse(maxDelayInput?.text, out int maxDelay);
+            int.TryParse(packetLossInput?.text, out int packetLoss);
+
+            NetworkConfig.MinArtificialDelay = minDelay;
+            NetworkConfig.MaxArtificialDelay = maxDelay;
+            NetworkConfig.PacketLossPercentage = packetLoss;
 
             SceneManager.LoadScene("MultiplayerCombatScene");
         }

@@ -2,6 +2,8 @@
 
 public struct RawInput
 {
+    public bool IsConfirmed;
+    
     public ushort FrameId;
 
     public sbyte LeftStickX;
@@ -26,4 +28,6 @@ public struct RawInput
     public bool RightStickUp => (RightStick & (1 << 1)) != 0;
     public bool RightStickRight => (RightStick & (1 << 2)) != 0;
     public bool RightStickLeft => (RightStick & (1 << 3)) != 0;
+    
+    public bool IsEmpty => LeftStickX == 0 && LeftStickY == 0 && Buttons == 0 && RightStick == 0;
 }
