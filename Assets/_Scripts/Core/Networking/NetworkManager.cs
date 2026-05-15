@@ -35,12 +35,10 @@ namespace Core.Networking
 
         private volatile bool isRunning = false;
 
-        public void Start(int localPort, string remoteIP, int remotePort)
+        public void Start(UdpClient udpClient, IPAddress remoteIP, int remotePort)
         {
-            Debug.Log($"Starting connection localhost:{localPort}");
-            
-            udpClient = new UdpClient(localPort);
-            remoteEndPoint = new IPEndPoint(IPAddress.Parse(remoteIP), remotePort);
+            this.udpClient = udpClient;
+            remoteEndPoint = new IPEndPoint(remoteIP, remotePort);
             isRunning = true;
 
             sendThread = new Thread(SendLoop)
@@ -66,7 +64,7 @@ namespace Core.Networking
         {
             System.Random rng = new System.Random();
 
-            byte[] outboundBuffer = new byte[PacketSerializer.PACKET_SIZE];
+            byte[] outboundBuffer = new byte[NetworkUtils.PACKET_SIZE];
 
             // Stopwatch to track the time for delay Testing
             
@@ -98,7 +96,7 @@ namespace Core.Networking
                 {
                     DelayedPacket readyPacket = delayStagingQueue.Dequeue();
                     
-                    PacketSerializer.Serialize(readyPacket.Packet, outboundBuffer);
+                    NetworkUtils.Serialize(readyPacket.Packet, outboundBuffer);
                     udpClient.Send(outboundBuffer, outboundBuffer.Length, remoteEndPoint);
                 }
 
@@ -117,7 +115,7 @@ namespace Core.Networking
                 {
                     byte[] receivedBytes = udpClient.Receive(ref senderEndPoint);
 
-                    NetworkPacket packet = PacketSerializer.Deserialize(receivedBytes);
+                    NetworkPacket packet = NetworkUtils.Deserialize(receivedBytes);
 
                     IncomingPackets.Enqueue(packet);
                 }

@@ -12,6 +12,9 @@ using UnityEngine.SceneManagement;
 public class JoinLobbyCharacterSelectManager : BaseCharacterSelectManager
 {
     [SerializeField]
+    private TMP_InputField lobbyCodeInput;
+
+    [SerializeField]
     private TMP_InputField minDelayInput;
 
     [SerializeField]
@@ -21,7 +24,7 @@ public class JoinLobbyCharacterSelectManager : BaseCharacterSelectManager
     private TMP_InputField packetLossInput;
     
     private volatile bool changeScene = false;
-    private LocalLobbyManager lobby = new LocalLobbyManager();
+    private MultiplayerLobbyManager lobby = new MultiplayerLobbyManager();
 
     protected virtual void Update()
     {
@@ -54,6 +57,9 @@ public class JoinLobbyCharacterSelectManager : BaseCharacterSelectManager
 
     public override void TryStartMatch()
     {
+        if (string.IsNullOrWhiteSpace(lobbyCodeInput?.text))
+            return;
+
         if (canStartMatch)
         {
             startLabel.SetText("Waiting for connection...");
@@ -61,9 +67,8 @@ public class JoinLobbyCharacterSelectManager : BaseCharacterSelectManager
             canStartMatch = false;
 
             lobby.OnConnectionComplete += StartMatch;
-        
-            // Start searching/sending requests
-            lobby.StartClient(NetworkingDefaults.LOCALHOST, NetworkingDefaults.HOST_PORT, NetworkingDefaults.CLIENT_PORT, SelectedCharacter);
+
+            lobby.StartMatchMaking(lobbyCodeInput.text, false, SelectedCharacter);
         }
     }
 
@@ -73,10 +78,15 @@ public class JoinLobbyCharacterSelectManager : BaseCharacterSelectManager
 
         joinedPlayers[0].PlayerIndex = 1;
 
-        NetworkConfig.IPAddress = NetworkingDefaults.LOCALHOST;
-        NetworkConfig.LocalPort = NetworkingDefaults.CLIENT_PORT;
-        NetworkConfig.RemotePort = NetworkingDefaults.HOST_PORT;
+        (UdpClient, IPEndPoint, CharacterType) connectionData = lobby.GetConnectionData();
+
+        NetworkConfig.ActiveClient = connectionData.Item1;
+
+        NetworkConfig.IPAddress = connectionData.Item2.Address;
+        NetworkConfig.RemotePort = connectionData.Item2.Port;
         NetworkConfig.LocalPlayerId = 1;
+
+        lobby.ReleaseSocketOwnership();
 
         changeScene = true;
     }

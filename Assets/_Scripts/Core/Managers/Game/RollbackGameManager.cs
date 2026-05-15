@@ -16,7 +16,7 @@ namespace Core
             localPlayerId = NetworkConfig.LocalPlayerId;
             
             networkManager = new Networking.NetworkManager();
-            networkManager.Start(NetworkConfig.LocalPort, NetworkConfig.IPAddress, NetworkConfig.RemotePort);
+            networkManager.Start(NetworkConfig.ActiveClient, NetworkConfig.IPAddress, NetworkConfig.RemotePort);
         }
 
         protected override bool ShouldTickAccumulator()
@@ -81,10 +81,10 @@ namespace Core
                     PlayerId = (byte)localPlayerId,
                     LatestExecutionFrame = executionFrame,
                     RawAdvantage = (sbyte)logicEngine.GetLocalRawAdvantage(executionFrame),
-                    Inputs = new RawInput[Networking.PacketSerializer.REDUNDANCY_COUNT]
+                    Inputs = new RawInput[Networking.NetworkUtils.REDUNDANCY_COUNT]
                 };
 
-                for (int i = 0; i < Networking.PacketSerializer.REDUNDANCY_COUNT; i++)
+                for (int i = 0; i < Networking.NetworkUtils.REDUNDANCY_COUNT; i++)
                 {
                     int targetFrame = executionFrame - i;
 

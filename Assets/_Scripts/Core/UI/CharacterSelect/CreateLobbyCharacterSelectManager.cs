@@ -3,7 +3,6 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Codice.Client.BaseCommands.Merge.Xml;
 using Core;
 using Core.Networking;
 using TMPro;
@@ -21,10 +20,31 @@ public class CreateLobbyCharacterSelectManager : BaseCharacterSelectManager
     [SerializeField]
     private TMP_InputField packetLossInput;
 
-    private volatile bool changeScene = false;
-    private LocalLobbyManager lobby = new LocalLobbyManager();
+    [SerializeField]
+    private TMP_Text lobbyLabel;
 
-    protected virtual void Update()
+    private volatile bool changeScene = false;
+    private MultiplayerLobbyManager lobby = new MultiplayerLobbyManager();
+
+    private string lobbyCode;
+
+    protected override void Start()
+    {
+        base.Start();
+
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var stringChars = new char[6];
+
+        for (int i = 0; i < stringChars.Length; i++)
+        {
+            stringChars[i] = chars[UnityEngine.Random.Range(0, chars.Length)];
+        }
+
+        lobbyCode = new String(stringChars);
+
+        lobbyLabel.SetText(lobbyCode);
+    }
+    void Update()
     {
         lobby.Tick(Time.deltaTime);
 
@@ -64,7 +84,8 @@ public class CreateLobbyCharacterSelectManager : BaseCharacterSelectManager
             lobby.OnOpponentFound += HandleOpponentFound;
             lobby.OnConnectionComplete += StartMatch;
             
-            lobby.StartHost(NetworkingDefaults.HOST_PORT, SelectedCharacter);
+            // lobby.StartHost(lobbyCode, SelectedCharacter);
+            lobby.StartMatchMaking(lobbyCode, true, SelectedCharacter);
         }
     }
 
@@ -79,10 +100,15 @@ public class CreateLobbyCharacterSelectManager : BaseCharacterSelectManager
 
         joinedPlayers[0].PlayerIndex = 0;
 
-        NetworkConfig.IPAddress = NetworkingDefaults.LOCALHOST;
-        NetworkConfig.LocalPort = NetworkingDefaults.HOST_PORT;
-        NetworkConfig.RemotePort = NetworkingDefaults.CLIENT_PORT;
+        (UdpClient, IPEndPoint, CharacterType) connectionData = lobby.GetConnectionData();
+
+        NetworkConfig.ActiveClient = connectionData.Item1;
+
+        NetworkConfig.IPAddress = connectionData.Item2.Address;
+        NetworkConfig.RemotePort = connectionData.Item2.Port;
         NetworkConfig.LocalPlayerId = 0;
+
+        lobby.ReleaseSocketOwnership();
 
         changeScene = true;
     }

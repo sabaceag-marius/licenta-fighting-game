@@ -1,9 +1,11 @@
 using System;
+using System.Net;
+using System.Net.Sockets;
 using Data;
 
 namespace Core.Networking
 {
-    public static class PacketSerializer
+    public static class NetworkUtils
     {
         // Number of inputs sent in a packet
         public const int REDUNDANCY_COUNT = 30;
@@ -79,6 +81,18 @@ namespace Core.Networking
             // packet.Input.Buttons = buffer[5];
 
             return packet;
+        }
+
+        public static string FindLocalIP()
+        {
+            foreach(IPAddress ip in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            {
+                if(ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return null;
         }
     }
 }

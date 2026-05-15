@@ -182,7 +182,7 @@ namespace Core
                 RemoteRawAdvantage = packet.RawAdvantage;
             }
 
-            for (int i = 0; i < Core.Networking.PacketSerializer.REDUNDANCY_COUNT; i++)
+            for (int i = 0; i < Core.Networking.NetworkUtils.REDUNDANCY_COUNT; i++)
             {
                 RawInput input = packet.Inputs[i];
 

@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public abstract class BaseCharacterSelectManager : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public abstract class BaseCharacterSelectManager : MonoBehaviour
         MaxPlayerCount = GetComponent<PlayerInputManager>().maxPlayerCount;
     }
 
-    void Start()
+    protected virtual void Start()
     {
         PlayerHandlerBase[] returningPlayers = FindObjectsOfType<PlayerHandlerBase>();
 
@@ -97,5 +98,10 @@ public abstract class BaseCharacterSelectManager : MonoBehaviour
         
         // The PlayerInputManager handles destroying the GameObject, 
         // so any cursors linked to it need to clean themselves up.
+    }
+
+    public void HandleBack()
+    {
+        SceneManager.LoadScene("MainMenuScene");
     }
 }

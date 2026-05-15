@@ -71,6 +71,6 @@ public class UIResultsManager : MonoBehaviour
     {
         MatchResultsData.ResetData();
 
-        SceneManager.LoadScene("CharacterSelectScene");
+        SceneManager.LoadScene("MainMenuScene");
     }
 }
