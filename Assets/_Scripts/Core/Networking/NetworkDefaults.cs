@@ -9,7 +9,7 @@ namespace Core.Networking
 
         public const string LOCALHOST = "127.0.0.1";
 
-        public const string LOBBY_SERVER_IP = "192.168.1.149";
+        public const string LOBBY_SERVER_IP = "35.238.255.237";
 
         public const int LOBBY_SERVER_PORT = 5555;
     }

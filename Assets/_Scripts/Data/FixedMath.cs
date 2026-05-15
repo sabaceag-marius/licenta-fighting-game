@@ -201,7 +201,7 @@ public static class FixedMath
     {
         FixedFloat angleRadian = angleDegrees * (FixedFloat)(fpmath.PI / 180);
         
-        return new FixedVector2(fpmath.cos(angleRadian), fpmath.sin(angleRadian)).Normalize();
+        return new FixedVector2((FixedFloat)fpmath.cos(angleRadian), (FixedFloat)fpmath.sin(angleRadian)).Normalize();
         // return new FixedVector2(-fpmath.sin(angleRadian), fpmath.cos(angleRadian)).Normalize();
     }
 
