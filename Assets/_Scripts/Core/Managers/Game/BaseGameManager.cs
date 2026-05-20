@@ -219,8 +219,6 @@ namespace Core
 
                 gameState.Characters[i].Hurtboxes = new Data.Combat.HurtboxData[1];
                 gameState.Characters[i].Hurtboxes[0] = new Data.Combat.HurtboxData { Collider = characters[i].GetHurtbox() };
-
-                gameState.Characters[i].Damage = 50;
             }
 
             return gameState;

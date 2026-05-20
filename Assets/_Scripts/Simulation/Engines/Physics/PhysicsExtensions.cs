@@ -88,7 +88,7 @@ public static class PhysicsExtensions
         FixedFloat distanceSquared = (differenceVector.x * differenceVector.x) + (differenceVector.y * differenceVector.y);
         FixedFloat radiusSumSquared = (circleControllerA.Radius + circleControllerB.Radius) * (circleControllerA.Radius + circleControllerB.Radius);
 
-        return distanceSquared < radiusSumSquared;
+        return distanceSquared <= radiusSumSquared;
     }
 
     public static bool CheckCollisionCircleCapsule(this LogicCollider circleCollider, LogicCollider capsuleCollider)
