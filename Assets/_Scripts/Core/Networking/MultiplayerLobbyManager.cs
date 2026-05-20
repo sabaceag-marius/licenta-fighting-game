@@ -228,15 +228,23 @@ namespace Core.Networking
 
         private string GetLocalIPAddress()
         {
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            try
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork) // IPv4 only
+                // We open a dummy socket to a known public IP (Google's DNS).
+                // It doesn't actually send a packet, but it forces the OS to 
+                // calculate the correct routing table and select your true Wi-Fi adapter.
+                using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
                 {
-                    return ip.ToString();
+                    socket.Connect("8.8.8.8", 65530);
+                    IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+                    return endPoint.Address.ToString();
                 }
             }
-            return "127.0.0.1";
+            catch
+            {
+                // Fallback just in case you are completely offline
+                return "127.0.0.1";
+            }
         }
 
         public void ReleaseSocketOwnership() { udpClient = null; }
