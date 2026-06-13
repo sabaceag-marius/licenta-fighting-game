@@ -46,7 +46,7 @@ namespace Core.Networking
         public void StartMatchMaking(string lobbyCode, bool isHost, CharacterType characterType)
         {
             lobbyServerEndPoint = new IPEndPoint(IPAddress.Parse(NetworkingDefaults.LOBBY_SERVER_IP), NetworkingDefaults.LOBBY_SERVER_PORT);    
-            this.lobbyCode = lobbyCode;
+            this.lobbyCode = lobbyCode.ToUpper();
             this.isHost = isHost;
             this.myCharacter = characterType;
 

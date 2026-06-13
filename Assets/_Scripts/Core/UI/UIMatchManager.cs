@@ -19,6 +19,15 @@ namespace Core.UI
         [SerializeField]
         private PlayerHUD[] playerHUDs;
 
+        [SerializeField]
+        private TMP_Text PacketLossLabel;
+
+        [SerializeField]
+        private TMP_Text MinPacketDelayLabel;
+
+        [SerializeField]
+        private TMP_Text MaxPacketDelayLabel;
+
         private char[] timerChars = new char[] { '0', '0', ':', '0', '0', '.', '0', '0' };
 
         private void OnEnable()
@@ -26,6 +35,17 @@ namespace Core.UI
             MatchEventBus.OnTimerUpdated += UpdateTimer;
             MatchEventBus.OnCharacterStocksChanged += UpdateCharacterStocks;
             MatchEventBus.OnCharacterDamageChanged += UpdateCharacterDamage;
+            MatchEventBus.OnNetworkDebugUpdated += UpdateNetworkDebugUI;
+        }
+
+        private void UpdateNetworkDebugUI(int packetLossPercentage, int minPacketDelay, int maxPacketDelay)
+        {
+            if (PacketLossLabel == null || MinPacketDelayLabel == null || MaxPacketDelayLabel == null )
+                return;
+
+            PacketLossLabel.SetText(packetLossPercentage.ToString());
+            MinPacketDelayLabel.SetText(minPacketDelay.ToString());
+            MaxPacketDelayLabel.SetText(maxPacketDelay.ToString());
         }
 
         private void OnDisable()
@@ -33,6 +53,7 @@ namespace Core.UI
             MatchEventBus.OnTimerUpdated -= UpdateTimer;
             MatchEventBus.OnCharacterStocksChanged -= UpdateCharacterStocks;
             MatchEventBus.OnCharacterDamageChanged -= UpdateCharacterDamage;
+            MatchEventBus.OnNetworkDebugUpdated -= UpdateNetworkDebugUI;
         }
 
         private void UpdateTimer(long framesRemaining, int gameFPS)

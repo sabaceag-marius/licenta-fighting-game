@@ -1,4 +1,3 @@
-
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -13,15 +12,18 @@ namespace Core.Networking
     public class NetworkManager : IDisposable
     {
         #region Testing delay
-
         private struct DelayedPacket
         {
             public NetworkPacket Packet;
             public long SendTimeMs;
         }
-
         private Queue<DelayedPacket> delayStagingQueue = new Queue<DelayedPacket>();
 
+        int packetLossPercentage;
+        int minPacketDelay;        
+        int maxPacketDelay;
+
+        object networkTestLock = new object();        
         #endregion
 
         public ConcurrentQueue<NetworkPacket> IncomingPackets = new ConcurrentQueue<NetworkPacket>();
@@ -35,21 +37,21 @@ namespace Core.Networking
 
         private volatile bool isRunning = false;
 
+        public volatile bool HasDisconnected = false;
+        public string DisconnectReason { get; private set; } = string.Empty;
+
         public void Start(UdpClient udpClient, IPAddress remoteIP, int remotePort)
         {
             this.udpClient = udpClient;
             remoteEndPoint = new IPEndPoint(remoteIP, remotePort);
+            
+            this.udpClient.Client.ReceiveTimeout = 3000;
+
             isRunning = true;
+            HasDisconnected = false;
 
-            sendThread = new Thread(SendLoop)
-            {
-                IsBackground = true
-            };
-
-            receiveThread = new Thread(ReceiveLoop)
-            {
-                IsBackground = true
-            };
+            sendThread = new Thread(SendLoop) { IsBackground = true };
+            receiveThread = new Thread(ReceiveLoop) { IsBackground = true };
 
             sendThread.Start();
             receiveThread.Start();
@@ -57,50 +59,61 @@ namespace Core.Networking
 
         public void SendPacket(NetworkPacket packet)
         {
+            if (!isRunning) return;
             OutgoingPackets.Enqueue(packet);
+        }
+
+        private void TriggerDisconnect(string reason, Exception ex)
+        {
+            // Prevent double-triggering
+            if (HasDisconnected) return; 
+
+            HasDisconnected = true;
+            isRunning = false;
+
+            DisconnectReason = $"{reason} | {ex.GetType().Name}: {ex.Message}";
         }
 
         private void SendLoop()
         {
             System.Random rng = new System.Random();
-
             byte[] outboundBuffer = new byte[NetworkUtils.PACKET_SIZE];
-
-            // Stopwatch to track the time for delay Testing
-            
-            System.Diagnostics.Stopwatch dekayStopwatch = System.Diagnostics.Stopwatch.StartNew();
+            System.Diagnostics.Stopwatch delayStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             while (isRunning)
             {
-                // Pull everything from the game thread as soon as they are generated
-
-                while (OutgoingPackets.TryDequeue(out NetworkPacket packetToSend))
+                try
                 {
-                    int dropChance = rng.Next(100);
-
-                    if (dropChance <= NetworkConfig.PacketLossPercentage)
-                        continue;
-
-                    int delay = rng.Next(NetworkConfig.MinArtificialDelay, NetworkConfig.MaxArtificialDelay);
-
-                    delayStagingQueue.Enqueue(new DelayedPacket
+                    while (OutgoingPackets.TryDequeue(out NetworkPacket packetToSend))
                     {
-                        Packet = packetToSend,
-                        SendTimeMs = dekayStopwatch.ElapsedMilliseconds + delay
-                    });
+                        int dropChance = rng.Next(100);
+                        if (dropChance <= packetLossPercentage) continue;
+
+                        int delay = rng.Next(minPacketDelay, maxPacketDelay);
+
+                        delayStagingQueue.Enqueue(new DelayedPacket
+                        {
+                            Packet = packetToSend,
+                            SendTimeMs = delayStopwatch.ElapsedMilliseconds + delay
+                        });
+                    }
+
+                    // Look at the oldest packet. If enough time has passed, send it!
+
+                    while (delayStagingQueue.Count > 0 && delayStopwatch.ElapsedMilliseconds >= delayStagingQueue.Peek().SendTimeMs)
+                    {
+                        DelayedPacket readyPacket = delayStagingQueue.Dequeue();
+                        NetworkUtils.Serialize(readyPacket.Packet, outboundBuffer);
+                        
+                        udpClient.Send(outboundBuffer, outboundBuffer.Length, remoteEndPoint);
+                    }
                 }
-
-                // Look at the oldest packet. If enough time has passed, send it!
-
-                while (delayStagingQueue.Count > 0 && dekayStopwatch.ElapsedMilliseconds >= delayStagingQueue.Peek().SendTimeMs)
+                catch (Exception ex)
                 {
-                    DelayedPacket readyPacket = delayStagingQueue.Dequeue();
-                    
-                    NetworkUtils.Serialize(readyPacket.Packet, outboundBuffer);
-                    udpClient.Send(outboundBuffer, outboundBuffer.Length, remoteEndPoint);
+                    if (isRunning) TriggerDisconnect("Failed to send packet to opponent", ex);
+                    break;
                 }
 
-                // Sleep for 1ms to prevent 100% CPU core usage. 
                 Thread.Sleep(1);
             }
         }
@@ -114,16 +127,39 @@ namespace Core.Networking
                 try
                 {
                     byte[] receivedBytes = udpClient.Receive(ref senderEndPoint);
-
                     NetworkPacket packet = NetworkUtils.Deserialize(receivedBytes);
-
                     IncomingPackets.Enqueue(packet);
                 }
-                catch (SocketException)
+                catch (SocketException ex)
                 {
-                    if (!isRunning)
-                        break;
+                    if (!isRunning) break;
+
+                    // Differentiate between a Timeout and a Crash ---
+                    if (ex.SocketErrorCode == SocketError.TimedOut)
+                    {
+                        TriggerDisconnect("Connection timed out. No packets received for 3 seconds.", ex);
+                    }
+                    else
+                    {
+                        TriggerDisconnect("Socket connection reset or closed by remote host.", ex);
+                    }
+                    break;
                 }
+                catch (Exception ex)
+                {
+                    if (isRunning) TriggerDisconnect("Critical error in receive thread", ex);
+                    break;
+                }
+            }
+        }
+
+        public void SetNetworkDebugVariables(int packetLossPercentage, int minPacketDelay, int maxPacketDelay)
+        {
+            lock (networkTestLock)
+            {
+                this.packetLossPercentage = packetLossPercentage;
+                this.minPacketDelay = minPacketDelay;
+                this.maxPacketDelay = maxPacketDelay;
             }
         }
 

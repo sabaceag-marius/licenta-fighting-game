@@ -11,5 +11,8 @@ namespace Core.UI
         public static Action<int, int> OnCharacterStocksChanged;
         
         public static Action<long, int> OnTimerUpdated;
+
+        public static Action<int, int, int> OnNetworkDebugUpdated;
+
     }
 }

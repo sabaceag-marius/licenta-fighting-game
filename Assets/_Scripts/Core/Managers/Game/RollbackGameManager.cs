@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Core
 {
@@ -15,12 +16,19 @@ namespace Core
 
             localPlayerId = NetworkConfig.LocalPlayerId;
             
+            SetNetworkDebugVariables(NetworkConfig.PacketLossPercentage, NetworkConfig.MinArtificialDelay, NetworkConfig.MaxArtificialDelay);
+
             networkManager = new Networking.NetworkManager();
             networkManager.Start(NetworkConfig.ActiveClient, NetworkConfig.IPAddress, NetworkConfig.RemotePort);
         }
 
         protected override bool ShouldTickAccumulator()
         {
+            if (logicEngine.TotalMatchFrames - logicEngine.CurrentTick < 5)
+            {
+                return true;
+            }
+
             int executionFrame = logicEngine.CurrentTick + config.InputDelay;
             int trueAdvantage = logicEngine.GetTrueFrameAdvantage(executionFrame);
 
@@ -98,6 +106,72 @@ namespace Core
                 packet.Inputs[0] = currentInput;
 
                 networkManager.SendPacket(packet);
+        }
+
+        protected override void Update()
+        {
+            if (networkManager != null && networkManager.HasDisconnected)
+            {
+                Debug.LogError($"[NetworkManager Fatal Error] {networkManager.DisconnectReason}");
+
+                SceneManager.LoadScene("DesyncScene");
+                return;    
+            }   
+
+            HandleDebugInputs();
+
+            base.Update();
+        }
+
+        private void SetNetworkDebugVariables(int minPacketDelay, int maxPacketDelay, int packetLossPercentage)
+        {
+            if (networkManager == null)
+                return;
+
+            networkManager.SetNetworkDebugVariables(packetLossPercentage, minPacketDelay, maxPacketDelay);
+
+            UI.MatchEventBus.OnNetworkDebugUpdated?.Invoke(packetLossPercentage, minPacketDelay, maxPacketDelay);
+        }
+
+        private void HandleDebugInputs()
+        {
+            if (UnityEngine.InputSystem.Keyboard.current == null)
+                return;
+
+            if (UnityEngine.InputSystem.Keyboard.current.digit0Key.wasPressedThisFrame)
+            {
+                ShowHitboxes = !ShowHitboxes;
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current.digit1Key.wasPressedThisFrame)
+            {
+                SetNetworkDebugVariables(0, 0, 0);
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current.digit2Key.wasPressedThisFrame)
+            {
+                SetNetworkDebugVariables(50, 60, 0);
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current.digit3Key.wasPressedThisFrame)
+            {
+                SetNetworkDebugVariables(25, 50, 25);
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current.digit4Key.wasPressedThisFrame)
+            {
+                SetNetworkDebugVariables(130, 160, 10);
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current.digit5Key.wasPressedThisFrame)
+            {
+                SetNetworkDebugVariables(150, 250, 20);
+            }
+
+            if (UnityEngine.InputSystem.Keyboard.current.qKey.wasPressedThisFrame)
+            {
+                SceneManager.LoadScene("MainMenuScene");
+            }
         }
 
         void OnDestroy()

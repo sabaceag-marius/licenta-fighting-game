@@ -22,7 +22,7 @@ namespace Core
         [SerializeField] protected SimulationConfig config = new SimulationConfig { TargetFPS = 60, MinutesPerMatch = 3, InputDelay = 3, BufferSize = 60 };
 
         [Header("Debug settings")]
-        [SerializeField] private bool ShowHitboxes = true;
+        [SerializeField] protected bool ShowHitboxes = true;
 
         protected Core.GameLogicEngine logicEngine;
         protected Character[] characters;
@@ -164,7 +164,6 @@ namespace Core
                     accumulator -= fixedDeltaTime;
                 }
 
-                // Interpolation factor for unity to draw smooth movement
                 // threadInterpolationAlpha = (float)(accumulator / fixedDeltaTime);
 
                 // If the accumulator is empty, let the thread sleep for 1 millisecond
@@ -174,7 +173,7 @@ namespace Core
             Profiler.EndThreadProfiling();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if (logicEngine.MatchEnded)
             {
