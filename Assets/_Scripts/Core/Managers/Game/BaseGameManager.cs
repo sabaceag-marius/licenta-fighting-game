@@ -39,7 +39,7 @@ namespace Core
         private GameState renderState, previousRenderState;
         private object stateLock = new object();
 
-        // private volatile float threadInterpolationAlpha;
+        private volatile float threadInterpolationAlpha;
 
         private volatile bool isGamePaused = false;
 
@@ -164,7 +164,7 @@ namespace Core
                     accumulator -= fixedDeltaTime;
                 }
 
-                // threadInterpolationAlpha = (float)(accumulator / fixedDeltaTime);
+                threadInterpolationAlpha = (float)(accumulator / fixedDeltaTime);
 
                 // If the accumulator is empty, let the thread sleep for 1 millisecond
                 Thread.Sleep(1);
@@ -244,7 +244,7 @@ namespace Core
         {
             for (int i = 0; i < characters.Length; i++)
             {
-                characters[i].UpdateState(gameState.Characters[i]);
+                characters[i].UpdateState(gameState.Characters[i], threadInterpolationAlpha);
 
                 if (ShowHitboxes && DebugDrawer.Instance != null)
                 {

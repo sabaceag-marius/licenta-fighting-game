@@ -28,7 +28,7 @@ namespace Core
             {
                 return true;
             }
-
+            
             int executionFrame = logicEngine.CurrentTick + config.InputDelay;
             int trueAdvantage = logicEngine.GetTrueFrameAdvantage(executionFrame);
 
@@ -79,6 +79,13 @@ namespace Core
             {
                 Debug.Log($"Rollback {logicEngine.CurrentTick - logicEngine.OldestDesyncFrame} frames");
                 logicEngine.ProcessRollback();
+
+                var gameState = logicEngine.GetCurrentGameState();
+                
+                for (int i = 0; i < characters.Length; i++)
+                {
+                    characters[i].QueueSnapPosition(gameState.Characters[i].Position);
+                }
             }
         }
 

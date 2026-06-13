@@ -25,6 +25,10 @@ public class Character : MonoBehaviour
 
     private BaseColliderFactory hurtboxFactory;
 
+    private object snapLock = new object();
+
+    private bool shouldSnap;
+
     private void Awake()
     {
         inputController = GetComponent<InputController>();
@@ -86,5 +90,37 @@ public class Character : MonoBehaviour
         );
 
         characterAnimator.UpdateAnimation(data);
+    }
+
+    public void UpdateState(Data.Character.CharacterData data, float interpolationAlpha)
+    {
+        lock (snapLock)
+        {
+            if (shouldSnap)
+            {
+                dynamicBody.transform.position = Vector2.Lerp(dynamicBody.transform.position, new Vector2(data.Position.x, data.Position.y), interpolationAlpha);
+                shouldSnap = false;
+            }
+            else
+            {
+                dynamicBody.transform.position = Vector2.Lerp(dynamicBody.transform.position, new Vector2(data.Position.x, data.Position.y), interpolationAlpha);
+            }            
+        }
+
+        transform.localScale = new Vector3(
+            data.FacingDirection,
+            transform.localScale.y,
+            transform.localScale.z
+        );
+
+        characterAnimator.UpdateAnimation(data);
+    }
+
+    public void QueueSnapPosition(Vector2 position)
+    {
+        lock (snapLock)
+        {
+            shouldSnap = true;
+        }
     }
 }
