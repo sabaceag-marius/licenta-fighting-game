@@ -40,7 +40,7 @@ namespace Simulation
 
         public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (character.DynamicBody.IsGrounded)
+            if (character.DynamicBody.HitFloor)
             {
                 character.Velocity = character.AirDodgeDirection * Simulation.Character.GlobalCharacterStats.AirDodgePower;
 

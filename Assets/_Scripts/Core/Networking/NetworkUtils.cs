@@ -10,7 +10,7 @@ namespace Core.Networking
         // Number of inputs sent in a packet
         public const int REDUNDANCY_COUNT = 30;
         
-        // The exact size of our packet in bytes
+        // The exact size of the packet in bytes
         public const int PACKET_SIZE = 4 + REDUNDANCY_COUNT * 6;
 
         /// <summary>
@@ -71,15 +71,6 @@ namespace Core.Networking
                 offset += 6;
             }
             
-            // Reconstruct the ushort by shifting the second byte left by 8 bits and combining them
-            // packet.Input.FrameId = (ushort)(buffer[0] | (buffer[1] << 8));
-            
-            // // Reconstruct the remaining bytes
-            // packet.Input.LeftStickX = (sbyte)buffer[2];
-            // packet.Input.LeftStickY = (sbyte)buffer[3];
-            // packet.Input.RightStick = buffer[4];
-            // packet.Input.Buttons = buffer[5];
-
             return packet;
         }
 

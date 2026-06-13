@@ -5,7 +5,6 @@ public abstract class PlayerHandlerBase : MonoBehaviour
 {
     public int PlayerIndex { get; set; }
     
-    // Using nullable annotation as you had in your original code
     public GameObject? SelectedCharacterPrefab { get; private set; }
 
     protected virtual void Awake()
@@ -13,13 +12,11 @@ public abstract class PlayerHandlerBase : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Called during the Character Select screen
     public void SetCharacter(GameObject? characterPrefab)
     {
         SelectedCharacterPrefab = characterPrefab;
     }
 
-    // Called by the Game Manager in the Combat scene
     public GameObject SpawnCharacter(Transform spawnPoint)
     {
         if (SelectedCharacterPrefab == null)
@@ -28,7 +25,6 @@ public abstract class PlayerHandlerBase : MonoBehaviour
         // Spawn the character
         GameObject character = Instantiate(SelectedCharacterPrefab, spawnPoint.position, spawnPoint.rotation);
 
-        // Fix: Use the instantiated character's original Y/Z scale, not the Handler's scale
         character.transform.localScale = new Vector3(
             spawnPoint.localScale.x,
             character.transform.localScale.y,
@@ -51,12 +47,10 @@ public abstract class PlayerHandlerBase : MonoBehaviour
             characterScript.Index = PlayerIndex;
         }
 
-        // Delegate the input initialization to the specific child classes
         InitializeCharacterInput(character);
 
         return character;
     }
 
-    // Abstract method that Local and Remote handlers MUST implement
     protected abstract void InitializeCharacterInput(GameObject spawnedCharacter);
 }

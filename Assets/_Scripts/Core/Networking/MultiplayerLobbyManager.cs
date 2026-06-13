@@ -16,16 +16,13 @@ namespace Core.Networking
         private UdpClient udpClient;
         private IPEndPoint lobbyServerEndPoint;
         
-        // The Dual-Ping Candidates
         private IPEndPoint remotePublicEndPoint;
         private IPEndPoint remoteLocalEndPoint;
         
-        // The Final Winner
         private IPEndPoint remoteEndPoint; 
         
         private Thread receiveThread;
 
-        // Thread-safe queues for logging and main-thread execution
         private ConcurrentQueue<string> logQueue = new ConcurrentQueue<string>();
         private ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
 
@@ -63,19 +60,17 @@ namespace Core.Networking
 
         public void Tick(float deltaTime)
         {
-            // 1. Process all logs safely on the main thread
+            // Print logs in the Unity thread
             while (logQueue.TryDequeue(out string logMsg))
             {
                 Debug.Log($"[LobbyManager] {logMsg}");
             }
 
-            // 2. Process all Unity-API events safely on the main thread
             while (mainThreadActions.TryDequeue(out Action action))
             {
                 action.Invoke();
             }
 
-            // 3. Network State Machine
             if (state == NetworkState.ConnectingToServer)
             {
                 resendTimer += deltaTime;
@@ -87,7 +82,6 @@ namespace Core.Networking
 
                     string command = isHost ? "HOST" : "JOIN";
                     
-                    // Send our Command + Local Routing Data to the Server
                     SendSignalingServer($"{command}|{localIp}|{localPort}");
                     
                     resendTimer = 0;
@@ -98,7 +92,6 @@ namespace Core.Networking
                 resendTimer += deltaTime;
                 if (resendTimer >= RESEND_INTERVAL)
                 {
-                    // Blast BOTH endpoints! One will fail, one will punch through the NAT/Router.
                     SendP2P(MessageType.JoinRequest, remotePublicEndPoint);
                     SendP2P(MessageType.JoinRequest, remoteLocalEndPoint);
                     
@@ -135,7 +128,6 @@ namespace Core.Networking
                     }
                     else if (state == NetworkState.HolePunching || state == NetworkState.Connected)
                     {
-                        // 1. Compare against both candidates safely using IPv4 Mapping
                         bool matchesPublic = sender.Address.MapToIPv4().Equals(remotePublicEndPoint.Address.MapToIPv4()) && sender.Port == remotePublicEndPoint.Port;
                         bool matchesLocal = sender.Address.MapToIPv4().Equals(remoteLocalEndPoint.Address.MapToIPv4()) && sender.Port == remoteLocalEndPoint.Port;
 
@@ -144,7 +136,6 @@ namespace Core.Networking
                             continue; // Packet is from an unknown/malicious source
                         }
 
-                        // 2. WINNER SELECTION: Lock in the first Endpoint that successfully reached us
                         if (state == NetworkState.HolePunching && remoteEndPoint == null)
                         {
                             remoteEndPoint = matchesPublic ? remotePublicEndPoint : remoteLocalEndPoint;
@@ -181,7 +172,6 @@ namespace Core.Networking
             {
                 opponentCharacter = remoteChar;
                 
-                // Queue the event to run safely on Unity's main thread
                 mainThreadActions.Enqueue(() => OnOpponentFound?.Invoke(opponentCharacter));
                 
                 SendP2P(MessageType.JoinAccept, remoteEndPoint);
@@ -216,7 +206,6 @@ namespace Core.Networking
             catch (Exception e) { logQueue.Enqueue($"Send error (Server): {e.Message}"); }
         }
 
-        // Updated to accept a specific target Endpoint so we can Dual-Ping
         private void SendP2P(MessageType type, IPEndPoint targetEndPoint)
         {
             if (targetEndPoint == null) return;
@@ -230,9 +219,6 @@ namespace Core.Networking
         {
             try
             {
-                // We open a dummy socket to a known public IP (Google's DNS).
-                // It doesn't actually send a packet, but it forces the OS to 
-                // calculate the correct routing table and select your true Wi-Fi adapter.
                 using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
                 {
                     socket.Connect("8.8.8.8", 65530);
@@ -242,7 +228,7 @@ namespace Core.Networking
             }
             catch
             {
-                // Fallback just in case you are completely offline
+                // Fallback if offline
                 return "127.0.0.1";
             }
         }

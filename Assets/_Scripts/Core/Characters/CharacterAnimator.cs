@@ -151,7 +151,7 @@ namespace Core
             float offsetX = Random.Range(-currentIntensity, currentIntensity);
             float offsetY = 0f;
 
-            if (!characterData.DynamicBody.IsGrounded)
+            if (!characterData.DynamicBody.HitFloor)
             {
                 offsetY = Random.Range(-currentIntensity, currentIntensity);
             }

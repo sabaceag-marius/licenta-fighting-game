@@ -74,8 +74,6 @@ public class JoinLobbyCharacterSelectManager : BaseCharacterSelectManager
 
     private void StartMatch()
     {
-        // startLabel.SetText("Found connection!");
-
         joinedPlayers[0].PlayerIndex = 1;
 
         (UdpClient, IPEndPoint, CharacterType) connectionData = lobby.GetConnectionData();

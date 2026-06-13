@@ -4,7 +4,6 @@ using UnityEngine;
 using Data.Character;
 
 [RequireComponent(typeof(DynamicBody), typeof(Core.CharacterAnimator))]
-// [RequireComponent(typeof(DynamicBody), typeof(InputController), typeof(Core.CharacterAnimator))]
 public class Character : MonoBehaviour
 {
     public int Index {get; set;}

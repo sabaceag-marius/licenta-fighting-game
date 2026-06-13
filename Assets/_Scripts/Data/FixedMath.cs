@@ -74,7 +74,6 @@ public struct FixedVector2
     public static bool operator ==(FixedVector2 a, FixedVector2 b) => a.x == b.x && a.y == b.y;
     public static bool operator !=(FixedVector2 a, FixedVector2 b) => !(a == b);
 
-    // Override Equals and GetHashCode (Required when overloading == and !=)
     public override bool Equals(object obj) => obj is FixedVector2 other && this == other;
     public override int GetHashCode() => (int)fpmath.hash(this);
 
@@ -153,7 +152,7 @@ public static class FixedMath
             return target;
         }
 
-        // Move towards the target using pure addition/ subtraction(Zero multiplication!)
+        // Move towards the target using pure addition/ subtraction
         if (target > current)
         {
             return current + maxDelta;
@@ -220,8 +219,6 @@ public class FixedFloatConverter : JsonConverter<FixedFloat>
 {
     public override void WriteJson(JsonWriter writer, FixedFloat value, JsonSerializer serializer)
     {
-        // Write ONLY the raw deterministic long. 
-        // This changes your JSON from {"rawValue":{"RawValue":1011086}} to simply 1011086
         writer.WriteValue(value.rawValue.RawValue);
     }
 

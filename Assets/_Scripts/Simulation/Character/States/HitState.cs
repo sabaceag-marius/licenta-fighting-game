@@ -14,9 +14,8 @@ namespace Simulation
 
         public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
-            if (character.DynamicBody.IsGrounded)
+            if (character.DynamicBody.HitFloor)
             {
-                //TODO: remove hitstun frames?
                 character.HitstunFrames = 0;
                 character.CurrentState = CharacterStateType.Land;
                 return;

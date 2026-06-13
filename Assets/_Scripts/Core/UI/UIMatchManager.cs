@@ -69,7 +69,7 @@ namespace Core.UI
                 framesRemaining = 0;
             }
 
-            // 1. Convert frames to total raw seconds (with decimals)
+            // Convert frames to total raw seconds (with decimals)
             double totalSecondsRemaining = (double)framesRemaining / gameFPS;
 
             // Extract Minutes, Seconds, and Milliseconds

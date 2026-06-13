@@ -49,14 +49,8 @@ public class InputController : MonoBehaviour
         if (attackInputAction.IsPressed())
             input.Buttons |= (1 << 1);
 
-        //if (specialAttackInputAction.IsPressed())
-        //    input.Buttons |= (1 << 2);
-
         if (dodgeInputAction.IsPressed())
             input.Buttons |= (1 << 3);
-
-        //if (grabInputAction.IsPressed())
-        //    input.Buttons |= (1 << 4);
 
         if (ConsoleLog)
             LogInput(input);
@@ -74,8 +68,6 @@ public class InputController : MonoBehaviour
     {
         playerInput = assignedInput;
 
-        //TODO: remove magic strings
-        
         moveInputAction = playerInput.actions["Move"];
         jumpInputAction = playerInput.actions["Jump"];
         dodgeInputAction = playerInput.actions["Dodge"];

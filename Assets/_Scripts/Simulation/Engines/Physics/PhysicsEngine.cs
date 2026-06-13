@@ -10,7 +10,7 @@ public static class PhysicsEngine
         body.HitCeiling = false;
         body.HitFloor = false;
         body.HitWall = false;
-        body.IsGrounded = false;
+        body.HitFloor = false;
 
         FixedVector2 totalVelocity = body.Velocity + body.ExternalVelocity;
 
@@ -25,16 +25,14 @@ public static class PhysicsEngine
         
         for (int step = 0; step < iterations; step++)
         {
-            // Recalculate the step velocity every loop!
-            // If the character hits a wall and their Velocity.x is zeroed out (or bounced),
-            // currentVelocity updates, and the remaining sub-steps will safely slide or bounce.
+            // The external velocity may change between iterations
             FixedVector2 currentVelocity = body.Velocity + body.ExternalVelocity;
             FixedVector2 stepVelocity = currentVelocity / iterations;
 
             SimulateCharacterPhysicsStep(ref character, staticColliders, stepVelocity);
         }
 
-        // Decay external velocity ONCE per frame (after all sub-steps are done)
+        // Decay external velocity
         if (body.ExternalVelocity != FixedVector2.zero)
         {
             body.ExternalVelocity = body.ExternalVelocity.MoveTowards(FixedVector2.zero, new FixedFloat(0.15f));
@@ -106,21 +104,20 @@ public static class PhysicsEngine
         if (pushVector.y >= 0.01f)
         {
             dynamicBody.HitFloor = true;
-            dynamicBody.ExternalVelocityAtImpact = dynamicBody.ExternalVelocity; // Record impact
+            dynamicBody.ExternalVelocityAtImpact = dynamicBody.ExternalVelocity;
 
             dynamicBody.Velocity.y = 0f;
-            dynamicBody.IsGrounded = true;
 
             if (dynamicBody.ExternalVelocity.y < 0f) 
                 dynamicBody.ExternalVelocity.y = 0f;
         }
-        // If we were pushed DOWN, we hit a ceiling
-        else if (-pushVector.y > 0.01f) // && dynamicBody.Velocity.y > 0f
+        // If we were pushed down, we hit a ceiling
+        else if (-pushVector.y > 0.01f)
         {
             dynamicBody.Velocity.y = 0f;
 
             dynamicBody.HitCeiling = true;
-            dynamicBody.ExternalVelocityAtImpact = dynamicBody.ExternalVelocity; // Record impact
+            dynamicBody.ExternalVelocityAtImpact = dynamicBody.ExternalVelocity;
 
             if (dynamicBody.ExternalVelocity.y > 0f) dynamicBody.ExternalVelocity.y = 0f;
         }
@@ -136,7 +133,6 @@ public static class PhysicsEngine
             dynamicBody.Velocity.x = 0f;
         }
 
-        // are there cases when to not return true here?
         return true;
     }
 }

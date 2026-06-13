@@ -71,7 +71,7 @@ namespace Simulation
             if (CheckIfJumping(ref character, input))
                 return;
 
-            if (character.DynamicBody.IsGrounded)
+            if (character.DynamicBody.HitFloor)
             {
                 character.CurrentState = CharacterStateType.Land;
             }

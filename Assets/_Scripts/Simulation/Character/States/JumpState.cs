@@ -10,7 +10,7 @@ namespace Simulation
             base.HandlePhysics(ref character, input);
 
             // Air jump
-            if (!character.DynamicBody.IsGrounded)
+            if (!character.DynamicBody.HitFloor)
             {
                 character.DynamicBody.Velocity.y = character.Stats.AirJumpForce;
                 return;
@@ -29,7 +29,7 @@ namespace Simulation
         public override void HandlePostPhysicsLogic(ref CharacterData character, ProcessedInput input)
         {
             // Swap to fall state after jump squat or instantly if we are midair
-            if (!character.DynamicBody.IsGrounded || character.StateFrame == Simulation.Character.GlobalCharacterStats.JumpWindupFrames)
+            if (!character.DynamicBody.HitFloor || character.StateFrame == Simulation.Character.GlobalCharacterStats.JumpWindupFrames)
             {
                 character.CurrentState = CharacterStateType.Fall; 
                 return;

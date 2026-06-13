@@ -73,7 +73,7 @@ namespace Simulation
             }
 
             //TODO: Add the bounce back in case of spikes / attacks that land you on the ground
-            if (character.DynamicBody.IsGrounded)
+            if (character.DynamicBody.HitFloor)
             {
                 //TODO: remove hitstun frames?
                 character.HitstunFrames = 0;

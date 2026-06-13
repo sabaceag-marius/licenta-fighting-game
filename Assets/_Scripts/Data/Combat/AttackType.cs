@@ -12,9 +12,5 @@ namespace Data.Combat
         AirBackward,
         AirDownward,
         AirUpward,
-
-        // HeavyForward,
-        // HeavyDownward,
-        // HeavyUpward,
     }
 }

@@ -70,16 +70,13 @@ public abstract class BaseCharacterSelectManager : MonoBehaviour
         cursorScript.PlayerHandler = playerHandler;
         cursorScript.PlayerIndex = playerInput.playerIndex;
         
-        // We initialize the cursor and let IT handle its own input listening.
-        // This is much safer than subscribing to events on the persistent manager.
         cursorScript.Initialize(playerInput, this);
     }
 
     // Called by the VirtualCursor when a player locks in a character
     public void CheckStartCondition()
     {
-        canStartMatch = true;
-        // canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
+        canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
         startLabel?.gameObject?.SetActive(canStartMatch);
     }
 
@@ -96,9 +93,6 @@ public abstract class BaseCharacterSelectManager : MonoBehaviour
         }
 
         CheckStartCondition();
-        
-        // The PlayerInputManager handles destroying the GameObject, 
-        // so any cursors linked to it need to clean themselves up.
     }
 
     public void HandleBack()

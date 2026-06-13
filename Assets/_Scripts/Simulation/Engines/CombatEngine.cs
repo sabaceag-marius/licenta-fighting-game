@@ -62,7 +62,6 @@ public static class CombatEngine
 
                         attackerCharacter.Score += damage;
                         
-                        // Apply the damage
                         targetCharacter.Damage += damage;
 
                         if (hitbox.FixedKnockback > 0)
@@ -93,8 +92,6 @@ public static class CombatEngine
                         
                         targetCharacter.ExternalVelocity = knockbackDirection;
                         targetCharacter.HitstunFrames = hitstunFrames;
-
-                        // Debug.Log($"Damage: {percentage}; Knockback: {knockbackValue * 0.0045}; Direction {knockbackDirection}");
                     }
 
                     break;

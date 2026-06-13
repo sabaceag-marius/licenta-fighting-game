@@ -84,23 +84,3 @@ public class CapsuleColliderFactory : BaseColliderFactory
         return new Vector2(-Mathf.Sin(angleRadian), Mathf.Cos(angleRadian)).normalized;
     }
 }
-
-//public LogicBox GetBoundingBox(LogicCapsule capsule)
-//{
-//    FixedVector2 segmentCenter = new FixedVector2(
-//        capsule.PointA.x,
-//        (capsule.PointA.y + capsule.PointB.y) / (FixedFloat)2f
-//    );
-
-//    FixedFloat innerHeight = capsule.PointA.y - capsule.PointB.y;
-//    if (innerHeight < 0) innerHeight = -innerHeight;
-
-//    FixedFloat extentsX = capsule.Radius;
-//    FixedFloat extentsY = (innerHeight / (FixedFloat)2f) + capsule.Radius;
-
-//    return new LogicBox
-//    {
-//        Position = segmentCenter,
-//        Extents = new FixedVector2(extentsX, extentsY)
-//    };
-//}

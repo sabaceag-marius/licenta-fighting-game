@@ -32,7 +32,6 @@ namespace Core
             int executionFrame = logicEngine.CurrentTick + config.InputDelay;
             int trueAdvantage = logicEngine.GetTrueFrameAdvantage(executionFrame);
 
-            // If we are more than 2 frames ahead of the opponent, freeze the logic tick!
             if (trueAdvantage > 2)
             {
                 return false; 
@@ -69,8 +68,6 @@ namespace Core
         {
             while (networkManager.IncomingPackets.TryDequeue(out Data.NetworkPacket result))
             {
-                // Debug.Log($"Got packet for frame {result.LatestExecutionFrame}; RawAdvantage: {result.RawAdvantage} ");
-
                 logicEngine.ReceiveNetworkPacket(result);
             } 
 

@@ -55,8 +55,6 @@ namespace Core
 
         protected abstract void GatherLocalInput();
 
-        // something to check if the match ended
-
         #endregion
 
         void Awake()
@@ -76,16 +74,12 @@ namespace Core
 
             threadInput = new RawInput[initialState.Characters.Length];
 
-            // Get initial render states
-
             renderState = new GameState();
             previousRenderState = new GameState();
 
             Core.GameLogicEngine.DeepCopyGameState(initialState, ref renderState);
             Core.GameLogicEngine.DeepCopyGameState(initialState, ref previousRenderState);
             
-            // Start the thread
-
             isRunning = true;
             simulationThread = new Thread(SimulationThreadLoop)
             {
@@ -138,13 +132,10 @@ namespace Core
                         continue;
                     }
 
-                    // Get the input for the simulation
-
                     GetSimulationInput(ref currentInput);
 
                     Profiler.BeginSample("LogicEngine.RunSingleTick");
 
-                    // Tick the logic
                     logicEngine.RunSingleTick(currentInput);
 
                     Profiler.EndSample();

@@ -11,11 +11,8 @@ namespace Simulation
             }
         }
 
-        private static bool RespawnCharacter(ref Data.Character.CharacterData character)
+        private static void RespawnCharacter(ref Data.Character.CharacterData character)
         {
-            // if (character.RemainingStocks == 1)
-            //     return false;
-
             // Reset stock and percentage
 
             character.RemainingStocks--;
@@ -42,7 +39,6 @@ namespace Simulation
             
             // Give invincibility frames
             character.InvincibilityFrames = 120;
-            return true;
         }
     }
 }

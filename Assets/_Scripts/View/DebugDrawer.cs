@@ -28,7 +28,6 @@ public class DebugDrawer : MonoBehaviour
     [SerializeField]
     private Material BoundingBoxMaterial;
 
-    // Cached procedural meshes
     private Mesh boxMesh;
     private Mesh circleMesh;
 
@@ -48,9 +47,8 @@ public class DebugDrawer : MonoBehaviour
         {
             Instance = this;
 
-            // Generate primitive meshes via code so we don't need asset references
             boxMesh = CreateQuadMesh();
-            circleMesh = CreateCircleMesh(24); // 24 segments for a smooth circle
+            circleMesh = CreateCircleMesh(24); 
 
             // Cache RenderParams
 
@@ -74,12 +72,8 @@ public class DebugDrawer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Call this every frame from your View/Visuals script, passing the current player position.
-    /// </summary>
     public void DrawAttackState(Data.Combat.AttackData attack, int currentFrame, Vector2 playerPosition, int facingDirection, Data.Character.CharacterData characterData)
     {
-        // Safety check to ensure we don't read out of bounds
         if (currentFrame < 0 || currentFrame >= attack.FrameCount) return;
 
         FrameData frameData = attack.Frames[currentFrame];
@@ -145,7 +139,6 @@ public class DebugDrawer : MonoBehaviour
         Vector3 scale = new Vector3(radius * 2f, radius * 2f, 1f);
         Matrix4x4 matrix = Matrix4x4.TRS(worldPos, Quaternion.identity, scale);
 
-        // Modern API: Passes the cached RenderParams struct directly to the GPU
         Graphics.RenderMesh(rp, circleMesh, 0, matrix);
     }
 
@@ -171,17 +164,14 @@ public class DebugDrawer : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
-        // 1. A rectangle for the inner body
         Vector3 bodyScale = new Vector3(halfLength * 2f, radius * 2f, 1f);
         Matrix4x4 bodyMatrix = Matrix4x4.TRS(worldPos, rotation, bodyScale);
         Graphics.RenderMesh(rp, boxMesh, 0, bodyMatrix);
 
-        // 2. A circle at the top tip of the bone
         Vector3 topPos = worldPos + (new Vector3(dir.x, dir.y, 0f) * halfLength);
         Matrix4x4 topMatrix = Matrix4x4.TRS(topPos, Quaternion.identity, new Vector3(radius * 2f, radius * 2f, 1f));
         Graphics.RenderMesh(rp, circleMesh, 0, topMatrix);
 
-        // 3. A circle at the bottom tip of the bone
         Vector3 bottomPos = worldPos - (new Vector3(dir.x, dir.y, 0f) * halfLength);
         Matrix4x4 bottomMatrix = Matrix4x4.TRS(bottomPos, Quaternion.identity, new Vector3(radius * 2f, radius * 2f, 1f));
         Graphics.RenderMesh(rp, circleMesh, 0, bottomMatrix);
@@ -196,7 +186,6 @@ public class DebugDrawer : MonoBehaviour
         Mesh m = new Mesh { name = "DebugQuad" };
         m.vertices = new Vector3[]
         {
-            // Define vertices with the long axis along X, width along Y.
             new Vector3(-0.5f, -0.5f, 0),
             new Vector3(0.5f, -0.5f, 0),
             new Vector3(-0.5f, 0.5f, 0),
@@ -212,13 +201,12 @@ public class DebugDrawer : MonoBehaviour
         Vector3[] vertices = new Vector3[segments + 1];
         int[] triangles = new int[segments * 3];
 
-        vertices[0] = Vector3.zero; // Center vertex
+        vertices[0] = Vector3.zero;
         float angleStep = 360f / segments;
 
         for (int i = 0; i < segments; i++)
         {
             float angle = i * angleStep * Mathf.Deg2Rad;
-            // Vertices are at 0.5f radius so a scale of 1 equals 1 unit diameter
             vertices[i + 1] = new Vector3(Mathf.Cos(angle) * 0.5f, Mathf.Sin(angle) * 0.5f, 0);
 
             triangles[i * 3] = 0;

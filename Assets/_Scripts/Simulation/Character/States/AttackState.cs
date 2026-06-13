@@ -84,11 +84,11 @@ namespace Simulation
             if (character.StateFrame >= character.AttackDurationCount
                 || character.AttackFrameCount == 0)
             {
-                character.CurrentState = character.DynamicBody.IsGrounded ? CharacterStateType.Idle : CharacterStateType.Fall;
+                character.CurrentState = character.DynamicBody.HitFloor ? CharacterStateType.Idle : CharacterStateType.Fall;
                 return;
             }
             
-            if (character.IsAerialAttack && character.DynamicBody.IsGrounded)
+            if (character.IsAerialAttack && character.DynamicBody.HitFloor)
             {
                 character.CurrentState = CharacterStateType.Land;
             }

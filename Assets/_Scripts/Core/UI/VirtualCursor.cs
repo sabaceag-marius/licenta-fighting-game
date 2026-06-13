@@ -54,7 +54,6 @@ public class VirtualCursor : MonoBehaviour
         characterSlots = FindObjectsOfType<CharacterSlot>();
     }
 
-    // Called by the CharacterSelectManager right after this cursor is instantiated
     public void Initialize(PlayerInput input, BaseCharacterSelectManager manager)
     {
         myInput = input;
@@ -68,19 +67,17 @@ public class VirtualCursor : MonoBehaviour
 
     void Update()
     {
-        // Safety check to ensure Initialize was called
         if (myInput == null) return;
 
-        // 1. Read Inputs
         moveInput = moveAction.ReadValue<Vector2>();
 
-        // 2. Handle Movement
+        // Handle Movement
         // Move the cursor based on thumbstick input (only if they haven't locked in)
         if (moveInput.sqrMagnitude > 0.1f && !isCharacterSelected)
         {
             Vector2 newPosition = cursorRect.anchoredPosition + moveInput * cursorSpeed * Time.deltaTime;
 
-            // Clamp the position if we have a Canvas reference
+            // Clamp the position 
             if (canvasRect != null)
             {
                 newPosition = ClampToCanvas(newPosition);
@@ -89,20 +86,17 @@ public class VirtualCursor : MonoBehaviour
             cursorRect.anchoredPosition = newPosition;
         }
 
-        // 3. Handle Selection
         if (selectAction.WasPressedThisFrame())
         {
             HandleSelection();
         }
 
-        // 4. Handle Match Start
         if (startAction.WasPressedThisFrame())
         {
             selectManager.TryStartMatch();
         }
     }
 
-    // Extracted from your previous OnSelect logic
     private void HandleSelection()
     {
         Camera uiCamera = null;

@@ -18,7 +18,7 @@ namespace Simulation
 
         public virtual void HandlePhysics(ref CharacterData character, ProcessedInput input)
         {
-            if (character.DynamicBody.IsGrounded)
+            if (character.DynamicBody.HitFloor)
             {
                 character.DynamicBody.Velocity.y -= 0.01f;
             }
@@ -67,7 +67,7 @@ namespace Simulation
         /// <returns>true if the state changed, false otherwise</returns>
         protected bool CheckIfFalling(ref CharacterData character, ProcessedInput input)
         {
-            if (character.DynamicBody.IsGrounded)
+            if (character.DynamicBody.HitFloor)
                 return false;
 
             character.CurrentState = CharacterStateType.Fall;
@@ -124,8 +124,8 @@ namespace Simulation
             // You are grounded on the platform and you flick down (Idle and Walk)
             // or if you are falling above the platform and hold down
              
-            if ((character.DynamicBody.IsGrounded && input.FlickDirection.y == -1) ||
-                (!character.DynamicBody.IsGrounded && character.DynamicBody.Velocity.y < 0 && input.Movement.y <= -0.5))
+            if ((character.DynamicBody.HitFloor && input.FlickDirection.y == -1) ||
+                (!character.DynamicBody.HitFloor && character.DynamicBody.Velocity.y < 0 && input.Movement.y <= -0.5))
             {
                 character.IgnorePlatformCollisionFrames = Simulation.Character.GlobalCharacterStats.IgnorePlatformCollisionFrames;
             }
