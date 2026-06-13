@@ -22,7 +22,7 @@ public class MatchManager : MonoBehaviour
         if (SpawnPointsTransform == null)
             return;
             
-        PlayerHandler[] players = FindObjectsOfType<PlayerHandler>();
+        PlayerHandlerBase[] players = FindObjectsOfType<PlayerHandlerBase>().OrderBy(p => p.PlayerIndex).ToArray();
 
         Transform[] spawnpoints = SpawnPointsTransform.GetComponentsInChildren<Transform>().Where(t => t != SpawnPointsTransform).ToArray();
 
@@ -34,6 +34,11 @@ public class MatchManager : MonoBehaviour
             {
                 TargetGroup.AddMember(character.transform, 1f, 2f);
             }
+        }
+
+        foreach (var remotePlayer in FindObjectsOfType<RemotePlayerHandler>())
+        {
+            Destroy(remotePlayer.gameObject);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Data
     {
         public int TargetFPS;
         public int MinutesPerMatch;
-        public int InputDelay;
+        public ushort InputDelay;
         public int BufferSize;
     }
 }

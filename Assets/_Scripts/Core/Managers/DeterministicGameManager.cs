@@ -24,7 +24,6 @@ namespace Core
         [Header("Debug settings")]
         [SerializeField] private bool ShowHitboxes = true;
 
-        private float accumulator = 0;
         private Core.GameLogicEngine logicEngine;
         private Character[] characters;
         private CinemachineBrain cameraBrain;
@@ -70,6 +69,7 @@ namespace Core
 
             Core.GameLogicEngine.DeepCopyGameState(initialState, ref renderState);
             Core.GameLogicEngine.DeepCopyGameState(initialState, ref previousRenderState);
+            
             // Start the thread
 
             isRunning = true;

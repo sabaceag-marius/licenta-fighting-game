@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: GooberGroundedNeutralAttack 1
   m_EditorClassIdentifier: 
   Type: 0
+  TotalDurationFrames: 0
   FrameCount: 7
-  TotalAnimationFrames: 7
   OverrideHurtboxes: 0
   Frames:
   - frameIndex: 2
@@ -22,42 +22,82 @@ MonoBehaviour:
     - Id: 0
       Center: {x: -1.0450664, y: 0.12215048}
       Radius: 0.48
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     Hurtboxes: []
   - frameIndex: 3
     Hitboxes:
     - Id: 0
       Center: {x: -1.3903136, y: -0.019926667}
       Radius: 0.298486
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 1
       Center: {x: -1.8602962, y: -0.015658975}
       Radius: 0.29085392
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 2
       Center: {x: -2.3140507, y: -0.038802624}
       Radius: 0.19663334
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     Hurtboxes: []
   - frameIndex: 4
     Hitboxes:
     - Id: 0
       Center: {x: -1.231669, y: -0.019926667}
       Radius: 0.298486
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 1
       Center: {x: -1.7545333, y: -0.015658975}
       Radius: 0.29085392
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 2
       Center: {x: -2.2467465, y: -0.029187739}
       Radius: 0.26874447
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     Hurtboxes: []
   - frameIndex: 5
     Hitboxes:
     - Id: 0
       Center: {x: -1.2557063, y: -0.019926667}
       Radius: 0.298486
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 1
       Center: {x: -1.7689552, y: -0.006044209}
       Radius: 0.29085392
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     - Id: 2
       Center: {x: -2.2323241, y: -0.043610036}
       Radius: 0.19663334
+      Damage: 0
+      Angle: 0
+      FixedKnockback: 0
+      BaseKnockback: 0
     Hurtboxes: []
   AnimationClip: {fileID: 7400000, guid: ee924d1831e21d24eadf552403b7e7e7, type: 2}
   AnimationFrameRate: 60

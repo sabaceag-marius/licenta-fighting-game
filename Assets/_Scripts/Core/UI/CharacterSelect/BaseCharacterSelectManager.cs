@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -5,26 +6,37 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class CharacterSelectManager : MonoBehaviour
+public abstract class BaseCharacterSelectManager : MonoBehaviour
 {
-    [SerializeField] private Transform canvasTransform;
-    [SerializeField] private GameObject cursorPrefab;
-    [SerializeField] private TMP_Text startLabel;
+    [SerializeField]
+    protected GameObject[] characterPool; 
 
-    private List<PlayerHandler> joinedPlayers = new List<PlayerHandler>();
+    [SerializeField] 
+    private Transform canvasTransform;
+    [SerializeField] 
+    private GameObject cursorPrefab;
+    [SerializeField] 
+    protected TMP_Text startLabel;
+
+    [SerializeField]
+    protected GameObject remotePlayerPrefab;
+
+    protected List<PlayerHandlerBase> joinedPlayers = new List<PlayerHandlerBase>();
     private int MaxPlayerCount;
-    private bool canStartMatch;
+    protected bool canStartMatch;
+    
+    public Core.CharacterType SelectedCharacter;
 
     void Awake()
     {
         MaxPlayerCount = GetComponent<PlayerInputManager>().maxPlayerCount;
     }
 
-    void Start()
+    protected virtual void Start()
     {
-        PlayerHandler[] returningPlayers = FindObjectsOfType<PlayerHandler>();
+        PlayerHandlerBase[] returningPlayers = FindObjectsOfType<PlayerHandlerBase>();
 
-        foreach (PlayerHandler player in returningPlayers)
+        foreach (PlayerHandlerBase player in returningPlayers)
         {
             // Reset their previous character choice so they have to pick again
             player.SetCharacter(null); 
@@ -35,11 +47,11 @@ public class CharacterSelectManager : MonoBehaviour
 
     public void OnPlayerJoined(PlayerInput playerInput)
     {
-        PlayerHandler newPlayer = playerInput.GetComponent<PlayerHandler>();
+        PlayerHandlerBase newPlayer = playerInput.GetComponent<PlayerHandlerBase>();
         SetupPlayerUI(newPlayer, playerInput);
     }
 
-    private void SetupPlayerUI(PlayerHandler playerHandler, PlayerInput playerInput)
+    private void SetupPlayerUI(PlayerHandlerBase playerHandler, PlayerInput playerInput)
     {
         if (!joinedPlayers.Contains(playerHandler))
         {
@@ -52,6 +64,8 @@ public class CharacterSelectManager : MonoBehaviour
         // Spawn the visual cursor
         GameObject newCursor = Instantiate(cursorPrefab, canvasTransform);
         VirtualCursor cursorScript = newCursor.GetComponent<VirtualCursor>();
+
+        Debug.Log(newCursor);
         
         cursorScript.PlayerHandler = playerHandler;
         cursorScript.PlayerIndex = playerInput.playerIndex;
@@ -66,22 +80,15 @@ public class CharacterSelectManager : MonoBehaviour
     {
         canStartMatch = true;
         // canStartMatch = joinedPlayers.Count(p => p.SelectedCharacterPrefab != null) == MaxPlayerCount;
-        startLabel?.gameObject.SetActive(canStartMatch);
+        startLabel?.gameObject?.SetActive(canStartMatch);
     }
 
     // Called by the VirtualCursor when a player presses Start
-    public void TryStartMatch()
-    {
-        if (canStartMatch)
-        {
-            canStartMatch = false;
-            SceneManager.LoadScene("CombatScene");
-        }
-    }
+    public abstract void TryStartMatch();
 
     public void OnPlayerLeft(PlayerInput playerInput)
     {
-        PlayerHandler player = playerInput.GetComponent<PlayerHandler>();
+        PlayerHandlerBase player = playerInput.GetComponent<PlayerHandlerBase>();
         
         if (joinedPlayers.Contains(player))
         {
@@ -92,5 +99,10 @@ public class CharacterSelectManager : MonoBehaviour
         
         // The PlayerInputManager handles destroying the GameObject, 
         // so any cursors linked to it need to clean themselves up.
+    }
+
+    public void HandleBack()
+    {
+        SceneManager.LoadScene("MainMenuScene");
     }
 }

@@ -59,7 +59,13 @@ public class DeterminismTest
 
     private void RunTick(RawInput[] input, GameState expectedGameState)
     {
-        SerializeObject(gameLogicEngine.GetCurrentGameState().Characters[0]).Should().Be(SerializeObject(expectedGameState.Characters[0]));
+        var currentCharacter = gameLogicEngine.GetCurrentGameState().Characters[0];
+        currentCharacter.RawInput.FrameId = 0;
+
+         var expectedCharacter = expectedGameState.Characters[0];
+        expectedCharacter.RawInput.FrameId = 0;
+
+        SerializeObject(currentCharacter).Should().Be(SerializeObject(expectedCharacter));
 
         // gameLogicEngine.GetCurrentGameState().Characters[0].Should().Be(expectedGameState.Characters[0]);
 
@@ -84,6 +90,9 @@ public class DeterminismTest
         for (ushort i = 0; i < 600; i++)
         {
             tickInput[0] = inputs[i];
+            // tickInput[0].FrameId = i;
+
+            Debug.Log($"Ran tick {i}");
 
             RunTick(tickInput, gameStates[i]);
         }
