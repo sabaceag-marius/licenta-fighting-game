@@ -142,6 +142,8 @@ namespace Core
 
             int targetTick = CurrentTick;
 
+            RepredictUnconfirmedInputs(targetTick);
+
             // Move back before the desynchronization
             CurrentTick = (ushort) OldestDesyncFrame;
 
@@ -155,6 +157,29 @@ namespace Core
 
             // Reset the desync flag
             OldestDesyncFrame = -1;
+        }
+
+        private void RepredictUnconfirmedInputs(int targetTick)
+        {
+            for (int i = 0; i < InputBuffer.Length; i++) 
+            {
+                for (int f = OldestDesyncFrame + 1; f <= targetTick; f++)
+                {
+                    int bufferIndex = f % Config.BufferSize;
+                    
+                    if (!InputBuffer[i][bufferIndex].IsConfirmed)
+                    {
+                        int prevBufferIndex = (f - 1 + Config.BufferSize) % Config.BufferSize;
+                        
+                        RawInput predictedInput = InputBuffer[i][prevBufferIndex];
+                        
+                        predictedInput.FrameId = (ushort)f;
+                        predictedInput.IsConfirmed = false;
+                        
+                        InputBuffer[i][bufferIndex] = predictedInput;
+                    }
+                }
+            }
         }
 
         public GameState GetCurrentGameState()
