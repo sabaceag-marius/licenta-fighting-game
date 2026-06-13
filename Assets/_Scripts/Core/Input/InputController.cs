@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FluentAssertions.Formatting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -39,7 +40,21 @@ public class InputController : MonoBehaviour
         input.LeftStickX = (sbyte)(leftAnalog.x * 100f);
         input.LeftStickY = (sbyte)(leftAnalog.y * 100f);
 
-        //TODO: Right stick - only store if we are holding the direction
+        Vector2 rightAnalog = moveInputAction.ReadValue<Vector2>();
+        
+        // public byte RightStick; //0000LeftRightUpDown
+
+        if (rightAnalog.y <= -0.5f)
+            input.RightStick |= (1 << 0);
+
+        if (rightAnalog.y >= 0.5f)
+            input.RightStick |= (1 << 1);
+
+        if (rightAnalog.x >= 0.5f)
+            input.RightStick |= (1 << 2);
+
+        if (rightAnalog.x <= -0.5f)
+            input.RightStick |= (1 << 3);
 
         // Buttons
 

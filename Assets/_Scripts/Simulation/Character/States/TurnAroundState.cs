@@ -9,7 +9,7 @@ namespace Simulation
         {
             base.Enter(ref character, input, characterAttacks);
 
-            //TODO: move the flip to Exit when adding animations ?
+            // FUTURE WORK TODO: move the flip to Exit when adding animations ?
 
             FlipCharacter(ref character, (int)FixedMath.Sign(input.Movement.x));
         }

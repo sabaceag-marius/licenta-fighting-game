@@ -9,7 +9,7 @@ namespace Core
         public SimulationConfig Config { get; private set; }
         public GameState[] StateBuffer { get; private set; }
         public RawInput[][] InputBuffer { get; private set; }
-        //TODO: Change to Character Type Enum based-array and do the same thing for CharacterStats
+        //FUTURE WORK TODO: Change to Character Type Enum based-array and do the same thing for CharacterStats
         public AttackData[][] Attacks { get; private set; }
 
         public ushort CurrentTick { get; private set; }

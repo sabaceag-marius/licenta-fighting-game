@@ -45,7 +45,7 @@ public static class CombatEngine
                     // If any of the hurtboxes are in the invincible state, the target is not hit, but the hitstun still applies
                     // The invincible state should only be used when respawning and shields
 
-                    //TODO: Change check when adding shielding
+                    //FUTURE WORK TODO: Change check when adding shielding
                     bool isInvincible = targetCharacter.InvincibilityFrames > 0;
 
                     int hitstopFrames = GetHitstopFramesCount(hitbox, targetCharacter);
@@ -77,8 +77,7 @@ public static class CombatEngine
                         FixedVector2 knockbackDirection = new FixedVector2(hitbox.LaunchDirection.x * attackerCharacter.FacingDirection, hitbox.LaunchDirection.y)
                             * knockbackValue * 0.0045f;
 
-                        //TODO: add tumble only for high knockback
-                        var hurtState = CharacterStateType.Tumble;
+                        var hurtState = hitstunFrames > 15 ? CharacterStateType.Tumble : CharacterStateType.Hit;
 
                         // We do this in order to always reset the target character's state
                         if (targetCharacter.CurrentState == hurtState)

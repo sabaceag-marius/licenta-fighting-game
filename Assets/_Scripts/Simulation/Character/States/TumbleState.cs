@@ -72,10 +72,9 @@ namespace Simulation
                 return;
             }
 
-            //TODO: Add the bounce back in case of spikes / attacks that land you on the ground
+            //FUTURE WORK TODO: Add the bounce back in case of spikes / attacks that land you on the ground
             if (character.DynamicBody.HitFloor)
             {
-                //TODO: remove hitstun frames?
                 character.HitstunFrames = 0;
                 character.CurrentState = CharacterStateType.Land;
                 return;
