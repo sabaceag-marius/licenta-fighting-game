@@ -71,35 +71,31 @@ namespace Core
             CopyGameStateData(previousState, ref currentState);
 
             currentState.FrameNumber++;
+            
+            if (!isRollback)
+            {
+                for (int i = 0; i < currentState.Characters.Length; i++)
+                {
+                    UpdateInputBuffer(currentHardwareInputs[i], i);
+                }
+            }
 
+            SetCharactersInput(ref currentState);
+
+            gameSimulation.AdvanceFrame(ref currentState, previousState, Attacks);
+
+            CurrentTick++;
+
+            CheckMatchEnd(currentState);
+        }
+
+        private void SetCharactersInput(ref GameState currentState)
+        {
             for (int i = 0; i < currentState.Characters.Length; i++)
             {
-                int bufferIndex = CurrentTick % Config.BufferSize;
-
-                if (!isRollback)
-                {
-                    // Local input
-                    if (currentHardwareInputs[i].IsConfirmed)
-                    {
-                        InputBuffer[i][bufferIndex] = currentHardwareInputs[i];
-                    }
-                    else 
-                    {
-                        // We do not have input for this character yet, so we try to predict it:
-                        // Duplicate the input from the previous frame
-
-                        int prevBufferIndex = (CurrentTick - 1 + Config.BufferSize) % Config.BufferSize;
-                
-                        RawInput predictedInput = InputBuffer[i][prevBufferIndex];
-                        predictedInput.FrameId++; // Increment the frame to the next one
-                        predictedInput.IsConfirmed = false;   // Explicitly mark it as a guess
-                        
-                        InputBuffer[i][bufferIndex] = predictedInput;
-                    }    
-                }
-
                 // Apply Input Delay
                 RawInput simulationInput = new RawInput();
+                
                 int delayedTick = CurrentTick - Config.InputDelay;
 
                 if (delayedTick >= 0)
@@ -109,12 +105,33 @@ namespace Core
 
                 currentState.Characters[i].RawInput = simulationInput;
             }
+        }
 
-            gameSimulation.AdvanceFrame(ref currentState, previousState, Attacks);
+        private void UpdateInputBuffer( RawInput characterHardwareInput, int characterIndex)
+        {
+            int bufferIndex = CurrentTick % Config.BufferSize;
 
-            CurrentTick++;
+            // Local input
+            if (characterHardwareInput.IsConfirmed)
+            {
+                InputBuffer[characterIndex][bufferIndex] = characterHardwareInput;
+            }
+            else
+            {
+                // We do not have input for this character yet, so we try to predict it: 
+                // Duplicate the input from the previous frame
 
-            CheckMatchEnd(currentState);
+                int prevBufferIndex = (CurrentTick - 1 + Config.BufferSize) % Config.BufferSize;
+
+                RawInput predictedInput = InputBuffer[characterIndex][prevBufferIndex];
+                    
+                predictedInput.FrameId++;
+                
+                // Explicitly mark it as a prediction
+                predictedInput.IsConfirmed = false;   
+
+                InputBuffer[characterIndex][bufferIndex] = predictedInput;
+            }
         }
 
         public void ProcessRollback()
@@ -132,6 +149,16 @@ namespace Core
 
             while (CurrentTick < targetTick)
             {
+                int currentIndex = CurrentTick % Config.BufferSize;
+
+                GameState currentState = StateBuffer[currentIndex];
+
+                RawInput input = InputBuffer[0][currentIndex];
+
+                int idx = CurrentTick - OldestDesyncFrame + 1;
+
+                UnityEngine.Debug.Log($"Resimulating frame {CurrentTick}: {currentState.Characters[0].CurrentState}; {input.LeftStickX}");
+
                 // We pass null for the input array, as we do not use it during rollback
                 RunSingleTick(null, isRollback: true);    
             }

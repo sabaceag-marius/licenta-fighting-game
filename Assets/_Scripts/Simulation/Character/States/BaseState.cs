@@ -36,7 +36,6 @@ namespace Simulation
             
             HandlePhysics(ref character, input);
 
-            // add physics engine
             PhysicsEngine.SimulateCharacterPhysics(ref character, staticColliders, minimumSafeStepX, minimumSafeStepY);
             
             HandlePostPhysicsLogic(ref character, input);

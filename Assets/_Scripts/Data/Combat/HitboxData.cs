@@ -5,8 +5,6 @@ namespace Data.Combat
         // Circle collider
         public LogicCollider Collider;
         
-        public int Id;
-        
         public FixedFloat Damage;
 
         public FixedVector2 LaunchDirection;

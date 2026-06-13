@@ -67,8 +67,6 @@ public static class AttackExtensions
                     Radius = hitbox.Radius
                 },
 
-                Id = hitbox.Id,
-
                 LaunchDirection = launchDirection,
                 BaseKnockback = hitbox.BaseKnockback * damageMultiplier,
                 FixedKnockback = hitbox.FixedKnockback * damageMultiplier,
