@@ -149,16 +149,6 @@ namespace Core
 
             while (CurrentTick < targetTick)
             {
-                int currentIndex = CurrentTick % Config.BufferSize;
-
-                GameState currentState = StateBuffer[currentIndex];
-
-                RawInput input = InputBuffer[0][currentIndex];
-
-                int idx = CurrentTick - OldestDesyncFrame + 1;
-
-                UnityEngine.Debug.Log($"Resimulating frame {CurrentTick}: {currentState.Characters[0].CurrentState}; {input.LeftStickX}");
-
                 // We pass null for the input array, as we do not use it during rollback
                 RunSingleTick(null, isRollback: true);    
             }
