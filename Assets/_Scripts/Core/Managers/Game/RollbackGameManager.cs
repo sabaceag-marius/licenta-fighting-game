@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.SceneManagement;
 
 namespace Core
@@ -66,6 +67,9 @@ namespace Core
 
         protected override void ProcessBackgroundTasks()
         {
+            if (networkManager == null || networkManager.IncomingPackets == null)
+                return;
+                
             while (networkManager.IncomingPackets.TryDequeue(out Data.NetworkPacket result))
             {
                 logicEngine.ReceiveNetworkPacket(result);
@@ -75,7 +79,12 @@ namespace Core
             if (logicEngine.OldestDesyncFrame != -1)
             {
                 Debug.Log($"Rollback {logicEngine.CurrentTick - logicEngine.OldestDesyncFrame} frames");
+
+                Profiler.BeginSample("LogicEngine.ProcessRollback");
+
                 logicEngine.ProcessRollback();
+                
+                Profiler.EndSample();
 
                 var gameState = logicEngine.GetCurrentGameState();
                 

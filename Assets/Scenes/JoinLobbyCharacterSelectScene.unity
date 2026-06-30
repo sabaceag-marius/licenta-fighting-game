@@ -600,6 +600,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2260748092996232309, guid: 9301be325222c471eb27be634421ee48, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4683798602011676959, guid: 9301be325222c471eb27be634421ee48, type: 3}
+      propertyPath: m_FlipX
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5728725604946007636, guid: 9301be325222c471eb27be634421ee48, type: 3}
